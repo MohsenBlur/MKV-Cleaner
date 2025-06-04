@@ -181,7 +181,7 @@ def _build_cmd_ffmpeg(
             disp_flags.append("forced")
         if t.default_subtitle:
             disp_flags.append("default")
-        disp = ",".join(disp_flags) if disp_flags else "0"
+        disp = "+".join(disp_flags) if disp_flags else "0"
         cmd += [f"-disposition:s:{i}", disp]
 
     cmd += ["-c", "copy", str(destination)]

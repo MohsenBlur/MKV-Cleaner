@@ -9,6 +9,9 @@ class SettingsLogic:
 
         if hasattr(self, "action_bar") and hasattr(self.action_bar, "btn_prefs"):
             self.action_bar.btn_prefs.clicked.connect(self._open_preferences)
+        if hasattr(self, "action_bar") and hasattr(self.action_bar, "btn_wipe_all"):
+            # Initialise wipe all toggle with stored preference
+            self.action_bar.btn_wipe_all.setChecked(self.wipe_all_default)
         if hasattr(self, "menu_preferences"):
             self.menu_preferences.triggered.connect(self._open_preferences)
 

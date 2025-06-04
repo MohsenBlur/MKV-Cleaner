@@ -1,3 +1,11 @@
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QMessageBox
+from core.tracks import query_tracks, build_cmd, run_command
+from core.config import DEFAULTS
+from .subtitle_preview import SubtitlePreviewWindow
+from .processing import process_files
+
+
 class ActionsLogic:
     def _setup_action_logic(self):
         if hasattr(self, "action_bar") and hasattr(self.action_bar, "btn_open_files"):
@@ -18,22 +26,118 @@ class ActionsLogic:
             self.action_bar.btn_process_all.clicked.connect(self.process_all)
 
     def set_default_audio(self):
-        print("Default Audio button clicked")
+        row = self._current_idx()
+        if row is None:
+            return
+        t = self.track_table.model.track_at_row(row)
+        if t.type != "audio":
+            return
+        for tr in self.track_table.model.get_tracks():
+            if tr.type == "audio":
+                tr.default_audio = False
+        t.default_audio = True
+        self.track_table.model.update_tracks(self.track_table.model.tracks)
+        if hasattr(self, "statusBar"):
+            self.statusBar().showMessage("Default audio set", 2000)
 
     def set_default_subtitle(self):
-        print("Default Subtitle button clicked")
+        row = self._current_idx()
+        if row is None:
+            return
+        t = self.track_table.model.track_at_row(row)
+        if t.type != "subtitles":
+            return
+        for tr in self.track_table.model.get_tracks():
+            if tr.type == "subtitles":
+                tr.default_subtitle = False
+        t.default_subtitle = True
+        self.track_table.model.update_tracks(self.track_table.model.tracks)
+        if hasattr(self, "statusBar"):
+            self.statusBar().showMessage("Default subtitle set", 2000)
 
     def set_forced_subtitle(self):
-        print("Set Forced Subtitle button clicked")
+        row = self._current_idx()
+        if row is None:
+            return
+        t = self.track_table.model.track_at_row(row)
+        if t.type != "subtitles":
+            return
+        t.forced = not t.forced
+        self.track_table.model.update_tracks(self.track_table.model.tracks)
+        if hasattr(self, "statusBar"):
+            self.statusBar().showMessage("Forced flag toggled", 2000)
 
     def wipe_all_subs(self):
-        print("Wipe All Subs button clicked")
+        changed = False
+        for tr in self.track_table.model.get_tracks():
+            if tr.type == "subtitles" and not tr.removed:
+                tr.removed = True
+                changed = True
+        if changed:
+            self.track_table.model.update_tracks(self.track_table.model.tracks)
+            if hasattr(self, "statusBar"):
+                self.statusBar().showMessage("All subtitles marked for removal", 2000)
 
     def preview_subtitle(self):
-        print("Preview Subtitle button clicked")
+        row = self._current_idx()
+        if row is None:
+            return
+        t = self.track_table.model.track_at_row(row)
+        if t.type != "subtitles":
+            return
+        files = self.file_groups.get(self.current_sig, [])
+        if not files:
+            QMessageBox.information(self, "No files", "No files to preview")
+            return
+        self._preview_win = SubtitlePreviewWindow(
+            files,
+            t.tid,
+            t.language,
+            t.name,
+            run_command,
+            DEFAULTS["mkvextract_cmd"],
+            parent=self,
+        )
+        self._preview_win.show()
 
     def process_group(self):
-        print("Process Group button clicked")
+        if not self.current_sig:
+            QMessageBox.information(self, "No group", "No group selected")
+            return
+        files = self.file_groups.get(self.current_sig, [])
+        if not files:
+            QMessageBox.information(self, "No files", "No files in this group")
+            return
+        jobs = [(f, self.groups[self.current_sig]) for f in files]
+        wipe = self.action_bar.btn_wipe_all.isChecked() or getattr(self, "wipe_all_default", False)
+        process_files(
+            jobs,
+            DEFAULTS["max_workers"],
+            query_tracks,
+            build_cmd,
+            run_command,
+            DEFAULTS["output_dir"],
+            wipe,
+            parent=self,
+        )
 
     def process_all(self):
-        print("Process All button clicked")
+        if not self.groups:
+            QMessageBox.information(self, "No files", "No files loaded")
+            return
+        jobs = []
+        for sig, files in self.file_groups.items():
+            tracks = self.groups[sig]
+            for f in files:
+                jobs.append((f, tracks))
+        wipe = self.action_bar.btn_wipe_all.isChecked() or getattr(self, "wipe_all_default", False)
+        process_files(
+            jobs,
+            DEFAULTS["max_workers"],
+            query_tracks,
+            build_cmd,
+            run_command,
+            DEFAULTS["output_dir"],
+            wipe,
+            parent=self,
+        )

@@ -2,7 +2,7 @@
 
 from PySide6.QtWidgets import (
     QDialog, QFormLayout, QLineEdit, QCheckBox, QFileDialog,
-    QDialogButtonBox, QPushButton, QWidget, QHBoxLayout
+    QDialogButtonBox, QPushButton, QWidget, QHBoxLayout, QComboBox
 )
 from PySide6.QtCore import QSettings
 
@@ -13,6 +13,11 @@ class PreferencesDialog(QDialog):
         self.settings = QSettings("MKVToolsCorp", "MKVCleaner")
 
         layout = QFormLayout(self)
+
+        self.backend = QComboBox(self)
+        self.backend.addItems(["mkvtoolnix", "ffmpeg"])
+        self.backend.setCurrentText(self.settings.value("backend", "mkvtoolnix"))
+        layout.addRow("Backend:", self.backend)
 
         self.merge_path = QLineEdit(self)
         self.merge_path.setText(self.settings.value("mkvmerge_cmd", "mkvmerge"))
@@ -25,6 +30,18 @@ class PreferencesDialog(QDialog):
         btn_x = QPushButton("…", self)
         btn_x.clicked.connect(lambda: self._pick_file(self.extract_path))
         layout.addRow("mkvextract command:", self._with_button(self.extract_path, btn_x))
+
+        self.ffmpeg_path = QLineEdit(self)
+        self.ffmpeg_path.setText(self.settings.value("ffmpeg_cmd", "ffmpeg"))
+        btn_fm = QPushButton("…", self)
+        btn_fm.clicked.connect(lambda: self._pick_file(self.ffmpeg_path))
+        layout.addRow("ffmpeg command:", self._with_button(self.ffmpeg_path, btn_fm))
+
+        self.ffprobe_path = QLineEdit(self)
+        self.ffprobe_path.setText(self.settings.value("ffprobe_cmd", "ffprobe"))
+        btn_fp = QPushButton("…", self)
+        btn_fp.clicked.connect(lambda: self._pick_file(self.ffprobe_path))
+        layout.addRow("ffprobe command:", self._with_button(self.ffprobe_path, btn_fp))
 
         self.output_dir = QLineEdit(self)
         self.output_dir.setText(self.settings.value("output_dir", "cleaned"))
@@ -53,8 +70,11 @@ class PreferencesDialog(QDialog):
             line_edit.setText(path)
 
     def accept(self) -> None:
+        self.settings.setValue("backend", self.backend.currentText())
         self.settings.setValue("mkvmerge_cmd", self.merge_path.text())
         self.settings.setValue("mkvextract_cmd", self.extract_path.text())
+        self.settings.setValue("ffmpeg_cmd", self.ffmpeg_path.text())
+        self.settings.setValue("ffprobe_cmd", self.ffprobe_path.text())
         self.settings.setValue("output_dir", self.output_dir.text())
         self.settings.setValue("wipe_all_default", self.wipe_all_def.isChecked())
         super().accept()

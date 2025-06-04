@@ -7,8 +7,11 @@ from pathlib import Path
 from typing import Any, Dict
 
 DEFAULTS: Dict[str, Any] = {
+    "backend": "mkvtoolnix",  # or "ffmpeg"
     "mkvmerge_cmd": "mkvmerge",
     "mkvextract_cmd": "mkvextract",
+    "ffmpeg_cmd": "ffmpeg",
+    "ffprobe_cmd": "ffprobe",
     "output_dir": "cleaned",
     "max_workers": 4,
 }

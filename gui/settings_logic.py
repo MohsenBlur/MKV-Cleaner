@@ -17,8 +17,11 @@ class SettingsLogic:
 
     def _load_preferences(self):
         prefs = load_config()
+        prefs["backend"]        = self.settings.value("backend", prefs["backend"])
         prefs["mkvmerge_cmd"]   = self.settings.value("mkvmerge_cmd", prefs["mkvmerge_cmd"])
         prefs["mkvextract_cmd"] = self.settings.value("mkvextract_cmd", prefs["mkvextract_cmd"])
+        prefs["ffmpeg_cmd"]     = self.settings.value("ffmpeg_cmd", prefs["ffmpeg_cmd"])
+        prefs["ffprobe_cmd"]    = self.settings.value("ffprobe_cmd", prefs["ffprobe_cmd"])
         prefs["output_dir"]     = self.settings.value("output_dir", prefs["output_dir"])
         DEFAULTS.update(prefs)
         self.last_input_dir   = self.settings.value("last_input_dir", "", type=str)

@@ -1,5 +1,13 @@
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QPushButton, QButtonGroup, QSizePolicy
+from PySide6.QtWidgets import (
+    QWidget,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QButtonGroup,
+    QSizePolicy,
+)
 from PySide6.QtCore import Qt, QSize, Signal
+
 
 class GroupBar(QWidget):
     preferencesClicked = Signal()
@@ -30,8 +38,10 @@ class GroupBar(QWidget):
         self.btn_prefs.setMaximumSize(QSize(44, 42))
         self.btn_prefs.setToolTip("Preferences")
         self.btn_prefs.setStyleSheet(
-            "QPushButton { font-size: 19px; border-radius: 8px; background: #20222a; color: #ccc; border: 2px solid #333; padding: 0; }"
-            "QPushButton:hover { background: #363947; color: #fff; border: 2px solid #555; }"
+            "QPushButton { font-size: 19px; border-radius: 8px; background: #20222a;"
+            " color: #ccc; border: 2px solid #333; padding: 0; }"
+            "QPushButton:hover { background: #363947; color: #fff;"
+            " border: 2px solid #555; }"
         )
         self.layout.addWidget(self.btn_prefs, alignment=Qt.AlignRight)
         self.btn_prefs.clicked.connect(self.preferencesClicked.emit)
@@ -46,8 +56,10 @@ class GroupBar(QWidget):
         btn.setMaximumSize(QSize(48, 44))
         btn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         btn.setStyleSheet(
-            "QPushButton {font-weight: bold; font-size: 17px; border-radius: 8px; border: 2px solid #ccc; background: #2a2c34; color: #b9d4ff;}"
-            "QPushButton:checked {background: #3584e4; color: white; border: 2px solid #1c71d8;}"
+            "QPushButton {font-weight: bold; font-size: 17px; border-radius: 8px;"
+            " border: 2px solid #ccc; background: #2a2c34; color: #b9d4ff;}"
+            "QPushButton:checked {background: #3584e4; color: white;"
+            " border: 2px solid #1c71d8;}"
             "QPushButton:hover {background: #51a4fc;}"
         )
         if tooltip:
@@ -68,10 +80,14 @@ class GroupBar(QWidget):
             self.group_buttons[idx][1].setChecked(True)
 
     def button_at(self, idx):
-        return self.group_buttons[idx][1] if 0 <= idx < len(self.group_buttons) else None
+        return (
+            self.group_buttons[idx][1] if 0 <= idx < len(self.group_buttons) else None
+        )
 
     def sig_at(self, idx):
-        return self.group_buttons[idx][0] if 0 <= idx < len(self.group_buttons) else None
+        return (
+            self.group_buttons[idx][0] if 0 <= idx < len(self.group_buttons) else None
+        )
 
     def clear(self):
         for _, btn in self.group_buttons:

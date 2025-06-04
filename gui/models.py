@@ -1,5 +1,5 @@
 from PySide6.QtCore import QAbstractTableModel, Qt, QModelIndex
-from typing import List, Any
+
 
 class TrackTableModel(QAbstractTableModel):
     def __init__(self, tracks=None):
@@ -31,16 +31,20 @@ class TrackTableModel(QAbstractTableModel):
 
         c = index.column()
         if role == Qt.CheckStateRole and c == 0:
-            return Qt.Checked if not getattr(t, 'removed', False) else Qt.Unchecked
+            return Qt.Checked if not getattr(t, "removed", False) else Qt.Unchecked
         if role == Qt.DisplayRole:
             return {
-                1: getattr(t, 'tid', ''),
-                2: getattr(t, 'type', ''),
-                3: getattr(t, 'codec', ''),
-                4: getattr(t, 'language', ''),
-                5: "🚩" if getattr(t, 'forced', False) else "",
-                6: "🔊" if getattr(t, 'default_audio', False) else ("CC" if getattr(t, 'default_subtitle', False) else ""),
-                7: getattr(t, 'name', ''),
+                1: getattr(t, "tid", ""),
+                2: getattr(t, "type", ""),
+                3: getattr(t, "codec", ""),
+                4: getattr(t, "language", ""),
+                5: "🚩" if getattr(t, "forced", False) else "",
+                6: (
+                    "🔊"
+                    if getattr(t, "default_audio", False)
+                    else ("CC" if getattr(t, "default_subtitle", False) else "")
+                ),
+                7: getattr(t, "name", ""),
             }.get(c, "")
         return None
 
@@ -51,7 +55,7 @@ class TrackTableModel(QAbstractTableModel):
                 t = self.tracks[keys[index.row()]]
             else:
                 t = self.tracks[index.row()]
-            t.removed = (value == Qt.Unchecked)
+            t.removed = value == Qt.Unchecked
             self.dataChanged.emit(index, index, [Qt.CheckStateRole])
             return True
         return False
@@ -66,7 +70,9 @@ class TrackTableModel(QAbstractTableModel):
 
     def headerData(self, section, orientation, role=Qt.DisplayRole):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-            return ["Keep", "ID", "Type", "Codec", "Lang", "Forced", "Default", "Name"][section]
+            return ["Keep", "ID", "Type", "Codec", "Lang", "Forced", "Default", "Name"][
+                section
+            ]
         return super().headerData(section, orientation, role)
 
     def update_tracks(self, tracks):

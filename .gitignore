@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+*.egg
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+dist/
+*.so
+.mypy_cache/
+.pytest_cache/
+.DS_Store

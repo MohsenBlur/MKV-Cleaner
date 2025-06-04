@@ -82,3 +82,14 @@ class TrackTableModel(QAbstractTableModel):
 
     def get_tracks(self):
         return self.tracks
+
+    def track_at_row(self, row):
+        if isinstance(self.tracks, dict):
+            keys = sorted(self.tracks.keys())
+            if 0 <= row < len(keys):
+                return self.tracks[keys[row]]
+            raise KeyError(row)
+        else:
+            if 0 <= row < len(self.tracks):
+                return self.tracks[row]
+            raise IndexError(row)

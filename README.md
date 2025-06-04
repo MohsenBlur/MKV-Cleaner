@@ -13,7 +13,10 @@ After installing Python, open a command prompt and run `pip install pyside6` to 
 ## Usage
 
 1. Install the dependencies above.
+
 2. On Windows, simply double-click `mkv_cleaner.py` to launch the program. If you prefer the command line, run:
+=======
+2. Start the application with:
 
    ```bash
    python mkv_cleaner.py

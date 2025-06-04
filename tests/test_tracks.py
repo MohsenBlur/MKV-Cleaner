@@ -125,3 +125,61 @@ def test_build_cmd_wipe_all():
         "copy",
         str(dst),
     ]
+
+
+def test_build_cmd_forced_default_ffmpeg():
+    src = Path("in.mkv")
+    dst = Path("out.mkv")
+    tracks = [
+        Track(
+            idx=0,
+            tid=1,
+            type="audio",
+            codec="aac",
+            language="eng",
+            forced=False,
+            name="English",
+            default_audio=True,
+        ),
+        Track(
+            idx=1,
+            tid=2,
+            type="subtitles",
+            codec="srt",
+            language="eng",
+            forced=True,
+            name="English CC",
+            default_subtitle=True,
+        ),
+    ]
+    DEFAULTS["backend"] = "mkvtoolnix"
+    cmd = build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=False)
+    assert cmd == [
+        "mkvmerge",
+        "--forced-track",
+        "2:yes",
+        "--default-track",
+        "1:yes",
+        "--default-track",
+        "2:yes",
+        "-o",
+        str(dst),
+        str(src),
+    ]
+
+    DEFAULTS["backend"] = "ffmpeg"
+    cmd = build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=False)
+    assert cmd == [
+        "ffmpeg",
+        "-i",
+        str(src),
+        "-map",
+        "0",
+        "-disposition:a:0",
+        "default",
+        "-disposition:s:0",
+        "forced+default",
+        "-c",
+        "copy",
+        str(dst),
+    ]

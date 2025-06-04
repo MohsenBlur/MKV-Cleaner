@@ -16,6 +16,8 @@ class ActionBar(QWidget):
         self.btn_def_sub = QPushButton("💬 Default Subtitle")
         self.btn_forced = QPushButton("🏳️‍🌈 Set Forced")
         self.btn_wipe_all = QPushButton("🧹 Wipe All Subs")
+        # Allow toggling so the state can be used when processing files
+        self.btn_wipe_all.setCheckable(True)
         self.btn_preview = QPushButton("👁️ Preview Subtitle")
         self.btn_process_group = QPushButton("📦 Process Group")
         self.btn_process_all = QPushButton("🚀 Process All")

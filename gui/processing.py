@@ -44,7 +44,7 @@ def process_files(jobs, max_workers, query_tracks, build_cmd, run_command, outpu
         return src
 
     def update_progress_in_main_thread(val):
-        QMetaObject.invokeMethod(dlg, "setValue", dlg.QueuedConnection, Q_ARG(int, val))
+        QMetaObject.invokeMethod(dlg, "setValue", Qt.QueuedConnection, Q_ARG(int, val))
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = [executor.submit(process_one, src, tracks) for src, tracks in jobs]

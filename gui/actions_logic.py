@@ -37,8 +37,8 @@ class ActionsLogic:
                 tr.default_audio = False
         t.default_audio = True
         self.track_table.model.update_tracks(self.track_table.model.tracks)
-        if hasattr(self, "statusBar"):
-            self.statusBar().showMessage("Default audio set", 2000)
+        if hasattr(self, "status_bar"):
+            self.status_bar.showMessage("Default audio set", 2000)
 
     def set_default_subtitle(self):
         row = self._current_idx()
@@ -52,8 +52,8 @@ class ActionsLogic:
                 tr.default_subtitle = False
         t.default_subtitle = True
         self.track_table.model.update_tracks(self.track_table.model.tracks)
-        if hasattr(self, "statusBar"):
-            self.statusBar().showMessage("Default subtitle set", 2000)
+        if hasattr(self, "status_bar"):
+            self.status_bar.showMessage("Default subtitle set", 2000)
 
     def set_forced_subtitle(self):
         row = self._current_idx()
@@ -64,8 +64,8 @@ class ActionsLogic:
             return
         t.forced = not t.forced
         self.track_table.model.update_tracks(self.track_table.model.tracks)
-        if hasattr(self, "statusBar"):
-            self.statusBar().showMessage("Forced flag toggled", 2000)
+        if hasattr(self, "status_bar"):
+            self.status_bar.showMessage("Forced flag toggled", 2000)
 
     def wipe_all_subs(self):
         changed = False
@@ -75,8 +75,8 @@ class ActionsLogic:
                 changed = True
         if changed:
             self.track_table.model.update_tracks(self.track_table.model.tracks)
-            if hasattr(self, "statusBar"):
-                self.statusBar().showMessage("All subtitles marked for removal", 2000)
+            if hasattr(self, "status_bar"):
+                self.status_bar.showMessage("All subtitles marked for removal", 2000)
 
     def preview_subtitle(self):
         row = self._current_idx()

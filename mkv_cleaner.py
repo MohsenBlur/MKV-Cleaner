@@ -1,0 +1,81 @@
+# mkv_cleaner.py
+
+from gui.main_window import MainWindow
+from PySide6.QtWidgets import QApplication
+import sys
+import random
+
+def set_dynamic_modern_style(app):
+    accents = [
+        "#429aff",  # blue
+        "#30d0c6",  # teal
+        "#ab47bc",  # purple
+        "#ffa726",  # orange
+        "#6fc3df",  # light blue/teal
+        "#ff79c6",  # pink/magenta
+    ]
+    accent = random.choice(accents)
+
+    app.setStyleSheet(f"""
+        QMainWindow, QWidget {{
+            background-color: #181a20;
+            color: #d2e0f0;
+        }}
+        QTableView {{
+            background: #22242a;
+            alternate-background-color: #252b33;
+            color: #d0e8f7;
+            gridline-color: #34394c;
+            selection-background-color: {accent}33;
+            selection-color: #fff;
+        }}
+        QHeaderView::section {{
+            background-color: #232a34;
+            color: #8fdfff;
+            border-bottom: 2px solid {accent}88;
+            font-weight: bold;
+        }}
+        QPushButton {{
+            background: #262e36;
+            color: #bddcff;
+            border-radius: 8px;
+            border: 2px solid #344b60;
+            padding: 5px 16px;
+            font-size: 15px;
+        }}
+        QPushButton:hover {{
+            background: {accent}55;
+            color: #fff;
+            border: 2px solid {accent};
+        }}
+        QPushButton:checked, QPushButton:default {{
+            background: {accent};
+            color: #fff;
+            border: 2px solid #39aacc;
+        }}
+        QLineEdit, QComboBox, QSpinBox {{
+            background: #1e232c;
+            color: #b5e3ff;
+            border-radius: 6px;
+            border: 1.5px solid #2d3c4c;
+        }}
+        QToolTip {{
+            background: #2a4154;
+            color: #fff;
+            border: 1px solid {accent};
+        }}
+        /* GroupBar specific: */
+        #GroupBar QLabel {{
+            color: #fff;
+        }}
+    """)
+
+def main():
+    app = QApplication(sys.argv)
+    set_dynamic_modern_style(app)
+    win = MainWindow()
+    win.show()
+    sys.exit(app.exec())
+
+if __name__ == "__main__":
+    main()

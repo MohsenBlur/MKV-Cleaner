@@ -1,0 +1,8 @@
+[project]
+name = "mkv-cleaner"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = ["pyside6"]
+
+[tool.poetry.scripts]
+mkv-cleaner = "mkv_cleaner:main"

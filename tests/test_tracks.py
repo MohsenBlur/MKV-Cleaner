@@ -7,6 +7,7 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from core.tracks import build_cmd, Track  # noqa: E402
+from core.config import DEFAULTS
 
 
 def test_build_cmd_flags():
@@ -34,6 +35,7 @@ def test_build_cmd_flags():
             default_subtitle=True,
         ),
     ]
+    DEFAULTS["backend"] = "mkvtoolnix"
     cmd = build_cmd(src, dst, tracks, wipe_forced=True, wipe_all=False)
     assert cmd == [
         "mkvmerge",
@@ -46,6 +48,23 @@ def test_build_cmd_flags():
         "-o",
         str(dst),
         str(src),
+    ]
+
+    DEFAULTS["backend"] = "ffmpeg"
+    cmd = build_cmd(src, dst, tracks, wipe_forced=True, wipe_all=False)
+    assert cmd == [
+        "ffmpeg",
+        "-i",
+        str(src),
+        "-map",
+        "0",
+        "-disposition:a:0",
+        "default",
+        "-disposition:s:0",
+        "default",
+        "-c",
+        "copy",
+        str(dst),
     ]
 
 
@@ -74,6 +93,7 @@ def test_build_cmd_wipe_all():
             default_subtitle=True,
         ),
     ]
+    DEFAULTS["backend"] = "mkvtoolnix"
     cmd = build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=True)
     assert cmd == [
         "mkvmerge",
@@ -87,4 +107,21 @@ def test_build_cmd_wipe_all():
         "-o",
         str(dst),
         str(src),
+    ]
+
+    DEFAULTS["backend"] = "ffmpeg"
+    cmd = build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=True)
+    assert cmd == [
+        "ffmpeg",
+        "-i",
+        str(src),
+        "-map",
+        "0",
+        "-map",
+        "-0:2",
+        "-disposition:a:0",
+        "default",
+        "-c",
+        "copy",
+        str(dst),
     ]

@@ -40,22 +40,56 @@ def run_command(cmd: list[str]) -> subprocess.CompletedProcess:
         raise
 
 def query_tracks(source: Path) -> List[Track]:
-    """Query tracks in an MKV file via mkvmerge and return Track objects."""
-    result = run_command([DEFAULTS["mkvmerge_cmd"], "-J", str(source)])
-    data = json.loads(result.stdout)
-    tracks: List[Track] = []
-    for i, t in enumerate(data.get("tracks", [])):
-        p = t.get("properties", {})
-        tracks.append(Track(
-            idx=i,
-            tid=int(t["id"]),
-            type=t.get("type", ""),
-            codec=p.get("codec_id", ""),
-            language=p.get("language", "und"),
-            forced=p.get("forced_track", False),
-            name=p.get("track_name", ""),
-        ))
-    return tracks
+    """Query tracks using the configured backend."""
+    if DEFAULTS.get("backend") == "ffmpeg":
+        result = run_command([
+            DEFAULTS["ffprobe_cmd"],
+            "-v",
+            "quiet",
+            "-print_format",
+            "json",
+            "-show_streams",
+            str(source),
+        ])
+        data = json.loads(result.stdout)
+        tracks: List[Track] = []
+        for i, t in enumerate(data.get("streams", [])):
+            tags = t.get("tags", {})
+            disp = t.get("disposition", {})
+            tracks.append(
+                Track(
+                    idx=i,
+                    tid=int(t.get("index", i)),
+                    type="subtitles" if t.get("codec_type") == "subtitle" else t.get("codec_type", ""),
+                    codec=t.get("codec_name", ""),
+                    language=tags.get("language", "und"),
+                    forced=bool(disp.get("forced", 0)),
+                    name=tags.get("title", ""),
+                    default_audio=bool(disp.get("default", 0)) if t.get("codec_type") == "audio" else False,
+                    default_subtitle=bool(disp.get("default", 0)) if t.get("codec_type") == "subtitle" else False,
+                )
+            )
+        return tracks
+    else:
+        result = run_command([DEFAULTS["mkvmerge_cmd"], "-J", str(source)])
+        data = json.loads(result.stdout)
+        tracks: List[Track] = []
+        for i, t in enumerate(data.get("tracks", [])):
+            p = t.get("properties", {})
+            tracks.append(
+                Track(
+                    idx=i,
+                    tid=int(t["id"]),
+                    type=t.get("type", ""),
+                    codec=p.get("codec_id", ""),
+                    language=p.get("language", "und"),
+                    forced=p.get("forced_track", False),
+                    name=p.get("track_name", ""),
+                    default_audio=p.get("default_track", False) if t.get("type") == "audio" else False,
+                    default_subtitle=p.get("default_track", False) if t.get("type") == "subtitles" else False,
+                )
+            )
+        return tracks
 
 def build_cmd(
     source: Path,
@@ -64,7 +98,19 @@ def build_cmd(
     wipe_forced: bool = False,
     wipe_all: bool = False,
 ) -> list[str]:
-    """Build mkvmerge command for keeping/removing tracks using correct IDs."""
+    """Build command for the configured backend."""
+    if DEFAULTS.get("backend") == "ffmpeg":
+        return _build_cmd_ffmpeg(source, destination, tracks, wipe_forced, wipe_all)
+    return _build_cmd_mkvmerge(source, destination, tracks, wipe_forced, wipe_all)
+
+
+def _build_cmd_mkvmerge(
+    source: Path,
+    destination: Path,
+    tracks: List[Track],
+    wipe_forced: bool,
+    wipe_all: bool,
+) -> list[str]:
     cmd: list[str] = [DEFAULTS["mkvmerge_cmd"]]
 
     # Use tid (real mkvmerge track id) everywhere!
@@ -103,6 +149,42 @@ def build_cmd(
 
     # Output and input file MUST come last
     cmd += ["-o", str(destination), str(source)]
+    return cmd
+
+
+def _build_cmd_ffmpeg(
+    source: Path,
+    destination: Path,
+    tracks: List[Track],
+    wipe_forced: bool,
+    wipe_all: bool,
+) -> list[str]:
+    cmd: list[str] = [DEFAULTS["ffmpeg_cmd"], "-i", str(source), "-map", "0"]
+
+    for t in tracks:
+        if t.type in {"audio", "subtitles"}:
+            if wipe_all and t.type == "subtitles":
+                cmd += ["-map", f"-0:{t.tid}"]
+            elif t.removed:
+                cmd += ["-map", f"-0:{t.tid}"]
+
+    audio_tracks = [t for t in tracks if t.type == "audio" and not t.removed]
+    sub_tracks = [t for t in tracks if t.type == "subtitles" and not (wipe_all or t.removed)]
+
+    for i, t in enumerate(audio_tracks):
+        disp = "default" if t.default_audio else "0"
+        cmd += [f"-disposition:a:{i}", disp]
+
+    for i, t in enumerate(sub_tracks):
+        disp_flags = []
+        if not wipe_forced and t.forced:
+            disp_flags.append("forced")
+        if t.default_subtitle:
+            disp_flags.append("default")
+        disp = ",".join(disp_flags) if disp_flags else "0"
+        cmd += [f"-disposition:s:{i}", disp]
+
+    cmd += ["-c", "copy", str(destination)]
     return cmd
 
 def peek_sub(sub_file: Path, max_blocks: int = 5) -> str:

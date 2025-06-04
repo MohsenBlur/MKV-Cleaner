@@ -11,12 +11,25 @@ import tempfile
 import re
 
 
-def peek_subtitle(fp: Path, tid: int, run_command, mkvextract_cmd, maxlen=15000):
+def peek_subtitle(fp: Path, tid: int, run_command, extract_cmd, backend, maxlen=15000):
     """Extract and decode subtitle text robustly from an MKV file."""
     tmp = tempfile.NamedTemporaryFile(suffix=".ass", delete=False)
     tmp.close()
     try:
-        run_command([mkvextract_cmd, "tracks", str(fp), f"{tid}:{tmp.name}"])
+        if backend == "ffmpeg":
+            run_command([
+                extract_cmd,
+                "-y",
+                "-loglevel",
+                "error",
+                "-i",
+                str(fp),
+                "-map",
+                f"0:{tid}",
+                tmp.name,
+            ])
+        else:
+            run_command([extract_cmd, "tracks", str(fp), f"{tid}:{tmp.name}"])
         try:
             out = Path(tmp.name).read_text(encoding="utf-8")[:maxlen]
         except UnicodeDecodeError:
@@ -132,7 +145,15 @@ class SubtitlePreviewWindow(QMainWindow):
     """Popup window for previewing subtitles from multiple files in a group."""
 
     def __init__(
-        self, files, tid, language, name, run_command, mkvextract_cmd, parent=None
+        self,
+        files,
+        tid,
+        language,
+        name,
+        run_command,
+        extract_cmd,
+        backend,
+        parent=None,
     ):
         super().__init__(parent)
         self.files = files
@@ -140,7 +161,8 @@ class SubtitlePreviewWindow(QMainWindow):
         self.language = language
         self.name = name
         self.run_command = run_command
-        self.mkvextract_cmd = mkvextract_cmd
+        self.extract_cmd = extract_cmd
+        self.backend = backend
         self.pos = 0
 
         self.txt = QTextEdit(readOnly=True)
@@ -163,7 +185,13 @@ class SubtitlePreviewWindow(QMainWindow):
 
     def load(self):
         fp = self.files[self.pos]
-        raw = peek_subtitle(fp, self.tid, self.run_command, self.mkvextract_cmd)
+        raw = peek_subtitle(
+            fp,
+            self.tid,
+            self.run_command,
+            self.extract_cmd,
+            self.backend,
+        )
         if "[Events]" in raw and "Dialogue:" in raw:
             self.txt.setHtml(ass_to_html(raw))
         else:

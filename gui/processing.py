@@ -29,7 +29,7 @@ def process_files(jobs, max_workers, query_tracks, build_cmd, run_command, outpu
                 t.forced = False
                 t.default_audio = False
                 t.default_subtitle = False
-        # Fix: handle absolute or relative output_dir robustly
+        # Handle absolute or relative output_dir robustly
         output_dir_path = Path(output_dir)
         dst_dir = output_dir_path if output_dir_path.is_absolute() else (src.parent / output_dir_path)
         dst_dir.mkdir(exist_ok=True)

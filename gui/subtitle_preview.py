@@ -1,7 +1,15 @@
-from PySide6.QtWidgets import QMainWindow, QTextEdit, QHBoxLayout, QVBoxLayout, QWidget, QPushButton
+from PySide6.QtWidgets import (
+    QMainWindow,
+    QTextEdit,
+    QHBoxLayout,
+    QVBoxLayout,
+    QWidget,
+    QPushButton,
+)
 from pathlib import Path
 import tempfile
 import re
+
 
 def peek_subtitle(fp: Path, tid: int, run_command, mkvextract_cmd, maxlen=15000):
     """Extract and decode subtitle text robustly from an MKV file."""
@@ -19,6 +27,7 @@ def peek_subtitle(fp: Path, tid: int, run_command, mkvextract_cmd, maxlen=15000)
         Path(tmp.name).unlink(missing_ok=True)
     return out
 
+
 def srt_to_html(raw):
     """Convert SRT subtitle text to formatted HTML for preview."""
     raw = raw.lstrip("\ufeffï»¿")
@@ -30,21 +39,29 @@ def srt_to_html(raw):
             continue
         html = []
         if re.match(r"^\d+$", lines[0]):
-            html.append(f"<span style='font-weight:bold;color:#fa4;'>{lines[0]}</span><br>")
+            html.append(
+                f"<span style='font-weight:bold;color:#fa4;'>{lines[0]}</span><br>"
+            )
             lines = lines[1:]
         if lines and re.match(r"^\d{2}:\d{2}:\d{2},\d{3} -->", lines[0]):
-            html.append(f"<span style='color:#4bc;font-weight:bold'>{lines[0]}</span><br>")
+            html.append(
+                f"<span style='color:#4bc;font-weight:bold'>{lines[0]}</span><br>"
+            )
             lines = lines[1:]
-        for l in lines:
-            l = re.sub(r"^<i>(.*?)</i>$", r"<i>\1</i>", l)
-            html.append(f"<span style='color:#fff'>{l}</span>")
-        html_blocks.append("<div style='margin-bottom:10px'>" + "".join(html) + "</div>")
+        for line in lines:
+            line = re.sub(r"^<i>(.*?)</i>$", r"<i>\1</i>", line)
+            html.append(f"<span style='color:#fff'>{line}</span>")
+        html_blocks.append(
+            "<div style='margin-bottom:10px'>" + "".join(html) + "</div>"
+        )
     return (
-        "<div style='font-family:Consolas,monospace;font-size:13px;background:#20232b;padding:16px 20px;"
-        "color:#fff; border-radius:8px;line-height:1.7;'>"
+        "<div style='font-family:Consolas,monospace;font-size:13px;"
+        "background:#20232b;padding:16px 20px;color:#fff;"
+        " border-radius:8px;line-height:1.7;'>"
         + "".join(html_blocks)
         + "</div>"
     )
+
 
 def ass_to_html(raw):
     """Convert ASS/SSA subtitle text to formatted HTML for preview."""
@@ -54,18 +71,25 @@ def ass_to_html(raw):
     section = None
     for line in lines:
         lstripped = line.lstrip()
-        if lstripped.startswith('[') and lstripped.endswith(']'):
+        if lstripped.startswith("[") and lstripped.endswith("]"):
             section = lstripped
             html.append(
-                f"<div style='margin-top:10px;margin-bottom:2px;'><span style='font-weight:bold; color:#4bc;'>{section}</span></div>")
+                "<div style='margin-top:10px;margin-bottom:2px;'><span style='"
+                "font-weight:bold; color:#4bc;'>"
+                f"{section}</span></div>"
+            )
             continue
         if lstripped.startswith("Format:"):
             html.append(
-                f"<div style='color:#888; font-size:11px; margin-bottom:2px;'>{lstripped}</div>")
+                "<div style='color:#888; font-size:11px; margin-bottom:2px;'>"
+                f"{lstripped}</div>"
+            )
             continue
         if lstripped.startswith("Style:"):
             html.append(
-                f"<div style='color:#aaa; font-size:11px; margin-bottom:2px;'>{lstripped}</div>")
+                "<div style='color:#aaa; font-size:11px; margin-bottom:2px;'>"
+                f"{lstripped}</div>"
+            )
             continue
         if lstripped.startswith("Dialogue:"):
             parts = lstripped.split(",", 9)
@@ -78,29 +102,38 @@ def ass_to_html(raw):
                 text = text.replace(r"\N", "<br>")
                 html.append(
                     f"<div style='margin-bottom:10px;'>"
-                    f"<span style='font-weight:bold; color:#fa4; font-size:13px;'>{start}</span> "
+                    f"<span style='font-weight:bold; color:#fa4; font-size:13px;'>"
+                    f"{start}</span> "
                     f"<span style='font-weight:normal; color:#4bc;'>&rarr; {end}</span>"
-                    + (f" <span style='color:#888; font-size:11px;'>[{actor}]</span>" if actor.strip() else "")
+                    + (
+                        f" <span style='color:#888; font-size:11px;'>[{actor}]</span>"
+                        if actor.strip()
+                        else ""
+                    )
                     + f"<br><span style='color:#fff;'>{text}</span></div>"
                 )
             else:
                 html.append(f"<div style='color:#fff'>{lstripped}</div>")
             continue
         if section:
-            html.append(
-                f"<div style='color:#aaa; font-size:11px;'>{lstripped}</div>")
+            html.append(f"<div style='color:#aaa; font-size:11px;'>{lstripped}</div>")
         else:
             html.append(f"<div style='color:#fff'>{lstripped}</div>")
     return (
-        "<div style='font-family:Consolas,monospace;font-size:13px;background:#20232b;padding:16px 20px;"
-        "color:#fff; border-radius:8px;line-height:1.7;'>"
+        "<div style='font-family:Consolas,monospace;font-size:13px;"
+        "background:#20232b;padding:16px 20px;color:#fff;"
+        " border-radius:8px;line-height:1.7;'>"
         + "".join(html)
         + "</div>"
     )
 
+
 class SubtitlePreviewWindow(QMainWindow):
     """Popup window for previewing subtitles from multiple files in a group."""
-    def __init__(self, files, tid, language, name, run_command, mkvextract_cmd, parent=None):
+
+    def __init__(
+        self, files, tid, language, name, run_command, mkvextract_cmd, parent=None
+    ):
         super().__init__(parent)
         self.files = files
         self.tid = tid

@@ -10,6 +10,7 @@ from core.config import DEFAULTS
 
 logger = logging.getLogger("core.worker")
 
+
 class Worker:
     def __init__(
         self,
@@ -37,7 +38,7 @@ class Worker:
     def _on_done(self, fut: Future) -> None:
         if fut.cancelled():
             logger.debug("Task cancelled")
-        elif (err := fut.exception()):
-            logger.error(f"Error: %s", err)
+        elif err := fut.exception():
+            logger.error("Error: %s", err)
         else:
             logger.debug("Completed: %s", fut.result())

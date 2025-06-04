@@ -1,11 +1,12 @@
 from pathlib import Path
 import copy
-from core.tracks import query_tracks, Track
+from core.tracks import query_tracks
+
 
 class GroupLogic:
     def _setup_group_logic(self):
-        self.groups = {}        # {sig: [Track]}
-        self.file_groups = {}   # {sig: [Path]}
+        self.groups = {}  # {sig: [Track]}
+        self.file_groups = {}  # {sig: [Path]}
         self.current_sig = None
 
         self.group_bar.button_group.buttonClicked.connect(self._on_group_button_clicked)
@@ -35,11 +36,12 @@ class GroupLogic:
             if sig not in self.groups:
                 self.groups[sig] = [copy.deepcopy(t) for t in tracks]
                 self.file_groups[sig] = []
-                idx = len(self.group_bar.group_buttons)
                 tooltip = str(Path(p).name)
                 btn = self.group_bar.add_group_button(sig, tooltip=tooltip)
                 # Lambda must bind b=btn at definition time to avoid late binding bug
-                btn.clicked.connect(lambda checked, b=btn: self._on_group_button_clicked(b))
+                btn.clicked.connect(
+                    lambda checked, b=btn: self._on_group_button_clicked(b)
+                )
             self.file_groups[sig].append(Path(p))
             filestr = "\n".join(str(x.name) for x in self.file_groups[sig])
             self.group_bar.update_button_tooltip(sig, filestr)

@@ -1,26 +1,25 @@
 # MKV Cleaner
 
-MKV Cleaner is a simple GUI for tidying Matroska (`.mkv`) files. It lets you remove unwanted audio or subtitle tracks, choose which track should be default, toggle forced subtitles and batch process many files at once.
+MKV Cleaner is an easy-to-use GUI for tidying Matroska (`.mkv`) files. You can quickly remove unwanted audio or subtitle tracks, choose which track should be default or forced and even process many files at once.
 
 ## Dependencies
 
-- Python 3.10 or later
+- [Python 3.10 or later](https://www.python.org/downloads/)
 - [PySide6](https://pypi.org/project/PySide6/)
 - [MKVToolNix](https://mkvtoolnix.download/) (`mkvmerge` and `mkvextract` must be in your `PATH`)
 
-Install the Python dependency with `pip install pyside6` or using `poetry install` if you use Poetry.
+After installing Python, open a command prompt and run `pip install pyside6` to install the GUI framework.
 
 ## Usage
 
 1. Install the dependencies above.
+
+2. On Windows, simply double-click `mkv_cleaner.py` to launch the program. If you prefer the command line, run:
+=======
 2. Start the application with:
 
    ```bash
    python mkv_cleaner.py
-   ```
-   or, with Poetry:
-   ```bash
-   poetry run mkv-cleaner
    ```
 3. Click **Open Files** to select one or more MKV files.
 4. For each group of files with the same track layout you can:

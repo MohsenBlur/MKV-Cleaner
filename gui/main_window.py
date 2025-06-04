@@ -1,4 +1,10 @@
-from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QFileDialog
+from PySide6.QtWidgets import (
+    QMainWindow,
+    QVBoxLayout,
+    QWidget,
+    QFileDialog,
+    QStatusBar,
+)
 from PySide6.QtCore import QSettings
 import os
 
@@ -24,12 +30,15 @@ class MainWindow(QMainWindow, SettingsLogic, GroupLogic, TableLogic, ActionsLogi
         self.group_bar = GroupBar(self)
         self.action_bar = ActionBar(self)
         self.track_table = TrackTable(self)
+        self.status_bar = QStatusBar(self)
+        self.status_bar.setSizeGripEnabled(False)
 
         main_vbox = QVBoxLayout()
         main_vbox.setContentsMargins(0, 0, 0, 0)
         main_vbox.setSpacing(0)
         main_vbox.addWidget(self.group_bar)
         main_vbox.addWidget(self.track_table)
+        main_vbox.addWidget(self.status_bar)
         main_vbox.addWidget(self.action_bar)
 
         container = QWidget()

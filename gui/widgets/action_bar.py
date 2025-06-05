@@ -12,15 +12,37 @@ class ActionBar(QWidget):
         layout.setSpacing(8)
 
         self.btn_open_files = QPushButton("📂 Open Files...")
+        self.btn_open_files.setToolTip("Choose one or more MKV videos.")
+
         self.btn_def_audio = QPushButton("🔊 Default Audio")
+        self.btn_def_audio.setToolTip(
+            "Set which audio track should play by default."
+        )
+
         self.btn_def_sub = QPushButton("💬 Default Subtitle")
+        self.btn_def_sub.setToolTip(
+            "Set which subtitle track is shown automatically."
+        )
+
         self.btn_forced = QPushButton("🏳️‍🌈 Set Forced")
+        self.btn_forced.setToolTip(
+            "Mark selected subtitles as forced so players show them."
+        )
+
         self.btn_wipe_all = QPushButton("🧹 Wipe All Subs")
+        self.btn_wipe_all.setToolTip("Remove every subtitle from these videos.")
         # Allow toggling so the state can be used when processing files
         self.btn_wipe_all.setCheckable(True)
         self.btn_preview = QPushButton("👁️ Preview Subtitle")
+        self.btn_preview.setToolTip("Quickly check the subtitles before processing.")
+
         self.btn_process_group = QPushButton("📦 Process Group")
+        self.btn_process_group.setToolTip(
+            "Apply cleaning to the current group only."
+        )
+
         self.btn_process_all = QPushButton("🚀 Process All")
+        self.btn_process_all.setToolTip("Clean all loaded groups of videos.")
 
         for btn in (
             self.btn_open_files,

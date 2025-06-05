@@ -51,9 +51,9 @@ jobs:
         if: steps.changes.outputs.changed == 'true'
         shell: pwsh
         run: |
-          $installDir = Get-AppInstallLocation 'mkvtoolnix'
-          if (-not $installDir) { throw 'MKVToolNix installation not found' }
-          echo $installDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          $mkvmerge = Get-Command mkvmerge.exe -ErrorAction Stop
+          $dir = Split-Path $mkvmerge.Path
+          Add-Content -Path $env:GITHUB_PATH -Value $dir
 
       - name: Build wheel and sdist
         if: steps.changes.outputs.changed == 'true'

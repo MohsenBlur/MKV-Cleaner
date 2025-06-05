@@ -1,11 +1,17 @@
-# mkv_cleaner.py
+"""Application entry point for the MKV Cleaner GUI.
+
+This module starts a :class:`~PySide6.QtWidgets.QApplication`, applies a
+randomized modern style and opens the main window. Run the ``mkv-cleaner``
+console script or execute this module directly to launch the application.
+"""
 
 from gui.main_window import MainWindow
 from PySide6.QtWidgets import QApplication
 import sys
 import random
 
-def set_dynamic_modern_style(app):
+def set_dynamic_modern_style(app: QApplication) -> None:
+    """Apply a dark theme with a random accent color to ``app``."""
     accents = [
         "#429aff",  # blue
         "#30d0c6",  # teal
@@ -70,7 +76,8 @@ def set_dynamic_modern_style(app):
         }}
     """)
 
-def main():
+def main() -> None:
+    """Create the application and show the main window."""
     app = QApplication(sys.argv)
     set_dynamic_modern_style(app)
     win = MainWindow()

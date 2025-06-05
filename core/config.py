@@ -5,6 +5,12 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 from typing import Any, Dict
+import json
+
+try:  # Python >=3.11
+    import tomllib
+except ModuleNotFoundError:  # pragma: no cover - fallback for older versions
+    import tomli as tomllib
 
 DEFAULTS: Dict[str, Any] = {
     "backend": "mkvtoolnix",  # or "ffmpeg"
@@ -23,4 +29,18 @@ def setup_logging(level: int | str = logging.INFO) -> None:
     logging.getLogger("core").setLevel(level)
 
 def load_config(path: Path | None = None) -> Dict[str, Any]:
-    return DEFAULTS.copy()
+    """Load configuration from ``path`` and merge with :data:`DEFAULTS`."""
+
+    cfg = DEFAULTS.copy()
+    if path:
+        suffix = path.suffix.lower()
+        with open(path, "rb") as fh:
+            if suffix == ".json":
+                data = json.load(fh)
+            elif suffix == ".toml":
+                data = tomllib.load(fh)
+            else:
+                raise ValueError(f"Unsupported config format: {suffix}")
+        if isinstance(data, dict):
+            cfg.update(data)
+    return cfg

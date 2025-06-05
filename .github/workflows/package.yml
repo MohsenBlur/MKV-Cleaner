@@ -1,13 +1,11 @@
 name: Package
 
 on:
-  push:
-    branches: [main]
-  schedule:
-    - cron: '*/5 * * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write
+  actions: read
 
 jobs:
   build:
@@ -43,7 +41,7 @@ jobs:
         if: steps.changes.outputs.changed == 'true'
         run: |
           python -m pip install --upgrade pip
-          pip install build pyinstaller
+          pip install build pyinstaller pyside6
 
       - name: Build wheel and sdist
         if: steps.changes.outputs.changed == 'true'
@@ -55,7 +53,7 @@ jobs:
 
       - name: Upload artifacts
         if: steps.changes.outputs.changed == 'true'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: package
           path: |

@@ -6,18 +6,33 @@ import logging
 from pathlib import Path
 from typing import Any, Dict
 import json
+import os
+import sys
 
 try:  # Python >=3.11
     import tomllib
 except ModuleNotFoundError:  # pragma: no cover - fallback for older versions
     import tomli as tomllib
 
+if getattr(sys, 'frozen', False):  # Running from PyInstaller bundle
+    bindir = Path(sys.executable).parent
+    ext = '.exe' if os.name == 'nt' else ''
+    MKVMERGE = str(bindir / f"mkvmerge{ext}")
+    MKVEXTRACT = str(bindir / f"mkvextract{ext}")
+    FFMPEG = str(bindir / f"ffmpeg{ext}")
+    FFPROBE = str(bindir / f"ffprobe{ext}")
+else:
+    MKVMERGE = "mkvmerge"
+    MKVEXTRACT = "mkvextract"
+    FFMPEG = "ffmpeg"
+    FFPROBE = "ffprobe"
+
 DEFAULTS: Dict[str, Any] = {
     "backend": "mkvtoolnix",  # or "ffmpeg"
-    "mkvmerge_cmd": "mkvmerge",
-    "mkvextract_cmd": "mkvextract",
-    "ffmpeg_cmd": "ffmpeg",
-    "ffprobe_cmd": "ffprobe",
+    "mkvmerge_cmd": MKVMERGE,
+    "mkvextract_cmd": MKVEXTRACT,
+    "ffmpeg_cmd": FFMPEG,
+    "ffprobe_cmd": FFPROBE,
     "output_dir": "cleaned",
     "max_workers": 4,
 }

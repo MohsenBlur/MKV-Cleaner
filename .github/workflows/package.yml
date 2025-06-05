@@ -1,0 +1,41 @@
+name: Package
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 */2 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build pyinstaller
+
+      - name: Build wheel and sdist
+        run: python -m build
+
+      - name: Build PyInstaller bundle
+        run: pyinstaller mkv-cleaner.spec --distpath bundle
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: package
+          path: |
+            dist/*.whl
+            dist/*.tar.gz
+            bundle

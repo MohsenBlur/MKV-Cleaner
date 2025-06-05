@@ -4,12 +4,20 @@ MKV Cleaner is an easy-to-use GUI for tidying Matroska (`.mkv`) files. You can q
 
 ## Dependencies
 
+When running from source you need to install the following tools yourself:
+
 - [Python 3.10 or later](https://www.python.org/downloads/)
 - [PySide6](https://pypi.org/project/PySide6/)
-- [MKVToolNix](https://mkvtoolnix.download/) (`mkvmerge` and `mkvextract` must be in your `PATH`) *(optional if using FFmpeg)*
-- [FFmpeg](https://ffmpeg.org/) (`ffmpeg` and `ffprobe` must be in your `PATH` if selected)
+- [MKVToolNix](https://mkvtoolnix.download/) (`mkvmerge` and `mkvextract` on your `PATH`) *(optional if using FFmpeg)*
+- [FFmpeg](https://ffmpeg.org/) (`ffmpeg` and `ffprobe` on your `PATH` if selected)
 
-After installing Python, open a command prompt and run `pip install pyside6` to install the GUI framework.
+The prebuilt bundles published in the GitHub releases already include PySide6,
+FFmpeg and MKVToolNix so no additional installation is required. Copies of
+their licenses are distributed alongside the bundle.
+
+## Downloads
+
+Automated builds run every two hours and upload ready-to-use bundles to the GitHub Releases section. Download the archive for your platform and run the `mkv-cleaner` executable contained inside.
 
 ## Usage
 

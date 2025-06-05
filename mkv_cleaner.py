@@ -6,6 +6,7 @@ console script or execute this module directly to launch the application.
 """
 
 from gui.main_window import MainWindow
+from gui.widgets.fast_tooltip_style import FastToolTipStyle
 from PySide6.QtWidgets import QApplication
 import sys
 import random
@@ -79,6 +80,8 @@ def set_dynamic_modern_style(app: QApplication) -> None:
 def main() -> None:
     """Create the application and show the main window."""
     app = QApplication(sys.argv)
+    # Show tooltips faster than the Qt default
+    app.setStyle(FastToolTipStyle(app.style()))
     set_dynamic_modern_style(app)
     win = MainWindow()
     win.show()

@@ -17,7 +17,7 @@ their licenses are distributed alongside the bundle.
 
 ## Downloads
 
-Automated builds run every two hours and upload ready-to-use bundles to the GitHub Releases section. Download the archive for your platform and run the `mkv-cleaner` executable contained inside.
+A scheduled workflow checks every five minutes and uploads new bundles to the GitHub Releases section only when there have been changes. Download the archive for your platform and run the `mkv-cleaner` executable contained inside.
 
 ## Usage
 

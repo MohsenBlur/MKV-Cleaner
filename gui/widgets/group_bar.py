@@ -5,12 +5,15 @@ from PySide6.QtWidgets import (
     QPushButton,
     QButtonGroup,
     QSizePolicy,
+    QComboBox,
 )
 from PySide6.QtCore import Qt, QSize, Signal
+from core.config import DEFAULTS
 
 
 class GroupBar(QWidget):
     preferencesClicked = Signal()
+    backendChanged = Signal(str)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -33,6 +36,14 @@ class GroupBar(QWidget):
         self.group_btns_anchor = self.layout.count()
         self.stretch = self.layout.addStretch(1)
 
+        self.backend_combo = QComboBox(self)
+        self.backend_combo.addItems(["mkvtoolnix", "ffmpeg"])
+        self.backend_combo.setCurrentText(DEFAULTS.get("backend", "mkvtoolnix"))
+        self.backend_combo.setToolTip("Select backend")
+        self.backend_combo.currentTextChanged.connect(self.backendChanged.emit)
+        self.backend_combo.setFixedHeight(32)
+        self.layout.addWidget(self.backend_combo, alignment=Qt.AlignRight)
+
         self.btn_prefs = QPushButton("⚙️")
         self.btn_prefs.setMinimumSize(QSize(44, 42))
         self.btn_prefs.setMaximumSize(QSize(44, 42))
@@ -48,6 +59,14 @@ class GroupBar(QWidget):
 
         self.setLayout(self.layout)
         self.setFixedHeight(54)
+
+    def set_backend(self, backend: str):
+        """Update dropdown to reflect the selected backend."""
+        if backend not in {"mkvtoolnix", "ffmpeg"}:
+            return
+        self.backend_combo.blockSignals(True)
+        self.backend_combo.setCurrentText(backend)
+        self.backend_combo.blockSignals(False)
 
     def add_group_button(self, sig, tooltip=None):
         btn = QPushButton(str(len(self.group_buttons) + 1))

@@ -48,3 +48,18 @@ class GroupLogic:
         if self.group_bar.group_buttons:
             self.group_bar.set_checked(0)
             self._on_group_change_idx(0)
+
+    def _reload_all_groups(self):
+        """Re-import already loaded files using the current backend."""
+        all_paths = []
+        for files in self.file_groups.values():
+            all_paths.extend(files)
+
+        self.groups.clear()
+        self.file_groups.clear()
+        self.current_sig = None
+        self.group_bar.clear()
+        self.track_table.model.update_tracks([])
+
+        if all_paths:
+            self.add_files_to_groups(all_paths)

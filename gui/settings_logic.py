@@ -14,6 +14,9 @@ class SettingsLogic:
             self.action_bar.btn_wipe_all.setChecked(self.wipe_all_default)
         if hasattr(self, "menu_preferences"):
             self.menu_preferences.triggered.connect(self._open_preferences)
+        if hasattr(self, "group_bar") and hasattr(self.group_bar, "backend_combo"):
+            self.group_bar.set_backend(DEFAULTS.get("backend", "mkvtoolnix"))
+            self.group_bar.backendChanged.connect(self._change_backend)
 
     def _load_preferences(self):
         prefs = load_config()
@@ -26,6 +29,8 @@ class SettingsLogic:
         DEFAULTS.update(prefs)
         self.last_input_dir   = self.settings.value("last_input_dir", "", type=str)
         self.wipe_all_default = self.settings.value("wipe_all_default", False, type=bool)
+        if hasattr(self, "group_bar") and hasattr(self.group_bar, "set_backend"):
+            self.group_bar.set_backend(DEFAULTS.get("backend", "mkvtoolnix"))
 
     def _open_preferences(self):
         dlg = PreferencesDialog(self)
@@ -33,6 +38,12 @@ class SettingsLogic:
             self._load_preferences()
             if hasattr(self.action_bar, "btn_wipe_all"):
                 self.action_bar.btn_wipe_all.setChecked(self.wipe_all_default)
+
+    def _change_backend(self, backend: str):
+        DEFAULTS["backend"] = backend
+        self.settings.setValue("backend", backend)
+        if hasattr(self, "_reload_all_groups"):
+            self._reload_all_groups()
 
     def closeEvent(self, event):
         if hasattr(self, "track_table") and hasattr(self.track_table, "horizontalHeader"):

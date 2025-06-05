@@ -5,8 +5,9 @@ from PyInstaller.utils.hooks import collect_submodules
 binaries = []
 for exe in ("mkvmerge", "mkvextract", "ffmpeg", "ffprobe"):
     path = shutil.which(exe)
-    if path:
-        binaries.append((path, '.'))
+    if not path:
+        raise RuntimeError(f"Required executable '{exe}' not found on PATH")
+    binaries.append((path, '.'))
 
 hidden = collect_submodules('gui') + collect_submodules('core')
 

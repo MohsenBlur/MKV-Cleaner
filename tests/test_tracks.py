@@ -7,10 +7,9 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from core.tracks import build_cmd, Track  # noqa: E402
-from core.config import DEFAULTS
 
 
-def test_build_cmd_flags():
+def test_build_cmd_flags(defaults):
     src = Path("in.mkv")
     dst = Path("out.mkv")
     tracks = [
@@ -35,7 +34,7 @@ def test_build_cmd_flags():
             default_subtitle=True,
         ),
     ]
-    DEFAULTS["backend"] = "mkvtoolnix"
+    defaults["backend"] = "mkvtoolnix"
     cmd = build_cmd(src, dst, tracks, wipe_forced=True, wipe_all=False)
     assert cmd == [
         "mkvmerge",
@@ -50,7 +49,7 @@ def test_build_cmd_flags():
         str(src),
     ]
 
-    DEFAULTS["backend"] = "ffmpeg"
+    defaults["backend"] = "ffmpeg"
     cmd = build_cmd(src, dst, tracks, wipe_forced=True, wipe_all=False)
     assert cmd == [
         "ffmpeg",
@@ -68,7 +67,7 @@ def test_build_cmd_flags():
     ]
 
 
-def test_build_cmd_wipe_all():
+def test_build_cmd_wipe_all(defaults):
     src = Path("in.mkv")
     dst = Path("out.mkv")
     tracks = [
@@ -93,7 +92,7 @@ def test_build_cmd_wipe_all():
             default_subtitle=True,
         ),
     ]
-    DEFAULTS["backend"] = "mkvtoolnix"
+    defaults["backend"] = "mkvtoolnix"
     cmd = build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=True)
     assert cmd == [
         "mkvmerge",
@@ -109,7 +108,7 @@ def test_build_cmd_wipe_all():
         str(src),
     ]
 
-    DEFAULTS["backend"] = "ffmpeg"
+    defaults["backend"] = "ffmpeg"
     cmd = build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=True)
     assert cmd == [
         "ffmpeg",
@@ -127,7 +126,7 @@ def test_build_cmd_wipe_all():
     ]
 
 
-def test_build_cmd_forced_default_ffmpeg():
+def test_build_cmd_forced_default_ffmpeg(defaults):
     src = Path("in.mkv")
     dst = Path("out.mkv")
     tracks = [
@@ -152,7 +151,7 @@ def test_build_cmd_forced_default_ffmpeg():
             default_subtitle=True,
         ),
     ]
-    DEFAULTS["backend"] = "mkvtoolnix"
+    defaults["backend"] = "mkvtoolnix"
     cmd = build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=False)
     assert cmd == [
         "mkvmerge",
@@ -167,7 +166,7 @@ def test_build_cmd_forced_default_ffmpeg():
         str(src),
     ]
 
-    DEFAULTS["backend"] = "ffmpeg"
+    defaults["backend"] = "ffmpeg"
     cmd = build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=False)
     assert cmd == [
         "ffmpeg",

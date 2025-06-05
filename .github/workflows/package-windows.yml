@@ -47,9 +47,22 @@ jobs:
         if: steps.changes.outputs.changed == 'true'
         run: choco install ffmpeg mkvtoolnix --no-progress -y
 
+      - name: Refresh environment
+        if: steps.changes.outputs.changed == 'true'
+        shell: cmd
+        run: RefreshEnv
+
       - name: Build wheel and sdist
         if: steps.changes.outputs.changed == 'true'
         run: python -m build
+
+      - name: Verify tools on PATH
+        if: steps.changes.outputs.changed == 'true'
+        shell: cmd
+        run: |
+          where ffmpeg
+          where mkvmerge
+          where mkvextract
 
       - name: Build PyInstaller bundle
         if: steps.changes.outputs.changed == 'true'

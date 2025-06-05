@@ -51,9 +51,11 @@ jobs:
         if: steps.changes.outputs.changed == 'true'
         shell: pwsh
         run: |
-          $mkvmerge = Get-Command mkvmerge.exe -ErrorAction Stop
-          $dir = Split-Path $mkvmerge.Path
-          Add-Content -Path $env:GITHUB_PATH -Value $dir
+          $mkvDir = Join-Path $Env:ProgramFiles 'MKVToolNix'
+          if (-not (Test-Path (Join-Path $mkvDir 'mkvmerge.exe'))) {
+            throw 'mkvmerge.exe not found'
+          }
+          Add-Content -Path $Env:GITHUB_PATH -Value $mkvDir
 
       - name: Build wheel and sdist
         if: steps.changes.outputs.changed == 'true'

@@ -64,6 +64,7 @@ jobs:
         shell: cmd
         run: |
           where ffmpeg
+          where ffprobe
           where mkvmerge
           where mkvextract
 

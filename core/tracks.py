@@ -31,10 +31,18 @@ class Track:
             f"{self.language}-{'F' if self.forced else ''}-{self.name}"
         )
 
+class CommandNotFoundError(RuntimeError):
+    """Raised when an external command is missing."""
+
+
 def run_command(cmd: list[str]) -> subprocess.CompletedProcess:
-    logger.debug(f"Running: {' '.join(cmd)}")
+    logger.debug("Running: %s", " ".join(cmd))
     try:
         return subprocess.run(cmd, check=True, capture_output=True, text=True)
+    except FileNotFoundError as exc:
+        msg = f"{cmd[0]} not found on PATH"
+        logger.error(msg)
+        raise CommandNotFoundError(msg) from exc
     except subprocess.CalledProcessError as exc:
         logger.error("Command failed: %s\n%s", exc, exc.stderr)
         raise

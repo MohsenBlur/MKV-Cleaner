@@ -147,7 +147,6 @@ def _build_cmd_mkvmerge(
             else:
                 val = "yes" if t.default_subtitle else "no"
             cmd += ["--default-track", f"{t.tid}:{val}"]
-
     # Output and input file MUST come last
     cmd += ["-o", str(destination), str(source)]
     return cmd

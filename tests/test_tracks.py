@@ -182,8 +182,6 @@ def test_build_cmd_forced_default_ffmpeg(defaults):
         "copy",
         str(dst),
     ]
-
-
 def test_build_cmd_full_flags(defaults):
     src = Path("in.mkv")
     dst = Path("out.mkv")

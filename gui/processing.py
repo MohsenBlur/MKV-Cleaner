@@ -1,5 +1,8 @@
 from PySide6.QtCore import QMetaObject, Q_ARG, Qt
 from PySide6.QtWidgets import QProgressDialog, QMessageBox
+import logging
+
+logger = logging.getLogger(__name__)
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
@@ -35,7 +38,7 @@ def process_files(jobs, max_workers, query_tracks, build_cmd, run_command, outpu
         dst_dir.mkdir(exist_ok=True)
         dst = dst_dir / src.name
         cmd = build_cmd(src, dst, real_tracks, wipe_forced=False, wipe_all=wipe_all_flag)
-        print("Running:", " ".join(map(str, cmd)))
+        logger.info("Running: %s", " ".join(map(str, cmd)))
         try:
             run_command(cmd)
         except Exception as e:
@@ -51,6 +54,7 @@ def process_files(jobs, max_workers, query_tracks, build_cmd, run_command, outpu
         for i, fut in enumerate(as_completed(futures), 1):
             update_progress_in_main_thread(i)
             if dlg.wasCanceled():
+                executor.shutdown(cancel_futures=True)
                 break
 
     dlg.close()

@@ -17,7 +17,7 @@ their licenses are distributed alongside the bundle.
 
 ## Downloads
 
-New bundles are uploaded manually through a GitHub workflow whenever changes are ready. To build a new release, open the **Actions** tab on GitHub, select either **Package** or **Package Windows** and choose **Run workflow**. Download the archive for your platform from the Releases section and run the `mkv-cleaner` executable contained inside.
+New bundles are uploaded manually through a GitHub workflow whenever changes are ready. Download the archive for your platform from the Releases section and run the `mkv-cleaner` executable contained inside.
 
 ## Usage
 

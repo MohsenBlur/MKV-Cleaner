@@ -19,6 +19,7 @@ their licenses are distributed alongside the bundle.
 
 New bundles are uploaded manually through a GitHub workflow whenever changes are ready. Download the archive for your platform from the Releases section and run the `mkv-cleaner` executable contained inside.
 
+
 ## Usage
 
 1. Install the dependencies above.

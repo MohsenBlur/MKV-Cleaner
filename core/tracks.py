@@ -188,6 +188,7 @@ def _build_cmd_ffmpeg(
     return cmd
 
 def peek_sub(sub_file: Path, max_blocks: int = 5) -> str:
+    """Return up to ``max_blocks`` blocks from the subtitle file ``sub_file``."""
     text = sub_file.read_text(encoding="utf-8", errors="ignore")
     blocks = text.strip().split("\n\n")
     if len(blocks) > max_blocks:

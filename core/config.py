@@ -1,4 +1,4 @@
-# core/config.py
+"""Utilities for application configuration and logging setup."""
 
 from __future__ import annotations
 

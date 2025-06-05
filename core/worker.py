@@ -1,4 +1,4 @@
-# core/worker.py
+"""Thread pool worker helper for running jobs in the background."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ logger = logging.getLogger("core.worker")
 
 
 class Worker:
+    """Utility class wrapping ``ThreadPoolExecutor`` for background tasks."""
     def __init__(
         self,
         fn: Callable[..., Any],

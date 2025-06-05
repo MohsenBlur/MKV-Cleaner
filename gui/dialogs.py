@@ -1,4 +1,4 @@
-# gui/dialogs.py
+"""Qt dialog windows used throughout the application."""
 
 from PySide6.QtWidgets import (
     QDialog, QFormLayout, QLineEdit, QCheckBox, QFileDialog,
@@ -7,7 +7,9 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import QSettings
 
 class PreferencesDialog(QDialog):
-    def __init__(self, parent=None):
+    """Dialog window for editing persistent application preferences."""
+
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setWindowTitle("Preferences")
         self.settings = QSettings("MKVToolsCorp", "MKVCleaner")
@@ -56,7 +58,7 @@ class PreferencesDialog(QDialog):
         self.buttons.rejected.connect(self.reject)
         layout.addRow(self.buttons)
 
-    def _with_button(self, widget, button):
+    def _with_button(self, widget: QWidget, button: QPushButton) -> QWidget:
         container = QWidget(self)
         h = QHBoxLayout(container)
         h.setContentsMargins(0, 0, 0, 0)
@@ -64,7 +66,7 @@ class PreferencesDialog(QDialog):
         h.addWidget(button)
         return container
 
-    def _pick_file(self, line_edit: QLineEdit):
+    def _pick_file(self, line_edit: QLineEdit) -> None:
         path, _ = QFileDialog.getOpenFileName(self, "Select executable", "", "All Files (*)")
         if path:
             line_edit.setText(path)

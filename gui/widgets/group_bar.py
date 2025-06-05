@@ -1,3 +1,5 @@
+"""Widget for selecting and managing groups of input files."""
+
 from PySide6.QtWidgets import (
     QWidget,
     QHBoxLayout,
@@ -10,16 +12,18 @@ from PySide6.QtCore import Qt, QSize, Signal
 
 
 class GroupBar(QWidget):
+    """Horizontal bar presenting group buttons and preferences access."""
+
     preferencesClicked = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.group_buttons = []
         self.button_group = QButtonGroup(self)
         self.button_group.setExclusive(True)
         self._setup_ui()
 
-    def _setup_ui(self):
+    def _setup_ui(self) -> None:
         self.layout = QHBoxLayout(self)
         self.layout.setContentsMargins(16, 4, 16, 4)
         self.layout.setSpacing(14)
@@ -49,7 +53,7 @@ class GroupBar(QWidget):
         self.setLayout(self.layout)
         self.setFixedHeight(54)
 
-    def add_group_button(self, sig, tooltip=None):
+    def add_group_button(self, sig: str, tooltip: str | None = None) -> QPushButton:
         btn = QPushButton(str(len(self.group_buttons) + 1))
         btn.setCheckable(True)
         btn.setMinimumSize(QSize(48, 40))
@@ -69,27 +73,27 @@ class GroupBar(QWidget):
         self.group_buttons.append((sig, btn))
         return btn
 
-    def update_button_tooltip(self, sig, tooltip):
+    def update_button_tooltip(self, sig: str, tooltip: str) -> None:
         for s, b in self.group_buttons:
             if s == sig:
                 b.setToolTip(tooltip)
                 break
 
-    def set_checked(self, idx):
+    def set_checked(self, idx: int) -> None:
         if 0 <= idx < len(self.group_buttons):
             self.group_buttons[idx][1].setChecked(True)
 
-    def button_at(self, idx):
+    def button_at(self, idx: int) -> QPushButton | None:
         return (
             self.group_buttons[idx][1] if 0 <= idx < len(self.group_buttons) else None
         )
 
-    def sig_at(self, idx):
+    def sig_at(self, idx: int) -> str | None:
         return (
             self.group_buttons[idx][0] if 0 <= idx < len(self.group_buttons) else None
         )
 
-    def clear(self):
+    def clear(self) -> None:
         for _, btn in self.group_buttons:
             self.layout.removeWidget(btn)
             btn.deleteLater()

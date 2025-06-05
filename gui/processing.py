@@ -1,9 +1,21 @@
+"""Parallel processing helpers used by the GUI."""
+
 from PySide6.QtCore import QMetaObject, Q_ARG, Qt
-from PySide6.QtWidgets import QProgressDialog, QMessageBox
+from PySide6.QtWidgets import QProgressDialog, QMessageBox, QWidget
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+from typing import Callable, Iterable, Sequence
 
-def process_files(jobs, max_workers, query_tracks, build_cmd, run_command, output_dir, wipe_all_flag, parent=None):
+def process_files(
+    jobs: Sequence[tuple[Path, Sequence]],
+    max_workers: int,
+    query_tracks: Callable[[Path], Sequence],
+    build_cmd: Callable[[Path, Path, Sequence, bool, bool], list[str]],
+    run_command: Callable[[list[str]], None],
+    output_dir: str,
+    wipe_all_flag: bool,
+    parent: QWidget | None = None,
+) -> None:
     """Process multiple files in parallel and report progress/errors in the GUI."""
     dlg = QProgressDialog("Processing...", "Cancel", 0, len(jobs), parent)
     dlg.setWindowModality(Qt.WindowModal)
@@ -14,7 +26,7 @@ def process_files(jobs, max_workers, query_tracks, build_cmd, run_command, outpu
     import threading
     lock = threading.Lock()
 
-    def process_one(src, tracks):
+    def process_one(src: Path, tracks: Sequence) -> Path:
         real_tracks = query_tracks(src)
         tid_to_ui = {t.tid: t for t in tracks}
         for t in real_tracks:
@@ -43,7 +55,7 @@ def process_files(jobs, max_workers, query_tracks, build_cmd, run_command, outpu
                 errors.append((str(src), str(e)))
         return src
 
-    def update_progress_in_main_thread(val):
+    def update_progress_in_main_thread(val: int) -> None:
         QMetaObject.invokeMethod(dlg, "setValue", Qt.QueuedConnection, Q_ARG(int, val))
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:

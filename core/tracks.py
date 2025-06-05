@@ -1,4 +1,4 @@
-# core/tracks.py
+"""Track querying and command building utilities."""
 
 from __future__ import annotations
 import json
@@ -14,6 +14,7 @@ logger = logging.getLogger("core.tracks")
 
 @dataclass
 class Track:
+    """Representation of a single media track entry."""
     idx: int       # index in the UI/table
     tid: int       # real mkvmerge track id
     type: str

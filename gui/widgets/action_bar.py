@@ -1,12 +1,16 @@
+"""Widgets providing top-level actions for the application."""
+
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton
 
 
 class ActionBar(QWidget):
-    def __init__(self, parent=None):
+    """Horizontal bar with buttons for actions like processing files."""
+
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._setup_ui()
 
-    def _setup_ui(self):
+    def _setup_ui(self) -> None:
         layout = QHBoxLayout(self)
         layout.setContentsMargins(8, 4, 8, 4)
         layout.setSpacing(8)

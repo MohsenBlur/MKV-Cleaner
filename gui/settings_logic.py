@@ -1,9 +1,14 @@
+"""Persistence of user settings and loading preferences."""
+
 from PySide6.QtCore import QSettings
+from PySide6.QtGui import QCloseEvent
 from gui.dialogs import PreferencesDialog
 from core.config import load_config, DEFAULTS
 
 class SettingsLogic:
-    def _setup_settings_logic(self):
+    """Mixin handling persistence of user configurable settings."""
+
+    def _setup_settings_logic(self) -> None:
         self.settings = QSettings("MKVToolsCorp", "MKVCleaner")
         self._load_preferences()
 
@@ -15,7 +20,7 @@ class SettingsLogic:
         if hasattr(self, "menu_preferences"):
             self.menu_preferences.triggered.connect(self._open_preferences)
 
-    def _load_preferences(self):
+    def _load_preferences(self) -> None:
         prefs = load_config()
         prefs["backend"]        = self.settings.value("backend", prefs["backend"])
         prefs["mkvmerge_cmd"]   = self.settings.value("mkvmerge_cmd", prefs["mkvmerge_cmd"])
@@ -27,14 +32,14 @@ class SettingsLogic:
         self.last_input_dir   = self.settings.value("last_input_dir", "", type=str)
         self.wipe_all_default = self.settings.value("wipe_all_default", False, type=bool)
 
-    def _open_preferences(self):
+    def _open_preferences(self) -> None:
         dlg = PreferencesDialog(self)
         if dlg.exec():
             self._load_preferences()
             if hasattr(self.action_bar, "btn_wipe_all"):
                 self.action_bar.btn_wipe_all.setChecked(self.wipe_all_default)
 
-    def closeEvent(self, event):
+    def closeEvent(self, event: QCloseEvent) -> None:
         if hasattr(self, "track_table") and hasattr(self.track_table, "horizontalHeader"):
             self.settings.setValue("header_state", self.track_table.horizontalHeader().saveState())
         if getattr(self, "last_input_dir", None):

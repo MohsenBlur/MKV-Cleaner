@@ -1,17 +1,22 @@
+"""Logic for grouping files and handling group selection."""
+
 from pathlib import Path
 import copy
+from typing import Iterable
+from PySide6.QtWidgets import QAbstractButton, QPushButton
 from core.tracks import query_tracks
 
 
 class GroupLogic:
-    def _setup_group_logic(self):
+    """Mixin handling group creation and switching logic."""
+    def _setup_group_logic(self) -> None:
         self.groups = {}  # {sig: [Track]}
         self.file_groups = {}  # {sig: [Path]}
         self.current_sig = None
 
         self.group_bar.button_group.buttonClicked.connect(self._on_group_button_clicked)
 
-    def _on_group_button_clicked(self, btn):
+    def _on_group_button_clicked(self, btn: QAbstractButton) -> None:
         idx = None
         for i, (_, b) in enumerate(self.group_bar.group_buttons):
             if b is btn:
@@ -20,7 +25,7 @@ class GroupLogic:
         if idx is not None:
             self._on_group_change_idx(idx)
 
-    def _on_group_change_idx(self, idx):
+    def _on_group_change_idx(self, idx: int) -> None:
         sig = self.group_bar.sig_at(idx)
         if sig is None:
             self.current_sig = None
@@ -29,7 +34,7 @@ class GroupLogic:
         self.current_sig = sig
         self.track_table.model.update_tracks(self.groups[sig])
 
-    def add_files_to_groups(self, paths):
+    def add_files_to_groups(self, paths: Iterable[str | Path]) -> None:
         for p in paths:
             tracks = query_tracks(Path(p))
             sig = ";".join(t.signature() for t in tracks)

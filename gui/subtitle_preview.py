@@ -1,3 +1,5 @@
+"""Window for previewing subtitles extracted from input files."""
+
 from PySide6.QtWidgets import (
     QMainWindow,
     QTextEdit,
@@ -9,9 +11,17 @@ from PySide6.QtWidgets import (
 from pathlib import Path
 import tempfile
 import re
+from typing import Callable, Sequence
 
 
-def peek_subtitle(fp: Path, tid: int, run_command, extract_cmd, backend, maxlen=15000):
+def peek_subtitle(
+    fp: Path,
+    tid: int,
+    run_command: Callable[[list[str]], None],
+    extract_cmd: str,
+    backend: str,
+    maxlen: int = 15000,
+) -> str:
     """Extract and decode subtitle text robustly from an MKV file."""
     tmp = tempfile.NamedTemporaryFile(suffix=".ass", delete=False)
     tmp.close()
@@ -41,7 +51,7 @@ def peek_subtitle(fp: Path, tid: int, run_command, extract_cmd, backend, maxlen=
     return out
 
 
-def srt_to_html(raw):
+def srt_to_html(raw: str) -> str:
     """Convert SRT subtitle text to formatted HTML for preview."""
     raw = raw.lstrip("\ufeffï»¿")
     blocks = re.split(r"\n\s*\n", raw.strip())
@@ -76,7 +86,7 @@ def srt_to_html(raw):
     )
 
 
-def ass_to_html(raw):
+def ass_to_html(raw: str) -> str:
     """Convert ASS/SSA subtitle text to formatted HTML for preview."""
     raw = raw.lstrip("\ufeffï»¿")
     lines = raw.splitlines()
@@ -146,15 +156,15 @@ class SubtitlePreviewWindow(QMainWindow):
 
     def __init__(
         self,
-        files,
-        tid,
-        language,
-        name,
-        run_command,
-        extract_cmd,
-        backend,
-        parent=None,
-    ):
+        files: Sequence[Path],
+        tid: int,
+        language: str,
+        name: str,
+        run_command: Callable[[list[str]], None],
+        extract_cmd: str,
+        backend: str,
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
         self.files = files
         self.tid = tid
@@ -183,7 +193,7 @@ class SubtitlePreviewWindow(QMainWindow):
         self.nxt.clicked.connect(lambda: self.jump(1))
         self.load()
 
-    def load(self):
+    def load(self) -> None:
         fp = self.files[self.pos]
         raw = peek_subtitle(
             fp,
@@ -200,7 +210,7 @@ class SubtitlePreviewWindow(QMainWindow):
         self.prev.setEnabled(self.pos > 0)
         self.nxt.setEnabled(self.pos < len(self.files) - 1)
 
-    def jump(self, d):
+    def jump(self, d: int) -> None:
         newpos = self.pos + d
         if 0 <= newpos < len(self.files):
             self.pos = newpos

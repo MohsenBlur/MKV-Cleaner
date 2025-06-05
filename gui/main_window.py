@@ -1,3 +1,5 @@
+"""Application main window and layout composition."""
+
 from PySide6.QtWidgets import (
     QMainWindow,
     QVBoxLayout,
@@ -19,7 +21,9 @@ from .actions_logic import ActionsLogic
 
 
 class MainWindow(QMainWindow, SettingsLogic, GroupLogic, TableLogic, ActionsLogic):
-    def __init__(self):
+    """Top-level window assembling all GUI components and logic."""
+
+    def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("MKV Cleaner")
         self.resize(1200, 750)
@@ -48,13 +52,13 @@ class MainWindow(QMainWindow, SettingsLogic, GroupLogic, TableLogic, ActionsLogi
         self.group_bar.preferencesClicked.connect(self._open_preferences)
         self._setup_all_logic()
 
-    def _setup_all_logic(self):
+    def _setup_all_logic(self) -> None:
         self._setup_settings_logic()
         self._setup_group_logic()
         self._setup_table_logic()
         self._setup_action_logic()
 
-    def open_files(self):
+    def open_files(self) -> None:
         files, _ = QFileDialog.getOpenFileNames(
             self, "Open MKV Files", self.last_dir, "Matroska Video Files (*.mkv)"
         )

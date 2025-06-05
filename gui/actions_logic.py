@@ -1,3 +1,6 @@
+
+"""Logic for responding to user actions triggered by the UI widgets."""
+
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMessageBox
 from core.tracks import query_tracks, build_cmd, run_command
@@ -7,7 +10,9 @@ from .processing import process_files
 
 
 class ActionsLogic:
-    def _setup_action_logic(self):
+    """Mixin providing handlers for the action bar buttons."""
+
+    def _setup_action_logic(self) -> None:
         if hasattr(self, "action_bar") and hasattr(self.action_bar, "btn_open_files"):
             self.action_bar.btn_open_files.clicked.connect(self.open_files)
         if hasattr(self, "action_bar") and hasattr(self.action_bar, "btn_def_audio"):
@@ -25,7 +30,7 @@ class ActionsLogic:
         if hasattr(self, "action_bar") and hasattr(self.action_bar, "btn_process_all"):
             self.action_bar.btn_process_all.clicked.connect(self.process_all)
 
-    def set_default_audio(self):
+    def set_default_audio(self) -> None:
         row = self._current_idx()
         if row is None:
             return
@@ -40,7 +45,7 @@ class ActionsLogic:
         if hasattr(self, "status_bar"):
             self.status_bar.showMessage("Default audio set", 2000)
 
-    def set_default_subtitle(self):
+    def set_default_subtitle(self) -> None:
         row = self._current_idx()
         if row is None:
             return
@@ -55,7 +60,7 @@ class ActionsLogic:
         if hasattr(self, "status_bar"):
             self.status_bar.showMessage("Default subtitle set", 2000)
 
-    def set_forced_subtitle(self):
+    def set_forced_subtitle(self) -> None:
         row = self._current_idx()
         if row is None:
             return
@@ -67,7 +72,7 @@ class ActionsLogic:
         if hasattr(self, "status_bar"):
             self.status_bar.showMessage("Forced flag toggled", 2000)
 
-    def wipe_all_subs(self):
+    def wipe_all_subs(self) -> None:
         changed = False
         for tr in self.track_table.model.get_tracks():
             if tr.type == "subtitles" and not tr.removed:
@@ -78,7 +83,7 @@ class ActionsLogic:
             if hasattr(self, "status_bar"):
                 self.status_bar.showMessage("All subtitles marked for removal", 2000)
 
-    def preview_subtitle(self):
+    def preview_subtitle(self) -> None:
         row = self._current_idx()
         if row is None:
             return
@@ -101,7 +106,7 @@ class ActionsLogic:
         )
         self._preview_win.show()
 
-    def process_group(self):
+    def process_group(self) -> None:
         if not self.current_sig:
             QMessageBox.information(self, "No group", "No group selected")
             return
@@ -122,7 +127,7 @@ class ActionsLogic:
             parent=self,
         )
 
-    def process_all(self):
+    def process_all(self) -> None:
         if not self.groups:
             QMessageBox.information(self, "No files", "No files loaded")
             return

@@ -6,7 +6,10 @@ build-backend = "setuptools.build_meta"
 name = "mkv-cleaner"
 version = "0.1.0"
 requires-python = ">=3.10"
-dependencies = ["pyside6"]
+dependencies = [
+    "pyside6",
+    "tomli",
+]
 
 [project.scripts]
 mkv-cleaner = "mkv_cleaner:main"

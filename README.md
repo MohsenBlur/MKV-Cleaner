@@ -8,6 +8,7 @@ When running from source you need to install the following tools yourself:
 
 - [Python 3.10 or later](https://www.python.org/downloads/)
 - [PySide6](https://pypi.org/project/PySide6/)
+- [tomli](https://pypi.org/project/tomli/) *(for Python < 3.11)*
 - [MKVToolNix](https://mkvtoolnix.download/) (`mkvmerge` and `mkvextract` on your `PATH`) *(optional if using FFmpeg)*
 - [FFmpeg](https://ffmpeg.org/) (`ffmpeg` and `ffprobe` on your `PATH` if selected)
 

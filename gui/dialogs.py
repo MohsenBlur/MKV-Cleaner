@@ -1,5 +1,3 @@
-# gui/dialogs.py
-
 from PySide6.QtWidgets import (
     QDialog, QFormLayout, QLineEdit, QCheckBox, QFileDialog,
     QDialogButtonBox, QPushButton, QWidget, QHBoxLayout, QComboBox

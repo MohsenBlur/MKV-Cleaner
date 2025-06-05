@@ -37,7 +37,6 @@ class GroupLogic:
                 self.file_groups[sig] = []
                 tooltip = str(Path(p).name)
                 btn = self.group_bar.add_group_button(sig, tooltip=tooltip)
-                # Lambda must bind b=btn at definition time to avoid late binding bug
                 btn.clicked.connect(
                     lambda checked, b=btn: self._on_group_button_clicked(b)
                 )

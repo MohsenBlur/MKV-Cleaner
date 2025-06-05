@@ -1,14 +1,13 @@
 from PySide6.QtCore import QAbstractTableModel, Qt, QModelIndex
+from core.tracks import Track
 
 
 class TrackTableModel(QAbstractTableModel):
-    def __init__(self, tracks=None):
+    def __init__(self, tracks: list[Track] | None = None):
         super().__init__()
-        self.tracks = tracks or []
+        self.tracks: list[Track] = tracks or []
 
     def rowCount(self, parent=QModelIndex()):
-        if isinstance(self.tracks, dict):
-            return len(self.tracks)
         return len(self.tracks)
 
     def columnCount(self, parent=QModelIndex()):
@@ -18,16 +17,9 @@ class TrackTableModel(QAbstractTableModel):
         if not index.isValid():
             return None
 
-        if isinstance(self.tracks, dict):
-            keys = sorted(self.tracks.keys())
-            if index.row() < 0 or index.row() >= len(keys):
-                return None
-            key = keys[index.row()]
-            t = self.tracks[key]
-        else:
-            if index.row() < 0 or index.row() >= len(self.tracks):
-                return None
-            t = self.tracks[index.row()]
+        if index.row() < 0 or index.row() >= len(self.tracks):
+            return None
+        t = self.tracks[index.row()]
 
         c = index.column()
         if role == Qt.CheckStateRole and c == 0:
@@ -50,11 +42,7 @@ class TrackTableModel(QAbstractTableModel):
 
     def setData(self, index, value, role=Qt.CheckStateRole):
         if index.isValid() and role == Qt.CheckStateRole and index.column() == 0:
-            if isinstance(self.tracks, dict):
-                keys = sorted(self.tracks.keys())
-                t = self.tracks[keys[index.row()]]
-            else:
-                t = self.tracks[index.row()]
+            t = self.tracks[index.row()]
             t.removed = value == Qt.Unchecked
             self.dataChanged.emit(index, index, [Qt.CheckStateRole])
             return True
@@ -84,12 +72,6 @@ class TrackTableModel(QAbstractTableModel):
         return self.tracks
 
     def track_at_row(self, row):
-        if isinstance(self.tracks, dict):
-            keys = sorted(self.tracks.keys())
-            if 0 <= row < len(keys):
-                return self.tracks[keys[row]]
-            raise KeyError(row)
-        else:
-            if 0 <= row < len(self.tracks):
-                return self.tracks[row]
-            raise IndexError(row)
+        if 0 <= row < len(self.tracks):
+            return self.tracks[row]
+        raise IndexError(row)

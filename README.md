@@ -11,7 +11,9 @@ When running from source you need to install the following tools yourself:
 - [MKVToolNix](https://mkvtoolnix.download/) (`mkvmerge` and `mkvextract` on your `PATH`) *(optional if using FFmpeg)*
 - [FFmpeg](https://ffmpeg.org/) (`ffmpeg` and `ffprobe` on your `PATH` if selected)
 
-The prebuilt bundles published in the GitHub releases already include PySide6, FFmpeg and MKVToolNix so no additional installation is required.
+The prebuilt bundles published in the GitHub releases already include PySide6,
+FFmpeg and MKVToolNix so no additional installation is required. Copies of
+their licenses are distributed alongside the bundle.
 
 ## Downloads
 

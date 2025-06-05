@@ -1,5 +1,3 @@
-# test_tracks.py
-
 from pathlib import Path
 import os
 import sys

@@ -9,7 +9,6 @@ class GroupLogic:
         self.file_groups = {}  # {sig: [Path]}
         self.current_sig = None
 
-        self.group_bar.button_group.buttonClicked.connect(self._on_group_button_clicked)
 
     def _on_group_button_clicked(self, btn):
         idx = None

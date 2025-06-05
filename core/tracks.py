@@ -131,21 +131,22 @@ def _build_cmd_mkvmerge(
         cmd += ["--subtitle-tracks", ",".join(kept_sub)]
 
     # Forced flags
-    if wipe_forced:
-        for t in tracks:
-            if t.type == "subtitles" and not t.removed:
+    for t in tracks:
+        if t.type == "subtitles" and not t.removed:
+            if wipe_forced:
                 cmd += ["--forced-track", f"{t.tid}:no"]
-    else:
-        for t in tracks:
-            if t.type == "subtitles" and t.forced and not t.removed:
-                cmd += ["--forced-track", f"{t.tid}:yes"]
+            else:
+                val = "yes" if t.forced else "no"
+                cmd += ["--forced-track", f"{t.tid}:{val}"]
 
     # Default flags
     for t in tracks:
-        if not t.removed and t.type == "audio" and t.default_audio:
-            cmd += ["--default-track", f"{t.tid}:yes"]
-        if not t.removed and t.type == "subtitles" and t.default_subtitle:
-            cmd += ["--default-track", f"{t.tid}:yes"]
+        if not t.removed and t.type in {"audio", "subtitles"}:
+            if t.type == "audio":
+                val = "yes" if t.default_audio else "no"
+            else:
+                val = "yes" if t.default_subtitle else "no"
+            cmd += ["--default-track", f"{t.tid}:{val}"]
 
     # Output and input file MUST come last
     cmd += ["-o", str(destination), str(source)]

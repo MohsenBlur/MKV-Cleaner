@@ -24,7 +24,6 @@ A scheduled workflow checks every five minutes and uploads new bundles to the Gi
 1. Install the dependencies above.
 
 2. On Windows, simply double-click `mkv_cleaner.py` to launch the program. If you prefer the command line, run:
-2. Start the application with:
 
    ```bash
    python mkv_cleaner.py

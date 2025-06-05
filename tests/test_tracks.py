@@ -182,39 +182,7 @@ def test_build_cmd_forced_default_ffmpeg(defaults):
         "copy",
         str(dst),
     ]
-
-
-def test_mkvmerge_forced_false(defaults):
-    src = Path("in.mkv")
-    dst = Path("out.mkv")
-    tracks = [
-        Track(
-            idx=0,
-            tid=1,
-            type="subtitles",
-            codec="srt",
-            language="eng",
-            forced=False,
-            name="English",
-            default_subtitle=True,
-        ),
-    ]
-    defaults["backend"] = "mkvtoolnix"
-    cmd = build_cmd(src, dst, tracks, wipe_forced=True, wipe_all=False)
-    assert cmd == [
-        "mkvmerge",
-        "--no-audio",
-        "--forced-track",
-        "1:no",
-        "--default-track",
-        "1:yes",
-        "-o",
-        str(dst),
-        str(src),
-    ]
-
-
-def test_mkvmerge_default_no(defaults):
+def test_build_cmd_full_flags(defaults):
     src = Path("in.mkv")
     dst = Path("out.mkv")
     tracks = [
@@ -231,24 +199,50 @@ def test_mkvmerge_default_no(defaults):
         Track(
             idx=1,
             tid=2,
+            type="audio",
+            codec="aac",
+            language="deu",
+            forced=False,
+            name="Deutsch",
+            default_audio=True,
+        ),
+        Track(
+            idx=2,
+            tid=3,
             type="subtitles",
             codec="srt",
             language="eng",
             forced=False,
-            name="English CC",
+            name="English Subs",
             default_subtitle=False,
+        ),
+        Track(
+            idx=3,
+            tid=4,
+            type="subtitles",
+            codec="srt",
+            language="spa",
+            forced=True,
+            name="Spanish",
+            default_subtitle=True,
         ),
     ]
     defaults["backend"] = "mkvtoolnix"
-    cmd = build_cmd(src, dst, tracks, wipe_forced=True, wipe_all=False)
+    cmd = build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=False)
     assert cmd == [
         "mkvmerge",
         "--forced-track",
-        "2:no",
+        "3:no",
+        "--forced-track",
+        "4:yes",
         "--default-track",
         "1:no",
         "--default-track",
-        "2:no",
+        "2:yes",
+        "--default-track",
+        "3:no",
+        "--default-track",
+        "4:yes",
         "-o",
         str(dst),
         str(src),

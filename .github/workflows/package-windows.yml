@@ -1,0 +1,83 @@
+name: Package Windows
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '*/5 * * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for new commits
+        id: changes
+        shell: bash
+        run: |
+          latest_tag=$(git tag -l 'nightly-*' --sort=-creatordate | head -n 1)
+          if [ -z "$latest_tag" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            latest_commit=$(git rev-list -1 "$latest_tag")
+            head_commit=$(git rev-parse HEAD)
+            if [ "$latest_commit" != "$head_commit" ]; then
+              echo "changed=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "changed=false" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          python -m pip install --upgrade pip
+          pip install build pyinstaller
+
+      - name: Install FFmpeg and MKVToolNix
+        if: steps.changes.outputs.changed == 'true'
+        run: choco install ffmpeg mkvtoolnix --no-progress -y
+
+      - name: Build wheel and sdist
+        if: steps.changes.outputs.changed == 'true'
+        run: python -m build
+
+      - name: Build PyInstaller bundle
+        if: steps.changes.outputs.changed == 'true'
+        run: pyinstaller mkv-cleaner.spec --distpath bundle
+
+      - name: Upload artifacts
+        if: steps.changes.outputs.changed == 'true'
+        uses: actions/upload-artifact@v3
+        with:
+          name: package
+          path: |
+            dist/*.whl
+            dist/*.tar.gz
+            bundle
+
+      - name: Create GitHub Release
+        if: steps.changes.outputs.changed == 'true'
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: nightly-${{ github.run_number }}
+          name: "Nightly Build ${{ github.run_number }}"
+          prerelease: true
+          generate_release_notes: true
+          files: |
+            dist/*.whl
+            dist/*.tar.gz
+            bundle/**/*

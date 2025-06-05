@@ -17,7 +17,7 @@ their licenses are distributed alongside the bundle.
 
 ## Downloads
 
-A scheduled workflow checks every five minutes and uploads new bundles to the GitHub Releases section only when there have been changes. Download the archive for your platform and run the `mkv-cleaner` executable contained inside.
+New bundles are uploaded manually through a GitHub workflow whenever changes are ready. To build a new release, open the **Actions** tab on GitHub, select either **Package** or **Package Windows** and choose **Run workflow**. Download the archive for your platform from the Releases section and run the `mkv-cleaner` executable contained inside.
 
 ## Usage
 

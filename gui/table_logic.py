@@ -3,7 +3,13 @@ from PySide6.QtCore import Qt
 class TableLogic:
     def _setup_table_logic(self):
         self.track_table.clicked.connect(self._on_table_clicked)
-        self.track_table.selectionModel().currentChanged.connect(self._on_selection_change)
+        self.track_table.selectionModel().currentChanged.connect(
+            self._on_selection_change
+        )
+        self.track_table.table_model.modelReset.connect(
+            lambda: self._on_selection_change(self.track_table.currentIndex(), None)
+        )
+        self._on_selection_change(self.track_table.currentIndex(), None)
 
     def _on_table_clicked(self, index):
         if index.column() == 0:

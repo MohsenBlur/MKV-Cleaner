@@ -17,6 +17,7 @@ if sys.version_info < (3, 11):
 from gui.main_window import MainWindow
 from gui.widgets.fast_tooltip_style import FastToolTipStyle
 from PySide6.QtWidgets import QApplication
+from PySide6.QtGui import QFont
 
 def set_dynamic_modern_style(app: QApplication) -> None:
     """Apply a dark theme with a random accent color to ``app``."""
@@ -87,6 +88,9 @@ def set_dynamic_modern_style(app: QApplication) -> None:
 def main() -> None:
     """Create the application and show the main window."""
     app = QApplication(sys.argv)
+    if sys.platform.startswith("win"):
+        # Ensure a font capable of color emoji is used on Windows
+        app.setFont(QFont("Segoe UI Emoji"))
     # Show tooltips faster than the Qt default
     app.setStyle(FastToolTipStyle(app.style()))
     set_dynamic_modern_style(app)

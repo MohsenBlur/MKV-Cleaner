@@ -10,6 +10,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QSize, Signal
 from core.config import DEFAULTS
 
+from .fade_disabled import apply_fade_on_disable
+
 
 class GroupBar(QWidget):
     preferencesClicked = Signal()
@@ -45,6 +47,7 @@ class GroupBar(QWidget):
             " background: #2a2c34; color: #b9d4ff;}"
             "QPushButton:hover {background: #51a4fc;}"
         )
+        apply_fade_on_disable(self.btn_prev)
         self.btn_prev.clicked.connect(lambda checked=False: self.prevClicked.emit())
         self.btn_prev.hide()
         self.layout.addWidget(self.btn_prev, alignment=Qt.AlignVCenter)
@@ -61,6 +64,7 @@ class GroupBar(QWidget):
             " background: #2a2c34; color: #b9d4ff;}"
             "QPushButton:hover {background: #51a4fc;}"
         )
+        apply_fade_on_disable(self.btn_next)
         self.btn_next.clicked.connect(lambda checked=False: self.nextClicked.emit())
         self.btn_next.hide()
         self.layout.addWidget(self.btn_next, alignment=Qt.AlignVCenter)
@@ -82,6 +86,7 @@ class GroupBar(QWidget):
                 "QPushButton { font-weight: 500; font-size: 14px;" +
                 " border-radius: 8px; padding: 5px 10px; }"
             )
+            apply_fade_on_disable(btn)
             self.layout.addWidget(btn, alignment=Qt.AlignRight)
 
         self.backend_combo = QComboBox(self)
@@ -102,6 +107,7 @@ class GroupBar(QWidget):
             "QPushButton:hover { background: #363947; color: #fff;"
             " border: 2px solid #555; }"
         )
+        apply_fade_on_disable(self.btn_prefs)
         self.layout.addWidget(self.btn_prefs, alignment=Qt.AlignRight)
         self.btn_prefs.clicked.connect(self.preferencesClicked.emit)
 
@@ -129,6 +135,7 @@ class GroupBar(QWidget):
             " border: 2px solid #1c71d8;}"
             "QPushButton:hover {background: #51a4fc;}"
         )
+        apply_fade_on_disable(btn)
         if tooltip:
             btn.setToolTip(tooltip)
         self.layout.insertWidget(self.group_btns_anchor + len(self.group_buttons), btn)

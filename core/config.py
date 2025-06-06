@@ -15,7 +15,7 @@ except ModuleNotFoundError:  # pragma: no cover - fallback for older versions
     import tomli as tomllib
 
 if getattr(sys, 'frozen', False):  # Running from PyInstaller bundle
-    bindir = Path(sys.executable).parent
+    bindir = Path(getattr(sys, '_MEIPASS', Path(sys.executable).parent))
     ext = '.exe' if os.name == 'nt' else ''
     MKVMERGE = str(bindir / f"mkvmerge{ext}")
     MKVEXTRACT = str(bindir / f"mkvextract{ext}")

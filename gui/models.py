@@ -23,6 +23,8 @@ class TrackTableModel(QAbstractTableModel):
         t = self.tracks[index.row()]
 
         c = index.column()
+        if role == getattr(Qt, "TextAlignmentRole", None):
+            return getattr(Qt, "AlignCenter", 0)
         if role == Qt.CheckStateRole and c == 0:
             return Qt.Checked if not getattr(t, "removed", False) else Qt.Unchecked
         if role == Qt.DisplayRole:
@@ -62,10 +64,13 @@ class TrackTableModel(QAbstractTableModel):
         return base
 
     def headerData(self, section, orientation, role=Qt.DisplayRole):
-        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-            return ["Keep", "ID", "Type", "Codec", "Lang", "Forced", "Default", "Name"][
-                section
-            ]
+        if orientation == Qt.Horizontal:
+            if role == Qt.DisplayRole:
+                return ["Keep", "ID", "Type", "Codec", "Lang", "Forced", "Default", "Name"][
+                    section
+                ]
+            if role == getattr(Qt, "TextAlignmentRole", None):
+                return getattr(Qt, "AlignCenter", 0)
         return super().headerData(section, orientation, role)
 
     def update_tracks(self, tracks):

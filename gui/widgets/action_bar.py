@@ -1,5 +1,7 @@
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton
 
+from .fade_disabled import apply_fade_on_disable
+
 
 class ActionBar(QWidget):
     def __init__(self, parent=None):
@@ -51,6 +53,7 @@ class ActionBar(QWidget):
                 "QPushButton { font-weight: 500; font-size: 14px;" +
                 " border-radius: 8px; padding: 5px 10px; }"
             )
+            apply_fade_on_disable(btn)
             layout.addWidget(btn)
 
         self.setLayout(layout)

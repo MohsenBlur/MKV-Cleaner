@@ -24,7 +24,7 @@ class FlagDelegate(QStyledItemDelegate):
         rect = option.rect
         color = option.palette.text().color()
         faded = QColor(color)
-        faded.setAlpha(100)
+        faded.setAlpha(60)
         if cur and orig:
             half = rect.width() // 2
             orig_rect = QRect(rect.left(), rect.top(), half, rect.height())
@@ -34,8 +34,12 @@ class FlagDelegate(QStyledItemDelegate):
             painter.setPen(color)
             painter.drawText(cur_rect, Qt.AlignCenter, char)
         elif orig and not cur:
-            painter.setPen(faded)
-            painter.drawText(rect, Qt.AlignCenter, char)
+            if self.column == 5:
+                # When forced flag is removed, hide the old indicator entirely
+                pass
+            else:
+                painter.setPen(faded)
+                painter.drawText(rect, Qt.AlignCenter, char)
         elif cur:
             painter.setPen(color)
             painter.drawText(rect, Qt.AlignCenter, char)

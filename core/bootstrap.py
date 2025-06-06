@@ -1,3 +1,5 @@
+"""Utilities to bootstrap required binaries and Python packages."""
+
 from __future__ import annotations
 
 import os
@@ -55,4 +57,3 @@ def ensure_python_package(pkg: str) -> None:
         __import__(pkg)
     except ImportError:
         subprocess.run([sys.executable, "-m", "pip", "install", pkg], check=True)
-

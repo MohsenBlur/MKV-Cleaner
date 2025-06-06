@@ -17,6 +17,13 @@ class TrackTableModel(QAbstractTableModel):
         self._change_tint.setAlpha(40)
         self._remove_tint = QColor("#c75f5f")
         self._remove_tint.setAlpha(40)
+        self._type_colors = {
+            "video": QColor("#4e9a06"),
+            "audio": QColor("#3465a4"),
+            "subtitles": QColor("#c17d11"),
+        }
+        for col in self._type_colors.values():
+            col.setAlpha(40)
 
     def rowCount(self, parent=QModelIndex()):
         return len(self.tracks)
@@ -48,6 +55,10 @@ class TrackTableModel(QAbstractTableModel):
         if role == Qt.BackgroundRole:
             if getattr(t, "removed", False):
                 return self._remove_tint
+            if c == 2:
+                col = self._type_colors.get(t.type)
+                if col:
+                    return col
             if c == 5 and getattr(t, "forced", False):
                 return self._change_tint
             if c == 6 and (

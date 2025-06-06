@@ -5,6 +5,11 @@ from core.flags import lang_to_flag
 
 
 class TrackTableModel(QAbstractTableModel):
+    ForcedRole = Qt.UserRole + 1
+    OrigForcedRole = Qt.UserRole + 2
+    DefaultRole = Qt.UserRole + 3
+    OrigDefaultRole = Qt.UserRole + 4
+
     def __init__(self, tracks: list[Track] | None = None):
         super().__init__()
         self.tracks: list[Track] = tracks or []
@@ -32,6 +37,14 @@ class TrackTableModel(QAbstractTableModel):
             return Qt.AlignCenter
         if role == Qt.CheckStateRole and c == 0:
             return Qt.Checked if not getattr(t, "removed", False) else Qt.Unchecked
+        if role == self.ForcedRole:
+            return getattr(t, "forced", False)
+        if role == self.OrigForcedRole:
+            return getattr(t, "orig_forced", False)
+        if role == self.DefaultRole:
+            return getattr(t, "default_audio", False) if t.type == "audio" else getattr(t, "default_subtitle", False)
+        if role == self.OrigDefaultRole:
+            return getattr(t, "orig_default_audio", False) if t.type == "audio" else getattr(t, "orig_default_subtitle", False)
         if role == Qt.BackgroundRole:
             if getattr(t, "removed", False):
                 return self._remove_tint

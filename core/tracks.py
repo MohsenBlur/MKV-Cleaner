@@ -22,6 +22,9 @@ class Track:
     default_audio: bool = False
     default_subtitle: bool = False
     removed: bool = False
+    orig_forced: bool = False
+    orig_default_audio: bool = False
+    orig_default_subtitle: bool = False
 
     def signature(self) -> str:
         return (
@@ -64,6 +67,8 @@ def query_tracks(source: Path) -> List[Track]:
         for i, t in enumerate(data.get("streams", [])):
             tags = t.get("tags", {})
             disp = t.get("disposition", {})
+            forced = bool(disp.get("forced", 0))
+            def_flag = bool(disp.get("default", 0))
             tracks.append(
                 Track(
                     idx=i,
@@ -71,10 +76,13 @@ def query_tracks(source: Path) -> List[Track]:
                     type="subtitles" if t.get("codec_type") == "subtitle" else t.get("codec_type", ""),
                     codec=t.get("codec_name", ""),
                     language=tags.get("language", "und"),
-                    forced=bool(disp.get("forced", 0)),
+                    forced=forced,
                     name=tags.get("title", ""),
-                    default_audio=bool(disp.get("default", 0)) if t.get("codec_type") == "audio" else False,
-                    default_subtitle=bool(disp.get("default", 0)) if t.get("codec_type") == "subtitle" else False,
+                    default_audio=def_flag if t.get("codec_type") == "audio" else False,
+                    default_subtitle=def_flag if t.get("codec_type") == "subtitle" else False,
+                    orig_forced=forced,
+                    orig_default_audio=def_flag if t.get("codec_type") == "audio" else False,
+                    orig_default_subtitle=def_flag if t.get("codec_type") == "subtitle" else False,
                 )
             )
         return tracks
@@ -84,6 +92,8 @@ def query_tracks(source: Path) -> List[Track]:
         tracks: List[Track] = []
         for i, t in enumerate(data.get("tracks", [])):
             p = t.get("properties", {})
+            forced = p.get("forced_track", False)
+            def_flag = p.get("default_track", False)
             tracks.append(
                 Track(
                     idx=i,
@@ -91,10 +101,13 @@ def query_tracks(source: Path) -> List[Track]:
                     type=t.get("type", ""),
                     codec=p.get("codec_id", ""),
                     language=p.get("language", "und"),
-                    forced=p.get("forced_track", False),
+                    forced=forced,
                     name=p.get("track_name", ""),
-                    default_audio=p.get("default_track", False) if t.get("type") == "audio" else False,
-                    default_subtitle=p.get("default_track", False) if t.get("type") == "subtitles" else False,
+                    default_audio=def_flag if t.get("type") == "audio" else False,
+                    default_subtitle=def_flag if t.get("type") == "subtitles" else False,
+                    orig_forced=forced,
+                    orig_default_audio=def_flag if t.get("type") == "audio" else False,
+                    orig_default_subtitle=def_flag if t.get("type") == "subtitles" else False,
                 )
             )
         return tracks

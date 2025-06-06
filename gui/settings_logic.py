@@ -15,7 +15,7 @@ class SettingsLogic:
         if hasattr(self, "menu_preferences"):
             self.menu_preferences.triggered.connect(self._open_preferences)
         if hasattr(self, "group_bar") and hasattr(self.group_bar, "backend_combo"):
-            self.group_bar.set_backend(DEFAULTS.get("backend", "mkvtoolnix"))
+            self.group_bar.set_backend(DEFAULTS.get("backend", "ffmpeg"))
             self.group_bar.backendChanged.connect(self._change_backend)
 
     def _load_preferences(self):
@@ -30,7 +30,7 @@ class SettingsLogic:
         self.last_input_dir   = self.settings.value("last_input_dir", "", type=str)
         self.wipe_all_default = self.settings.value("wipe_all_default", False, type=bool)
         if hasattr(self, "group_bar") and hasattr(self.group_bar, "set_backend"):
-            self.group_bar.set_backend(DEFAULTS.get("backend", "mkvtoolnix"))
+            self.group_bar.set_backend(DEFAULTS.get("backend", "ffmpeg"))
 
     def _open_preferences(self):
         dlg = PreferencesDialog(self)

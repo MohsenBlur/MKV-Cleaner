@@ -3,7 +3,7 @@ import sys
 from PyInstaller.utils.hooks import collect_submodules
 
 binaries = []
-for exe in ("mkvmerge", "mkvextract", "ffmpeg", "ffprobe"):
+for exe in ("ffmpeg", "ffprobe"):
     path = shutil.which(exe)
     if not path:
         raise RuntimeError(f"Required executable '{exe}' not found on PATH")

@@ -14,6 +14,7 @@ _LANG_TO_COUNTRY = {
     # French
     "fr": "FR",
     "fra": "FR",
+    "fre": "FR",
     # Italian
     "it": "IT",
     "ita": "IT",

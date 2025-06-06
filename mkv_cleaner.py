@@ -46,6 +46,7 @@ def set_dynamic_modern_style(app: QApplication) -> None:
             selection-background-color: {accent}33;
             selection-color: #fff;
             font-family: 'Segoe UI', 'Noto Color Emoji';
+            font-size: 16px;
         }}
         QHeaderView::section {{
             background-color: #232a34;
@@ -53,6 +54,7 @@ def set_dynamic_modern_style(app: QApplication) -> None:
             border-bottom: 2px solid {accent}88;
             font-weight: bold;
             font-family: 'Segoe UI', 'Noto Color Emoji';
+            font-size: 16px;
         }}
         QPushButton {{
             background: #262e36;

@@ -20,7 +20,6 @@ if sys.platform == "win32":
         if bin_dir.is_dir():
             search_dirs.append(bin_dir)
         for directory in search_dirs:
-codex/update-mkv-cleaner.spec-for-ffprobe-dlls
             for dll in directory.glob("*.dll"):
                 binaries.append((str(dll), '.'))
 

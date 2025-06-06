@@ -11,4 +11,18 @@ class TrackTable(QTableView):
         self.horizontalHeader().setDefaultAlignment(Qt.AlignCenter)
         self.setItemDelegateForColumn(0, KeepToggleDelegate(self))
         self.setMouseTracking(True)
+        # Adjust row spacing whenever the model resets
+        self.table_model.modelReset.connect(self._apply_row_spacing)
+
+    def _apply_row_spacing(self):
+        """Increase spacing between different track types."""
+        vh = self.verticalHeader()
+        default = vh.defaultSectionSize()
+        prev_type = None
+        for row, track in enumerate(self.table_model.get_tracks()):
+            height = default
+            if prev_type is not None and track.type != prev_type:
+                height += 10
+            self.setRowHeight(row, height)
+            prev_type = track.type
 

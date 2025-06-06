@@ -53,7 +53,8 @@ def set_dynamic_modern_style(app: QApplication) -> None:
             border-bottom: 1px solid #34394c;
         }}
         QTableView::item:selected {{
-            border-color: {accent};
+            /* highlight all cell borders when selected */
+            border: 1px solid {accent};
         }}
         QHeaderView::section {{
             background-color: #232a34;

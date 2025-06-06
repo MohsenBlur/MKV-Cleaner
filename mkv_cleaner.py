@@ -19,9 +19,10 @@ from gui.widgets.fast_tooltip_style import FastToolTipStyle
 from pathlib import Path
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QFont, QFontDatabase
+from PySide6.QtCore import QSettings
 
 def set_dynamic_modern_style(app: QApplication) -> None:
-    """Apply a dark theme with a random accent color to ``app``."""
+    """Apply a dark theme with an accent color to ``app``."""
     accents = [
         "#429aff",  # blue
         "#30d0c6",  # teal
@@ -30,7 +31,10 @@ def set_dynamic_modern_style(app: QApplication) -> None:
         "#6fc3df",  # light blue/teal
         "#ff79c6",  # pink/magenta
     ]
-    accent = random.choice(accents)
+    settings = QSettings("MKVToolsCorp", "MKVCleaner")
+    accent = settings.value("accent_color", "")
+    if not accent:
+        accent = random.choice(accents)
 
     app.setStyleSheet(f"""
         QMainWindow, QWidget {{

@@ -99,8 +99,8 @@ def test_cancel_shutdown(monkeypatch):
     def build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=False):
         return ["cmd", str(src), str(dst)]
 
-    def run_command(cmd):
-        commands.append(cmd)
+    def run_command(cmd, capture=True):
+        commands.append((cmd, capture))
 
     dlg = DummyDialog()
 
@@ -116,6 +116,7 @@ def test_cancel_shutdown(monkeypatch):
                              output_dir="out", wipe_all_flag=False)
 
     assert len(commands) == 1
+    assert commands[0][1] is False
     assert exec_instance.shutdown_called.get("cancel_futures") is True
 
 
@@ -129,8 +130,8 @@ def test_output_dir_created(monkeypatch, tmp_path):
     def build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=False):
         return ["cmd", str(src), str(dst)]
 
-    def run_command(cmd):
-        commands.append(cmd)
+    def run_command(cmd, capture=True):
+        commands.append((cmd, capture))
 
     dlg = DummyDialog()
 
@@ -156,3 +157,4 @@ def test_output_dir_created(monkeypatch, tmp_path):
     )
 
     assert (tmp_path / "out" / "sub").is_dir()
+    assert commands and commands[0][1] is False

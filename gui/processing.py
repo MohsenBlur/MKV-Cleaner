@@ -40,7 +40,7 @@ def process_files(jobs, max_workers, query_tracks, build_cmd, run_command, outpu
         cmd = build_cmd(src, dst, real_tracks, wipe_forced=False, wipe_all=wipe_all_flag)
         logger.info("Running: %s", " ".join(map(str, cmd)))
         try:
-            run_command(cmd)
+            run_command(cmd, capture=False)
         except Exception as e:
             with lock:
                 errors.append((str(src), str(e)))

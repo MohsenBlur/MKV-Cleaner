@@ -27,9 +27,9 @@ def peek_subtitle(fp: Path, tid: int, run_command, extract_cmd, backend, maxlen=
                 "-map",
                 f"0:{tid}",
                 tmp.name,
-            ])
+            ], capture=False)
         else:
-            run_command([extract_cmd, "tracks", str(fp), f"{tid}:{tmp.name}"])
+            run_command([extract_cmd, "tracks", str(fp), f"{tid}:{tmp.name}"], capture=False)
         try:
             out = Path(tmp.name).read_text(encoding="utf-8")[:maxlen]
         except UnicodeDecodeError:

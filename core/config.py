@@ -42,7 +42,7 @@ else:
         FFPROBE = ensure_binary(f"ffprobe{ext}", ff_url)
 
 DEFAULTS: Dict[str, Any] = {
-    "backend": "mkvtoolnix",  # or "ffmpeg"
+    "backend": "ffmpeg",  # or "mkvtoolnix"
     "mkvmerge_cmd": MKVMERGE,
     "mkvextract_cmd": MKVEXTRACT,
     "ffmpeg_cmd": FFMPEG,

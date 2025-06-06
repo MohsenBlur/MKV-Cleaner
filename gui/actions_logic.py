@@ -96,7 +96,7 @@ class ActionsLogic:
             t.name,
             run_command,
             DEFAULTS["ffmpeg_cmd"] if DEFAULTS.get("backend") == "ffmpeg" else DEFAULTS["mkvextract_cmd"],
-            DEFAULTS.get("backend", "mkvtoolnix"),
+            DEFAULTS.get("backend", "ffmpeg"),
             parent=self,
         )
         self._preview_win.show()

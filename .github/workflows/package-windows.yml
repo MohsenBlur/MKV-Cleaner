@@ -43,19 +43,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install build pyinstaller pyside6
 
-      - name: Install FFmpeg and MKVToolNix
+      - name: Install FFmpeg
         if: steps.changes.outputs.changed == 'true'
-        run: choco install ffmpeg mkvtoolnix --no-progress -y
+        run: choco install ffmpeg --no-progress -y
 
-      - name: Add MKVToolNix to PATH
-        if: steps.changes.outputs.changed == 'true'
-        shell: pwsh
-        run: |
-          $mkvDir = Join-Path $Env:ProgramFiles 'MKVToolNix'
-          if (-not (Test-Path (Join-Path $mkvDir 'mkvmerge.exe'))) {
-            throw 'mkvmerge.exe not found'
-          }
-          Add-Content -Path $Env:GITHUB_PATH -Value $mkvDir
 
       - name: Build wheel and sdist
         if: steps.changes.outputs.changed == 'true'
@@ -67,8 +58,6 @@ jobs:
         run: |
           where ffmpeg
           where ffprobe
-          where mkvmerge
-          where mkvextract
 
       - name: Build PyInstaller bundle
         if: steps.changes.outputs.changed == 'true'

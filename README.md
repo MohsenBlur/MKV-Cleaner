@@ -11,7 +11,7 @@ MKV Cleaner is an easy-to-use GUI for tidying Matroska (`.mkv`) files. You can q
 - **Drop unneeded tracks** – remove audio or subtitle tracks you don't want
 - **Control default and forced flags** for audio and subtitle tracks
 - **Subtitle preview** lets you inspect text before processing
-- **Flexible backend** – work with either MKVToolNix or FFmpeg
+- **Flexible backend** – work with either MKVToolNix or FFmpeg (FFmpeg is the default)
 - **Self-contained bundles** ship with all required dependencies
 
 ## Dependencies
@@ -30,9 +30,9 @@ Missing binaries (`mkvmerge`, `mkvextract`, `ffmpeg`, `ffprobe`) will be
 downloaded to the application directory on first launch if they cannot be
 found, and Python packages will be installed automatically.
 
-The prebuilt bundles published in the GitHub releases already include PySide6,
-FFmpeg and MKVToolNix so no additional installation is required. Copies of
-their licenses are distributed alongside the bundle.
+The prebuilt bundles published in the GitHub releases already include PySide6
+and FFmpeg so no additional installation is required. Copies of their licenses
+are distributed alongside the bundle.
 
 ## Downloads
 

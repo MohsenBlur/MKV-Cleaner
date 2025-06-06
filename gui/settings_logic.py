@@ -25,13 +25,20 @@ class SettingsLogic:
         prefs["mkvextract_cmd"] = self.settings.value("mkvextract_cmd", prefs["mkvextract_cmd"])
         prefs["ffmpeg_cmd"]     = self.settings.value("ffmpeg_cmd", prefs["ffmpeg_cmd"])
         prefs["ffprobe_cmd"]    = self.settings.value("ffprobe_cmd", prefs["ffprobe_cmd"])
-        prefs["output_dir"]     = self.settings.value("output_dir", prefs["output_dir"])
-        prefs["font_size"]      = int(self.settings.value("font_size", prefs.get("font_size", 16)))
-        if prefs["font_size"] < 8:
-            prefs["font_size"] = 8
+        prefs["output_dir"]      = self.settings.value("output_dir", prefs["output_dir"])
+        prefs["track_font_size"] = int(
+            self.settings.value("track_font_size", prefs.get("track_font_size", 16))
+        )
+        if prefs["track_font_size"] < 10:
+            prefs["track_font_size"] = 10
+        prefs["preview_font_size"] = int(
+            self.settings.value("preview_font_size", prefs.get("preview_font_size", 16))
+        )
+        if prefs["preview_font_size"] < 10:
+            prefs["preview_font_size"] = 10
         DEFAULTS.update(prefs)
         if hasattr(self, "track_table"):
-            size = DEFAULTS.get("font_size", 16)
+            size = DEFAULTS.get("track_font_size", 16)
             self.track_table.setStyleSheet(f"font-size: {size}px;")
             self.track_table.horizontalHeader().setStyleSheet(
                 f"font-size: {size}px; font-weight: bold;"

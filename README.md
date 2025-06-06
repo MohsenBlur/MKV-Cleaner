@@ -63,6 +63,10 @@ Run the unit tests with:
 pytest
 ```
 
+Set the environment variable `MKVCLEANER_SKIP_BOOTSTRAP=1` to disable
+automatic downloads and package installation when running tests or
+using the application in offline environments.
+
 
 ## License
 

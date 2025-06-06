@@ -11,6 +11,9 @@ from pathlib import Path
 # Directory containing ``mkv_cleaner.py``
 APP_DIR = Path(__file__).resolve().parents[1]
 
+# Environment variable to skip downloads/installations
+SKIP_BOOTSTRAP = os.environ.get("MKVCLEANER_SKIP_BOOTSTRAP")
+
 
 def ensure_binary(exe_name: str, url: str) -> str:
     """Ensure ``exe_name`` exists next to ``mkv_cleaner.py``.
@@ -20,6 +23,8 @@ def ensure_binary(exe_name: str, url: str) -> str:
     extracted and its local path is returned.
     """
     exe_path = APP_DIR / exe_name
+    if SKIP_BOOTSTRAP:
+        return str(exe_path)
     if exe_path.exists():
         return str(exe_path)
 
@@ -44,6 +49,8 @@ def ensure_binary(exe_name: str, url: str) -> str:
 
 def ensure_python_package(pkg: str) -> None:
     """Import ``pkg`` or install it via ``pip`` if missing."""
+    if SKIP_BOOTSTRAP:
+        return
     try:
         __import__(pkg)
     except ImportError:

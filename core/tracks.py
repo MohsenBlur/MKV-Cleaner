@@ -165,7 +165,15 @@ def _build_cmd_ffmpeg(
     wipe_forced: bool,
     wipe_all: bool,
 ) -> list[str]:
-    cmd: list[str] = [DEFAULTS["ffmpeg_cmd"], "-i", str(source), "-map", "0"]
+    cmd: list[str] = [
+        DEFAULTS["ffmpeg_cmd"],
+        "-loglevel",
+        "error",
+        "-i",
+        str(source),
+        "-map",
+        "0",
+    ]
 
     for t in tracks:
         if t.type in {"audio", "subtitles"}:

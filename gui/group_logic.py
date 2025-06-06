@@ -92,19 +92,31 @@ class GroupLogic:
                 return i
         return None
 
-    def _on_prev_group(self):
+    def _on_prev_group(self, loop: bool = False):
         idx = self._current_group_idx()
-        if idx is None or idx <= 0:
+        if idx is None:
             return
-        self.group_bar.set_checked(idx - 1)
-        self._on_group_change_idx(idx - 1)
+        if idx <= 0:
+            if not loop:
+                return
+            idx = len(self.group_bar.group_buttons) - 1
+        else:
+            idx -= 1
+        self.group_bar.set_checked(idx)
+        self._on_group_change_idx(idx)
 
-    def _on_next_group(self):
+    def _on_next_group(self, loop: bool = False):
         idx = self._current_group_idx()
-        if idx is None or idx >= len(self.group_bar.group_buttons) - 1:
+        if idx is None:
             return
-        self.group_bar.set_checked(idx + 1)
-        self._on_group_change_idx(idx + 1)
+        if idx >= len(self.group_bar.group_buttons) - 1:
+            if not loop:
+                return
+            idx = 0
+        else:
+            idx += 1
+        self.group_bar.set_checked(idx)
+        self._on_group_change_idx(idx)
 
     def _update_process_buttons(self):
         if not hasattr(self, "group_bar"):

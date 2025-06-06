@@ -1,6 +1,9 @@
-from PySide6.QtWidgets import QStyledItemDelegate, QStyleOptionViewItem
+from PySide6.QtWidgets import (
+    QStyledItemDelegate,
+    QStyleOptionViewItem,
+    QStyle,
+)
 from PySide6.QtGui import QPainter
-from PySide6.QtCore import QStyle
 
 class NoFocusDelegate(QStyledItemDelegate):
     """Delegate that removes the focus outline from table cells."""

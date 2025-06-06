@@ -40,6 +40,7 @@ DEFAULTS: Dict[str, Any] = {
     "max_workers": 4,
     "track_font_size": 16,
     "preview_font_size": 16,
+    "accent_color": "",
 }
 
 LOG_FORMAT = "%(asctime)s %(levelname)s [%(name)s] %(message)s"

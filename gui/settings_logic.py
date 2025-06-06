@@ -26,6 +26,7 @@ class SettingsLogic:
         prefs["ffmpeg_cmd"]     = self.settings.value("ffmpeg_cmd", prefs["ffmpeg_cmd"])
         prefs["ffprobe_cmd"]    = self.settings.value("ffprobe_cmd", prefs["ffprobe_cmd"])
         prefs["output_dir"]      = self.settings.value("output_dir", prefs["output_dir"])
+        prefs["accent_color"]    = self.settings.value("accent_color", prefs.get("accent_color", ""))
         prefs["track_font_size"] = int(
             self.settings.value("track_font_size", prefs.get("track_font_size", 16))
         )

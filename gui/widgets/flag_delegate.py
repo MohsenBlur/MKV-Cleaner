@@ -1,5 +1,4 @@
 from PySide6.QtWidgets import QStyledItemDelegate
-from PySide6.QtGui import QColor
 from PySide6.QtCore import Qt, QRect
 
 class FlagDelegate(QStyledItemDelegate):
@@ -23,24 +22,26 @@ class FlagDelegate(QStyledItemDelegate):
         painter.save()
         rect = option.rect
         color = option.palette.text().color()
-        faded = QColor(color)
-        faded.setAlpha(60)
+        faded_opacity = 0.3
         if cur and orig:
             half = rect.width() // 2
             orig_rect = QRect(rect.left(), rect.top(), half, rect.height())
             cur_rect = QRect(rect.left() + half, rect.top(), rect.width() - half, rect.height())
-            painter.setPen(faded)
-            painter.drawText(orig_rect, Qt.AlignCenter, char)
             painter.setPen(color)
+            painter.setOpacity(faded_opacity)
+            painter.drawText(orig_rect, Qt.AlignCenter, char)
+            painter.setOpacity(1.0)
             painter.drawText(cur_rect, Qt.AlignCenter, char)
         elif orig and not cur:
+            painter.setPen(color)
             if self.column == 5:
-                # When forced flag is removed, hide the old indicator entirely
-                pass
+                painter.setOpacity(faded_opacity)
+                painter.drawText(rect, Qt.AlignCenter, char)
             else:
-                painter.setPen(faded)
+                painter.setOpacity(faded_opacity)
                 painter.drawText(rect, Qt.AlignCenter, char)
         elif cur:
             painter.setPen(color)
+            painter.setOpacity(1.0)
             painter.drawText(rect, Qt.AlignCenter, char)
         painter.restore()

@@ -23,10 +23,10 @@ class GroupLogic:
         sig = self.group_bar.sig_at(idx)
         if sig is None:
             self.current_sig = None
-            self.track_table.model.update_tracks([])
+            self.track_table.table_model.update_tracks([])
             return
         self.current_sig = sig
-        self.track_table.model.update_tracks(self.groups[sig])
+        self.track_table.table_model.update_tracks(self.groups[sig])
 
     def add_files_to_groups(self, paths):
         for p in paths:
@@ -57,7 +57,7 @@ class GroupLogic:
         self.file_groups.clear()
         self.current_sig = None
         self.group_bar.clear()
-        self.track_table.model.update_tracks([])
+        self.track_table.table_model.update_tracks([])
 
         if all_paths:
             self.add_files_to_groups(all_paths)

@@ -7,9 +7,9 @@ class TableLogic:
 
     def _on_table_clicked(self, index):
         if index.column() == 0:
-            t = self.track_table.model.track_at_row(index.row())
+            t = self.track_table.table_model.track_at_row(index.row())
             t.removed = not t.removed
-            self.track_table.model.dataChanged.emit(index, index, [Qt.CheckStateRole])
+            self.track_table.table_model.dataChanged.emit(index, index, [Qt.CheckStateRole])
         self._on_selection_change(self.track_table.currentIndex(), None)
 
     def _on_selection_change(self, current, _):
@@ -20,7 +20,7 @@ class TableLogic:
             btn.setEnabled(False)
         if not current.isValid():
             return
-        t = self.track_table.model.track_at_row(current.row())
+        t = self.track_table.table_model.track_at_row(current.row())
         if t.removed:
             self.action_bar.btn_wipe_all.setEnabled(t.type == "subtitles")
             return

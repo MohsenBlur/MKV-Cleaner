@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QStyledItemDelegate
+from PySide6.QtWidgets import QStyledItemDelegate, QStyle
 from PySide6.QtGui import QColor
 from PySide6.QtCore import Qt, QEvent
 
@@ -14,7 +14,7 @@ class KeepToggleDelegate(QStyledItemDelegate):
 
     def paint(self, painter, option, index):
         state = index.data(Qt.CheckStateRole)
-        if option.state & option.State_MouseOver:
+        if option.state & QStyle.State_MouseOver:
             color = self.hover_color
         elif state == Qt.Checked:
             color = self.checked_color

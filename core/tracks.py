@@ -33,10 +33,12 @@ class CommandNotFoundError(RuntimeError):
     """Raised when an external command is missing."""
 
 
-def run_command(cmd: list[str]) -> subprocess.CompletedProcess:
+def run_command(cmd: list[str], capture: bool = True) -> subprocess.CompletedProcess:
     logger.debug("Running: %s", " ".join(cmd))
     try:
-        return subprocess.run(cmd, check=True, capture_output=True, text=True)
+        if capture:
+            return subprocess.run(cmd, check=True, capture_output=True, text=True)
+        return subprocess.run(cmd, check=True)
     except FileNotFoundError as exc:
         msg = f"{cmd[0]} not found on PATH"
         logger.error(msg)

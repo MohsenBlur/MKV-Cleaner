@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List
 
-from core.config import DEFAULTS
+from core.config import AppConfig
 
 logger = logging.getLogger("core.tracks")
 
@@ -57,11 +57,11 @@ def run_command(cmd: list[str], capture: bool = True) -> subprocess.CompletedPro
         logger.error("Command failed: %s\n%s", exc, exc.stderr)
         raise
 
-def query_tracks(source: Path) -> List[Track]:
+def query_tracks(source: Path, cfg: AppConfig) -> List[Track]:
     """Query tracks using the configured backend."""
-    if DEFAULTS.get("backend") == "ffmpeg":
+    if cfg.backend == "ffmpeg":
         result = run_command([
-            DEFAULTS["ffprobe_cmd"],
+            cfg.ffprobe_cmd,
             "-v",
             "quiet",
             "-print_format",
@@ -94,7 +94,7 @@ def query_tracks(source: Path) -> List[Track]:
             )
         return tracks
     else:
-        result = run_command([DEFAULTS["mkvmerge_cmd"], "-J", str(source)])
+        result = run_command([cfg.mkvmerge_cmd, "-J", str(source)])
         data = json.loads(result.stdout)
         tracks: List[Track] = []
         for i, t in enumerate(data.get("tracks", [])):
@@ -123,23 +123,25 @@ def build_cmd(
     source: Path,
     destination: Path,
     tracks: List[Track],
+    cfg: AppConfig,
     wipe_forced: bool = False,
     wipe_all: bool = False,
 ) -> list[str]:
     """Build command for the configured backend."""
-    if DEFAULTS.get("backend") == "ffmpeg":
-        return _build_cmd_ffmpeg(source, destination, tracks, wipe_forced, wipe_all)
-    return _build_cmd_mkvmerge(source, destination, tracks, wipe_forced, wipe_all)
+    if cfg.backend == "ffmpeg":
+        return _build_cmd_ffmpeg(source, destination, tracks, cfg, wipe_forced, wipe_all)
+    return _build_cmd_mkvmerge(source, destination, tracks, cfg, wipe_forced, wipe_all)
 
 
 def _build_cmd_mkvmerge(
     source: Path,
     destination: Path,
     tracks: List[Track],
+    cfg: AppConfig,
     wipe_forced: bool,
     wipe_all: bool,
 ) -> list[str]:
-    cmd: list[str] = [DEFAULTS["mkvmerge_cmd"]]
+    cmd: list[str] = [cfg.mkvmerge_cmd]
 
     # Use tid (real mkvmerge track id) everywhere!
     all_audio_ids = [str(t.tid) for t in tracks if t.type == "audio"]
@@ -184,11 +186,12 @@ def _build_cmd_ffmpeg(
     source: Path,
     destination: Path,
     tracks: List[Track],
+    cfg: AppConfig,
     wipe_forced: bool,
     wipe_all: bool,
 ) -> list[str]:
     cmd: list[str] = [
-        DEFAULTS["ffmpeg_cmd"],
+        cfg.ffmpeg_cmd,
         "-loglevel",
         "error",
         "-i",

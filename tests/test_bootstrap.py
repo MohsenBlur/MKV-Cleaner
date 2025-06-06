@@ -97,8 +97,8 @@ def test_config_uses_system_binaries(monkeypatch):
     importlib.reload(config)
     ext = '.exe' if os.name == 'nt' else ''
     assert config.MKVMERGE == f'mkvmerge{ext}'
-    assert config.DEFAULTS['mkvmerge_cmd'] == f'mkvmerge{ext}'
-    assert config.DEFAULTS['ffmpeg_cmd'] == f'ffmpeg{ext}'
+    assert config.AppConfig().mkvmerge_cmd == f'mkvmerge{ext}'
+    assert config.AppConfig().ffmpeg_cmd == f'ffmpeg{ext}'
     assert not called
 
 

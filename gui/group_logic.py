@@ -44,7 +44,7 @@ class GroupLogic:
 
     def add_files_to_groups(self, paths):
         for p in paths:
-            tracks = query_tracks(Path(p))
+            tracks = query_tracks(Path(p), self.app_config)
             sig = ";".join(t.signature() for t in tracks)
             if sig not in self.groups:
                 self.groups[sig] = [copy.deepcopy(t) for t in tracks]

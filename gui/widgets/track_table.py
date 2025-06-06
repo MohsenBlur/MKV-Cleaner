@@ -13,6 +13,8 @@ class TrackTable(QTableView):
         header.setDefaultAlignment(Qt.AlignCenter)
         header.setStretchLastSection(False)
         header.setSectionResizeMode(QHeaderView.Fixed)
+        # Hide vertical header that shows row numbers
+        self.verticalHeader().setVisible(False)
         self.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.setItemDelegateForColumn(0, KeepToggleDelegate(self))
         self.setMouseTracking(True)

@@ -1,4 +1,5 @@
 from PySide6.QtWidgets import QTableView
+from PySide6.QtCore import Qt
 from gui.models import TrackTableModel
 from .keep_toggle_delegate import KeepToggleDelegate
 
@@ -7,4 +8,5 @@ class TrackTable(QTableView):
         super().__init__(parent)
         self.model = TrackTableModel()
         self.setModel(self.model)
+        self.horizontalHeader().setDefaultAlignment(Qt.AlignCenter)
         self.setItemDelegateForColumn(0, KeepToggleDelegate(self))

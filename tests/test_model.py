@@ -8,6 +8,8 @@ qtcore.Qt = type('Qt', (), {
     'Unchecked': 0,
     'CheckStateRole': 0,
     'DisplayRole': 1,
+    'TextAlignmentRole': 2,
+    'AlignCenter': 4,
     'ItemIsEnabled': 1,
     'ItemIsSelectable': 2,
     'ItemIsUserCheckable': 4

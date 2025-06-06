@@ -73,10 +73,17 @@ class ActionsLogic:
         t = self.track_table.table_model.track_at_row(row)
         if t.type != "subtitles":
             return
-        t.forced = not t.forced
+        if not t.forced:
+            for tr in self.track_table.table_model.get_tracks():
+                if tr.type == "subtitles":
+                    tr.forced = False
+            t.forced = True
+            state = "enabled"
+        else:
+            t.forced = False
+            state = "disabled"
         self.track_table.table_model.update_tracks(self.track_table.table_model.tracks)
         if hasattr(self, "status_bar"):
-            state = "enabled" if t.forced else "disabled"
             msg = f"Forced flag {state} on track {t.tid} ({t.language})"
             if t.name:
                 msg += f" - {t.name}"

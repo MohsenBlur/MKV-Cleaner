@@ -60,6 +60,11 @@ class MainWindow(QMainWindow, SettingsLogic, GroupLogic, TableLogic, ActionsLogi
         self.shortcut_prev_group.activated.connect(
             lambda: self._on_prev_group(loop=True)
         )
+        self.shortcut_prev_group_shift = QShortcut(QKeySequence("Shift+Tab"), self)
+        self.shortcut_prev_group_shift.setContext(Qt.ApplicationShortcut)
+        self.shortcut_prev_group_shift.activated.connect(
+            lambda: self._on_prev_group(loop=True)
+        )
 
         self.group_bar.preferencesClicked.connect(self._open_preferences)
         self._setup_all_logic()

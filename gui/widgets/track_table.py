@@ -9,6 +9,7 @@ from PySide6.QtCore import Qt
 from gui.models import TrackTableModel
 from .keep_toggle_delegate import KeepToggleDelegate
 from .flag_delegate import FlagDelegate
+from .no_focus_delegate import NoFocusDelegate
 
 class TrackTable(QTableView):
     def __init__(self, parent=None):
@@ -29,6 +30,7 @@ class TrackTable(QTableView):
         # Prevent flickering scrollbars when resizing
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setItemDelegate(NoFocusDelegate(self))
         self.setItemDelegateForColumn(0, KeepToggleDelegate(self))
         self.setItemDelegateForColumn(5, FlagDelegate(5, self))
         self.setItemDelegateForColumn(6, FlagDelegate(6, self))

@@ -55,7 +55,7 @@ class DummyModel:
 
 class DummyTrackTable:
     def __init__(self):
-        self.model = DummyModel()
+        self.table_model = DummyModel()
 
 
 def test_button_click_triggers_once(monkeypatch):

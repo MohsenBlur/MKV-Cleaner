@@ -29,14 +29,14 @@ class ActionsLogic:
         row = self._current_idx()
         if row is None:
             return
-        t = self.track_table.model.track_at_row(row)
+        t = self.track_table.table_model.track_at_row(row)
         if t.type != "audio":
             return
-        for tr in self.track_table.model.get_tracks():
+        for tr in self.track_table.table_model.get_tracks():
             if tr.type == "audio":
                 tr.default_audio = False
         t.default_audio = True
-        self.track_table.model.update_tracks(self.track_table.model.tracks)
+        self.track_table.table_model.update_tracks(self.track_table.table_model.tracks)
         if hasattr(self, "status_bar"):
             self.status_bar.showMessage("Default audio set", 2000)
 
@@ -44,14 +44,14 @@ class ActionsLogic:
         row = self._current_idx()
         if row is None:
             return
-        t = self.track_table.model.track_at_row(row)
+        t = self.track_table.table_model.track_at_row(row)
         if t.type != "subtitles":
             return
-        for tr in self.track_table.model.get_tracks():
+        for tr in self.track_table.table_model.get_tracks():
             if tr.type == "subtitles":
                 tr.default_subtitle = False
         t.default_subtitle = True
-        self.track_table.model.update_tracks(self.track_table.model.tracks)
+        self.track_table.table_model.update_tracks(self.track_table.table_model.tracks)
         if hasattr(self, "status_bar"):
             self.status_bar.showMessage("Default subtitle set", 2000)
 
@@ -59,22 +59,22 @@ class ActionsLogic:
         row = self._current_idx()
         if row is None:
             return
-        t = self.track_table.model.track_at_row(row)
+        t = self.track_table.table_model.track_at_row(row)
         if t.type != "subtitles":
             return
         t.forced = not t.forced
-        self.track_table.model.update_tracks(self.track_table.model.tracks)
+        self.track_table.table_model.update_tracks(self.track_table.table_model.tracks)
         if hasattr(self, "status_bar"):
             self.status_bar.showMessage("Forced flag toggled", 2000)
 
     def wipe_all_subs(self):
         changed = False
-        for tr in self.track_table.model.get_tracks():
+        for tr in self.track_table.table_model.get_tracks():
             if tr.type == "subtitles" and not tr.removed:
                 tr.removed = True
                 changed = True
         if changed:
-            self.track_table.model.update_tracks(self.track_table.model.tracks)
+            self.track_table.table_model.update_tracks(self.track_table.table_model.tracks)
             if hasattr(self, "status_bar"):
                 self.status_bar.showMessage("All subtitles marked for removal", 2000)
 
@@ -82,7 +82,7 @@ class ActionsLogic:
         row = self._current_idx()
         if row is None:
             return
-        t = self.track_table.model.track_at_row(row)
+        t = self.track_table.table_model.track_at_row(row)
         if t.type != "subtitles":
             return
         files = self.file_groups.get(self.current_sig, [])

@@ -46,11 +46,12 @@ are distributed alongside the bundle.
    ```
 3. Click **Open Files** to select one or more MKV files.
 4. For each group of files with the same track layout you can:
-   - uncheck tracks you wish to remove
-   - set a default audio or subtitle track
-   - toggle the forced subtitle flag
-   - preview subtitle text
-   - wipe all subtitles if desired
+    - uncheck tracks you wish to remove
+    - set a default audio or subtitle track
+    - toggle the forced subtitle flag
+    - preview subtitle text
+    - wipe all subtitles if desired
+    - the status bar shows which track became default or forced
 5. Use **Process Group** or **Process All** to create cleaned files in the output directory (by default `cleaned/`).
 
 Paths to the command line tools, the output directory and the preferred backend (MKVToolNix or FFmpeg) can be configured via the Preferences dialog (⚙️ icon).

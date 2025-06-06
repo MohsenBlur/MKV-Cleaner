@@ -167,9 +167,9 @@ class SubtitlePreviewWindow(QMainWindow):
         self.extract_cmd = extract_cmd
         self.backend = backend
         self.settings = QSettings("MKVToolsCorp", "MKVCleaner")
-        self.font_size = int(self.settings.value("font_size", 16))
-        if self.font_size < 8:
-            self.font_size = 8
+        self.font_size = int(self.settings.value("preview_font_size", 16))
+        if self.font_size < 10:
+            self.font_size = 10
         self.pos = 0
 
         self.txt = QTextEdit(readOnly=True)

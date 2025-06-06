@@ -17,7 +17,8 @@ def test_load_config_json(tmp_path):
     assert cfg["output_dir"] == "here"
     # ensure default populated
     assert cfg["mkvmerge_cmd"] == DEFAULTS["mkvmerge_cmd"]
-    assert cfg["font_size"] == DEFAULTS["font_size"]
+    assert cfg["track_font_size"] == DEFAULTS["track_font_size"]
+    assert cfg["preview_font_size"] == DEFAULTS["preview_font_size"]
 
 
 def test_load_config_toml(tmp_path):
@@ -29,4 +30,5 @@ def test_load_config_toml(tmp_path):
     assert cfg["max_workers"] == 8
     # unchanged value
     assert cfg["output_dir"] == DEFAULTS["output_dir"]
-    assert cfg["font_size"] == DEFAULTS["font_size"]
+    assert cfg["track_font_size"] == DEFAULTS["track_font_size"]
+    assert cfg["preview_font_size"] == DEFAULTS["preview_font_size"]

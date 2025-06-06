@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 from typing import Any, Dict
+from dataclasses import dataclass
 import json
 import os
 import sys
@@ -30,17 +31,19 @@ else:
     FFMPEG = f"ffmpeg{ext}"
     FFPROBE = f"ffprobe{ext}"
 
-DEFAULTS: Dict[str, Any] = {
-    "backend": "ffmpeg",  # or "mkvtoolnix"
-    "mkvmerge_cmd": MKVMERGE,
-    "mkvextract_cmd": MKVEXTRACT,
-    "ffmpeg_cmd": FFMPEG,
-    "ffprobe_cmd": FFPROBE,
-    "output_dir": "cleaned",
-    "max_workers": 4,
-    "track_font_size": 16,
-    "preview_font_size": 16,
-}
+@dataclass
+class AppConfig:
+    """Application configuration."""
+
+    backend: str = "ffmpeg"  # or "mkvtoolnix"
+    mkvmerge_cmd: str = MKVMERGE
+    mkvextract_cmd: str = MKVEXTRACT
+    ffmpeg_cmd: str = FFMPEG
+    ffprobe_cmd: str = FFPROBE
+    output_dir: str = "cleaned"
+    max_workers: int = 4
+    track_font_size: int = 16
+    preview_font_size: int = 16
 
 LOG_FORMAT = "%(asctime)s %(levelname)s [%(name)s] %(message)s"
 
@@ -50,10 +53,10 @@ def setup_logging(level: int | str = logging.INFO) -> None:
     logging.basicConfig(format=LOG_FORMAT, level=level)
     logging.getLogger("core").setLevel(level)
 
-def load_config(path: Path | None = None) -> Dict[str, Any]:
-    """Load configuration from ``path`` and merge with :data:`DEFAULTS`."""
+def load_config(path: Path | None = None) -> AppConfig:
+    """Load configuration from ``path`` and merge with defaults."""
 
-    cfg = DEFAULTS.copy()
+    cfg = AppConfig()
     if path:
         suffix = path.suffix.lower()
         with open(path, "rb") as fh:
@@ -64,5 +67,7 @@ def load_config(path: Path | None = None) -> Dict[str, Any]:
             else:
                 raise ValueError(f"Unsupported config format: {suffix}")
         if isinstance(data, dict):
-            cfg.update(data)
+            for key, val in data.items():
+                if hasattr(cfg, key):
+                    setattr(cfg, key, val)
     return cfg

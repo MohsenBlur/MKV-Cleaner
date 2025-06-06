@@ -32,8 +32,8 @@ def test_build_cmd_flags(defaults):
             default_subtitle=True,
         ),
     ]
-    defaults["backend"] = "mkvtoolnix"
-    cmd = build_cmd(src, dst, tracks, wipe_forced=True, wipe_all=False)
+    defaults.backend = "mkvtoolnix"
+    cmd = build_cmd(src, dst, tracks, defaults, wipe_forced=True, wipe_all=False)
     assert cmd == [
         "mkvmerge",
         "--forced-track",
@@ -47,8 +47,8 @@ def test_build_cmd_flags(defaults):
         str(src),
     ]
 
-    defaults["backend"] = "ffmpeg"
-    cmd = build_cmd(src, dst, tracks, wipe_forced=True, wipe_all=False)
+    defaults.backend = "ffmpeg"
+    cmd = build_cmd(src, dst, tracks, defaults, wipe_forced=True, wipe_all=False)
     assert cmd == [
         "ffmpeg",
         "-loglevel",
@@ -92,8 +92,8 @@ def test_build_cmd_wipe_all(defaults):
             default_subtitle=True,
         ),
     ]
-    defaults["backend"] = "mkvtoolnix"
-    cmd = build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=True)
+    defaults.backend = "mkvtoolnix"
+    cmd = build_cmd(src, dst, tracks, defaults, wipe_forced=False, wipe_all=True)
     assert cmd == [
         "mkvmerge",
         "--no-subtitles",
@@ -108,8 +108,8 @@ def test_build_cmd_wipe_all(defaults):
         str(src),
     ]
 
-    defaults["backend"] = "ffmpeg"
-    cmd = build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=True)
+    defaults.backend = "ffmpeg"
+    cmd = build_cmd(src, dst, tracks, defaults, wipe_forced=False, wipe_all=True)
     assert cmd == [
         "ffmpeg",
         "-loglevel",
@@ -153,8 +153,8 @@ def test_build_cmd_forced_default_ffmpeg(defaults):
             default_subtitle=True,
         ),
     ]
-    defaults["backend"] = "mkvtoolnix"
-    cmd = build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=False)
+    defaults.backend = "mkvtoolnix"
+    cmd = build_cmd(src, dst, tracks, defaults, wipe_forced=False, wipe_all=False)
     assert cmd == [
         "mkvmerge",
         "--forced-track",
@@ -168,8 +168,8 @@ def test_build_cmd_forced_default_ffmpeg(defaults):
         str(src),
     ]
 
-    defaults["backend"] = "ffmpeg"
-    cmd = build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=False)
+    defaults.backend = "ffmpeg"
+    cmd = build_cmd(src, dst, tracks, defaults, wipe_forced=False, wipe_all=False)
     assert cmd == [
         "ffmpeg",
         "-loglevel",
@@ -231,8 +231,8 @@ def test_build_cmd_full_flags(defaults):
             default_subtitle=True,
         ),
     ]
-    defaults["backend"] = "mkvtoolnix"
-    cmd = build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=False)
+    defaults.backend = "mkvtoolnix"
+    cmd = build_cmd(src, dst, tracks, defaults, wipe_forced=False, wipe_all=False)
     assert cmd == [
         "mkvmerge",
         "--forced-track",

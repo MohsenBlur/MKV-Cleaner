@@ -1,7 +1,6 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMessageBox
 from core.tracks import query_tracks, build_cmd, run_command
-from core.config import DEFAULTS
 from .subtitle_preview import SubtitlePreviewWindow
 from .processing import process_files
 
@@ -117,8 +116,8 @@ class ActionsLogic:
             t.language,
             t.name,
             run_command,
-            DEFAULTS["ffmpeg_cmd"] if DEFAULTS.get("backend") == "ffmpeg" else DEFAULTS["mkvextract_cmd"],
-            DEFAULTS.get("backend", "ffmpeg"),
+            self.app_config.ffmpeg_cmd if self.app_config.backend == "ffmpeg" else self.app_config.mkvextract_cmd,
+            self.app_config.backend,
             parent=self,
         )
         self._preview_win.show()
@@ -135,11 +134,11 @@ class ActionsLogic:
         wipe = self.action_bar.btn_wipe_all.isChecked() or getattr(self, "wipe_all_default", False)
         process_files(
             jobs,
-            DEFAULTS["max_workers"],
-            query_tracks,
-            build_cmd,
+            self.app_config.max_workers,
+            lambda src: query_tracks(src, self.app_config),
+            lambda s, d, t, wipe_forced=False, wipe_all=False: build_cmd(s, d, t, self.app_config, wipe_forced, wipe_all),
             run_command,
-            DEFAULTS["output_dir"],
+            self.app_config.output_dir,
             wipe,
             parent=self,
         )
@@ -156,11 +155,11 @@ class ActionsLogic:
         wipe = self.action_bar.btn_wipe_all.isChecked() or getattr(self, "wipe_all_default", False)
         process_files(
             jobs,
-            DEFAULTS["max_workers"],
-            query_tracks,
-            build_cmd,
+            self.app_config.max_workers,
+            lambda src: query_tracks(src, self.app_config),
+            lambda s, d, t, wipe_forced=False, wipe_all=False: build_cmd(s, d, t, self.app_config, wipe_forced, wipe_all),
             run_command,
-            DEFAULTS["output_dir"],
+            self.app_config.output_dir,
             wipe,
             parent=self,
         )

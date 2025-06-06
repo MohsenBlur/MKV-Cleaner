@@ -8,7 +8,6 @@ from PySide6.QtWidgets import (
     QComboBox,
 )
 from PySide6.QtCore import Qt, QSize, Signal
-from core.config import DEFAULTS
 
 from .fade_disabled import apply_fade_on_disable
 
@@ -91,7 +90,7 @@ class GroupBar(QWidget):
 
         self.backend_combo = QComboBox(self)
         self.backend_combo.addItems(["mkvtoolnix", "ffmpeg"])
-        self.backend_combo.setCurrentText(DEFAULTS.get("backend", "ffmpeg"))
+        self.backend_combo.setCurrentText("ffmpeg")
         self.backend_combo.setToolTip("Select backend")
         self.backend_combo.currentTextChanged.connect(self.backendChanged.emit)
         self.backend_combo.setFixedHeight(32)

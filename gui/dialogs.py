@@ -14,7 +14,7 @@ class PreferencesDialog(QDialog):
 
         self.backend = QComboBox(self)
         self.backend.addItems(["mkvtoolnix", "ffmpeg"])
-        self.backend.setCurrentText(self.settings.value("backend", "mkvtoolnix"))
+        self.backend.setCurrentText(self.settings.value("backend", "ffmpeg"))
         layout.addRow("Backend:", self.backend)
 
         self.merge_path = QLineEdit(self)

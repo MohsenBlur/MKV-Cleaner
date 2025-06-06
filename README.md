@@ -46,6 +46,7 @@ Build a self-contained bundle with:
 pyinstaller mkv-cleaner.spec
 ```
 
+
 When packaging on Windows the spec file collects any DLLs located next to
 `ffprobe` (for example in `ffmpeg\bin`) so the bundled executable can run
 `ffprobe` without requiring FFmpeg to be installed separately.

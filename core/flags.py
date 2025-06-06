@@ -72,6 +72,49 @@ _LANG_TO_COUNTRY = {
     # Thai
     "th": "TH",
     "tha": "TH",
+    # Danish
+    "da": "DK",
+    "dan": "DK",
+    # Finnish
+    "fi": "FI",
+    "fin": "FI",
+    # Hungarian
+    "hu": "HU",
+    "hun": "HU",
+    # Norwegian
+    "no": "NO",
+    "nor": "NO",
+    # Romanian
+    "ro": "RO",
+    "ron": "RO",
+    "rum": "RO",
+    # Bulgarian
+    "bg": "BG",
+    "bul": "BG",
+    # Czech
+    "cs": "CZ",
+    "ces": "CZ",
+    "cze": "CZ",
+    # Slovak
+    "sk": "SK",
+    "slk": "SK",
+    "slo": "SK",
+    # Croatian
+    "hr": "HR",
+    "hrv": "HR",
+    # Ukrainian
+    "uk": "UA",
+    "ukr": "UA",
+    # Indonesian
+    "id": "ID",
+    "ind": "ID",
+    # Malay
+    "ms": "MY",
+    "msa": "MY",
+    "may": "MY",
+    # Filipino/Tagalog
+    "tl": "PH",
+    "tgl": "PH",
 }
 
 
@@ -88,6 +131,18 @@ def lang_to_flag(lang: str) -> str:
         return ""
     lang = lang.lower()
     cc = _LANG_TO_COUNTRY.get(lang)
-    if cc:
-        return _country_code_to_flag(cc)
-    return ""
+    if not cc:
+        if '-' in lang or '_' in lang:
+            country = lang.split('-')[1] if '-' in lang else lang.split('_')[1]
+            if len(country) == 2:
+                cc = country.upper()
+    if not cc:
+        import locale
+        loc = locale.getdefaultlocale()[0] or ''
+        if not loc:
+            loc = locale.getlocale()[0] or ''
+        if loc and ('_' in loc or '-' in loc):
+            country = loc.split('_')[1] if '_' in loc else loc.split('-')[1]
+            if len(country) == 2:
+                cc = country.upper()
+    return _country_code_to_flag(cc) if cc else ""

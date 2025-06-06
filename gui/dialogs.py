@@ -72,6 +72,11 @@ class PreferencesDialog(QDialog):
         )
         layout.addRow("Subtitle preview font size:", self.preview_font_combo)
 
+        self.accent_edit = QLineEdit(self)
+        self.accent_edit.setPlaceholderText("#RRGGBB or empty for random")
+        self.accent_edit.setText(self.settings.value("accent_color", ""))
+        layout.addRow("Accent color:", self.accent_edit)
+
         self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, parent=self)
         self.buttons.accepted.connect(self.accept)
         self.buttons.rejected.connect(self.reject)
@@ -102,4 +107,5 @@ class PreferencesDialog(QDialog):
         self.settings.setValue(
             "preview_font_size", int(self.preview_font_combo.currentText())
         )
+        self.settings.setValue("accent_color", self.accent_edit.text())
         super().accept()

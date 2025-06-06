@@ -1,5 +1,3 @@
-"""Utility functions for reading configuration and setting up logging."""
-
 from __future__ import annotations
 
 import logging

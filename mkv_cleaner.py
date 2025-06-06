@@ -48,6 +48,13 @@ def set_dynamic_modern_style(app: QApplication) -> None:
             font-family: 'Segoe UI', 'Noto Color Emoji';
             font-size: 16px;
         }}
+        QTableView::item {{
+            border-right: 1px solid #34394c;
+            border-bottom: 1px solid #34394c;
+        }}
+        QTableView::item:selected {{
+            border-color: {accent};
+        }}
         QHeaderView::section {{
             background-color: #232a34;
             color: #8fdfff;

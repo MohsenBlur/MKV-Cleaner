@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import (
     QDialog, QFormLayout, QLineEdit, QCheckBox, QFileDialog,
-    QDialogButtonBox, QPushButton, QWidget, QHBoxLayout, QComboBox
+    QDialogButtonBox, QPushButton, QWidget, QHBoxLayout, QComboBox, QSpinBox
 )
 from PySide6.QtCore import QSettings
 
@@ -49,6 +49,11 @@ class PreferencesDialog(QDialog):
         self.wipe_all_def.setChecked(self.settings.value("wipe_all_default", False, type=bool))
         layout.addRow("Wipe all subtitles by default:", self.wipe_all_def)
 
+        self.font_size_spin = QSpinBox(self)
+        self.font_size_spin.setRange(8, 72)
+        self.font_size_spin.setValue(int(self.settings.value("font_size", 16)))
+        layout.addRow("Track/preview font size:", self.font_size_spin)
+
         self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, parent=self)
         self.buttons.accepted.connect(self.accept)
         self.buttons.rejected.connect(self.reject)
@@ -75,4 +80,5 @@ class PreferencesDialog(QDialog):
         self.settings.setValue("ffprobe_cmd", self.ffprobe_path.text())
         self.settings.setValue("output_dir", self.output_dir.text())
         self.settings.setValue("wipe_all_default", self.wipe_all_def.isChecked())
+        self.settings.setValue("font_size", max(8, self.font_size_spin.value()))
         super().accept()

@@ -26,7 +26,18 @@ class SettingsLogic:
         prefs["ffmpeg_cmd"]     = self.settings.value("ffmpeg_cmd", prefs["ffmpeg_cmd"])
         prefs["ffprobe_cmd"]    = self.settings.value("ffprobe_cmd", prefs["ffprobe_cmd"])
         prefs["output_dir"]     = self.settings.value("output_dir", prefs["output_dir"])
+        prefs["font_size"]      = int(self.settings.value("font_size", prefs.get("font_size", 16)))
+        if prefs["font_size"] < 8:
+            prefs["font_size"] = 8
         DEFAULTS.update(prefs)
+        if hasattr(self, "track_table"):
+            size = DEFAULTS.get("font_size", 16)
+            self.track_table.setStyleSheet(f"font-size: {size}px;")
+            self.track_table.horizontalHeader().setStyleSheet(
+                f"font-size: {size}px; font-weight: bold;"
+            )
+            if hasattr(self.track_table, "_apply_row_spacing"):
+                self.track_table._apply_row_spacing()
         self.last_input_dir   = self.settings.value("last_input_dir", "", type=str)
         self.wipe_all_default = self.settings.value("wipe_all_default", False, type=bool)
         if hasattr(self, "group_bar") and hasattr(self.group_bar, "set_backend"):

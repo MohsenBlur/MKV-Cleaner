@@ -36,6 +36,7 @@ DEFAULTS: Dict[str, Any] = {
     "ffprobe_cmd": FFPROBE,
     "output_dir": "cleaned",
     "max_workers": 4,
+    "font_size": 16,
 }
 
 LOG_FORMAT = "%(asctime)s %(levelname)s [%(name)s] %(message)s"

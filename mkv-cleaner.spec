@@ -1,5 +1,6 @@
 import shutil
 import sys
+from pathlib import Path
 from PyInstaller.utils.hooks import collect_submodules
 
 binaries = []
@@ -8,6 +9,19 @@ for exe in ("ffmpeg", "ffprobe"):
     if not path:
         raise RuntimeError(f"Required executable '{exe}' not found on PATH")
     binaries.append((path, '.'))
+
+# On Windows we also need the DLLs shipped with ffprobe
+if sys.platform == "win32":
+    ffprobe_path = shutil.which("ffprobe")
+    if ffprobe_path:
+        base = Path(ffprobe_path).resolve().parent
+        search_dirs = [base]
+        bin_dir = base / "bin"
+        if bin_dir.is_dir():
+            search_dirs.append(bin_dir)
+        for directory in search_dirs:
+            for dll in directory.rglob("*.dll"):
+                binaries.append((str(dll), '.'))
 
 hidden = collect_submodules('gui') + collect_submodules('core')
 

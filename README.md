@@ -38,6 +38,19 @@ are distributed alongside the bundle.
 
 New bundles are uploaded manually through a GitHub workflow whenever changes are ready. Download the archive for your platform from the Releases section and run the `mkv-cleaner` executable contained inside.
 
+## Packaging
+
+Build a self-contained bundle with:
+
+```bash
+pyinstaller mkv-cleaner.spec
+```
+
+When packaging on Windows the spec file collects all DLLs from the directory
+containing `ffprobe` (and a `bin` subdirectory if present) so the bundled
+executable can run `ffprobe` without requiring FFmpeg to be installed
+separately.
+
 
 ## Usage
 

@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (
     QWidget,
     QPushButton,
 )
+from .widgets.fade_disabled import apply_fade_on_disable
 from PySide6.QtCore import QSettings
 from pathlib import Path
 import tempfile
@@ -176,7 +177,9 @@ class SubtitlePreviewWindow(QMainWindow):
         self.txt = QTextEdit(readOnly=True)
         nav = QHBoxLayout()
         self.prev = QPushButton("◀ Prev")
+        apply_fade_on_disable(self.prev)
         self.nxt = QPushButton("Next ▶")
+        apply_fade_on_disable(self.nxt)
         nav.addWidget(self.prev)
         nav.addStretch()
         nav.addWidget(self.nxt)

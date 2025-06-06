@@ -5,7 +5,8 @@ from PySide6.QtWidgets import (
     QFileDialog,
     QStatusBar,
 )
-from PySide6.QtCore import QSettings
+from PySide6.QtCore import QSettings, Qt
+from PySide6.QtGui import QKeySequence, QShortcut
 import os
 
 from gui.widgets.group_bar import GroupBar
@@ -47,6 +48,23 @@ class MainWindow(QMainWindow, SettingsLogic, GroupLogic, TableLogic, ActionsLogi
         container = QWidget()
         container.setLayout(main_vbox)
         self.setCentralWidget(container)
+
+        # Keyboard shortcuts for cycling through groups
+        self.shortcut_next_group = QShortcut(QKeySequence("Ctrl+Tab"), self)
+        self.shortcut_next_group.setContext(Qt.ApplicationShortcut)
+        self.shortcut_next_group.activated.connect(
+            lambda: self._on_next_group(loop=True)
+        )
+        self.shortcut_prev_group = QShortcut(QKeySequence("Ctrl+Shift+Tab"), self)
+        self.shortcut_prev_group.setContext(Qt.ApplicationShortcut)
+        self.shortcut_prev_group.activated.connect(
+            lambda: self._on_prev_group(loop=True)
+        )
+        self.shortcut_prev_group_shift = QShortcut(QKeySequence("Shift+Tab"), self)
+        self.shortcut_prev_group_shift.setContext(Qt.ApplicationShortcut)
+        self.shortcut_prev_group_shift.activated.connect(
+            lambda: self._on_prev_group(loop=True)
+        )
 
         self.group_bar.preferencesClicked.connect(self._open_preferences)
         self._setup_all_logic()

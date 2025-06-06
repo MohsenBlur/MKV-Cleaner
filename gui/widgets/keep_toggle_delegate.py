@@ -19,6 +19,16 @@ class KeepToggleDelegate(QStyledItemDelegate):
         opt.state &= ~QStyle.State_HasFocus
 
         painter.save()
+        track = None
+        if hasattr(index.model(), "track_at_row"):
+            try:
+                track = index.model().track_at_row(index.row())
+            except Exception:
+                track = None
+        if track is not None and getattr(track, "removed", False):
+            painter.setOpacity(0.4)
+        else:
+            painter.setOpacity(1.0)
         style = opt.widget.style() if opt.widget else QApplication.style()
         style.drawPrimitive(QStyle.PE_PanelItemViewItem, opt, painter, opt.widget)
 

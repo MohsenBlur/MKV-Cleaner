@@ -26,6 +26,11 @@ class FlagDelegate(QStyledItemDelegate):
         opt.state &= ~QStyle.State_HasFocus
 
         painter.save()
+        track_removed = getattr(track, "removed", False)
+        if track_removed:
+            painter.setOpacity(0.4)
+        else:
+            painter.setOpacity(1.0)
         style = opt.widget.style() if opt.widget else QApplication.style()
         style.drawPrimitive(QStyle.PE_PanelItemViewItem, opt, painter, opt.widget)
 

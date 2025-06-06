@@ -66,6 +66,9 @@ class TrackTableModel(QAbstractTableModel):
                 or getattr(t, "default_subtitle", False)
             ):
                 return self._change_tint
+        if role == Qt.ForegroundRole and getattr(t, "removed", False):
+            col = QColor("#888888")
+            return col
         if role == Qt.ToolTipRole:
             if c == 5:
                 cur = getattr(t, "forced", False)

@@ -1,3 +1,4 @@
+
 from PySide6.QtWidgets import QTableView, QHeaderView, QAbstractScrollArea
 from PySide6.QtCore import Qt
 from gui.models import TrackTableModel

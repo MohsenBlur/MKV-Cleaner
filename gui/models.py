@@ -1,5 +1,6 @@
 from PySide6.QtCore import QAbstractTableModel, Qt, QModelIndex
 from core.tracks import Track
+from core.flags import lang_to_flag
 
 
 class TrackTableModel(QAbstractTableModel):
@@ -29,7 +30,11 @@ class TrackTableModel(QAbstractTableModel):
                 1: getattr(t, "tid", ""),
                 2: getattr(t, "type", ""),
                 3: getattr(t, "codec", ""),
-                4: getattr(t, "language", ""),
+                4: (
+                    lang_to_flag(getattr(t, "language", ""))
+                    if t.type in {"audio", "subtitles"}
+                    else getattr(t, "language", "")
+                ),
                 5: "🚩" if getattr(t, "forced", False) else "",
                 6: (
                     "🔊"

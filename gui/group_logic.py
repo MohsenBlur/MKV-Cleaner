@@ -32,14 +32,12 @@ class GroupLogic:
             if hasattr(self, "file_list"):
                 self.file_list.update_files([])
             return
+
         self.current_sig = sig
         self.track_table.table_model.update_tracks(self.groups[sig])
         if hasattr(self, "file_list"):
             self.file_list.update_files(self.file_groups.get(sig, []))
-            self.group_bar.update_nav_buttons(idx)
-            return
-        self.current_sig = sig
-        self.track_table.table_model.update_tracks(self.groups[sig])
+
         self.group_bar.update_nav_buttons(idx)
 
     def add_files_to_groups(self, paths):

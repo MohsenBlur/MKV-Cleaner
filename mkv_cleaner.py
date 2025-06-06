@@ -36,6 +36,7 @@ def set_dynamic_modern_style(app: QApplication) -> None:
         QMainWindow, QWidget {{
             background-color: #181a20;
             color: #d2e0f0;
+            font-family: 'Segoe UI', 'Noto Color Emoji';
         }}
         QTableView {{
             background: #22242a;
@@ -44,12 +45,14 @@ def set_dynamic_modern_style(app: QApplication) -> None:
             gridline-color: #34394c;
             selection-background-color: {accent}33;
             selection-color: #fff;
+            font-family: 'Segoe UI', 'Noto Color Emoji';
         }}
         QHeaderView::section {{
             background-color: #232a34;
             color: #8fdfff;
             border-bottom: 2px solid {accent}88;
             font-weight: bold;
+            font-family: 'Segoe UI', 'Noto Color Emoji';
         }}
         QPushButton {{
             background: #262e36;
@@ -58,6 +61,7 @@ def set_dynamic_modern_style(app: QApplication) -> None:
             border: 2px solid #344b60;
             padding: 5px 16px;
             font-size: 15px;
+            font-family: 'Segoe UI', 'Noto Color Emoji';
         }}
         QPushButton:hover {{
             background: {accent}55;
@@ -74,11 +78,13 @@ def set_dynamic_modern_style(app: QApplication) -> None:
             color: #b5e3ff;
             border-radius: 6px;
             border: 1.5px solid #2d3c4c;
+            font-family: 'Segoe UI', 'Noto Color Emoji';
         }}
         QToolTip {{
             background: #2a4154;
             color: #fff;
             border: 1px solid {accent};
+            font-family: 'Segoe UI', 'Noto Color Emoji';
         }}
         /* GroupBar specific: */
         #GroupBar QLabel {{
@@ -91,9 +97,18 @@ def main() -> None:
     app = QApplication(sys.argv)
     font_path = Path(__file__).resolve().parent / "fonts" / "NotoColorEmoji.ttf"
     if font_path.exists():
-        QFontDatabase.addApplicationFont(str(font_path))
+        font_id = QFontDatabase.addApplicationFont(str(font_path))
+        if font_id != -1:
+            noto_family = QFontDatabase.applicationFontFamilies(font_id)[0]
+            QFont.insertSubstitution("Segoe UI Emoji", noto_family)
+            QFont.insertSubstitution("Segoe UI Symbol", noto_family)
+            font_fams = ["Segoe UI", "Segoe UI Emoji", noto_family]
+        else:
+            font_fams = ["Segoe UI", "Segoe UI Emoji"]
+    else:
+        font_fams = ["Segoe UI", "Segoe UI Emoji"]
     font = QFont()
-    font.setFamilies(["Segoe UI", "Noto Color Emoji"])
+    font.setFamilies(font_fams)
     app.setFont(font)
     # Show tooltips faster than the Qt default
     app.setStyle(FastToolTipStyle(app.style()))

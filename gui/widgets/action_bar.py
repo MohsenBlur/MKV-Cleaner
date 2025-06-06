@@ -55,3 +55,22 @@ class ActionBar(QWidget):
 
         self.setLayout(layout)
         self.setFixedHeight(52)
+
+    def required_width(self) -> int:
+        """Return the minimum width needed to show all buttons without cutting off."""
+        layout = self.layout()
+        if layout is None:
+            return 0
+        margins = layout.contentsMargins()
+        spacing = layout.spacing()
+        widths = []
+        for i in range(layout.count()):
+            item = layout.itemAt(i)
+            w = item.widget() if item else None
+            if w is not None:
+                widths.append(w.sizeHint().width())
+        if not widths:
+            return 0
+        total = sum(widths) + spacing * (len(widths) - 1)
+        total += margins.left() + margins.right()
+        return total

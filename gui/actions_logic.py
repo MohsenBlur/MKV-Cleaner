@@ -22,8 +22,13 @@ class ActionsLogic:
             self.action_bar.btn_preview.clicked.connect(self.preview_subtitle)
         if hasattr(self, "action_bar") and hasattr(self.action_bar, "btn_process_group"):
             self.action_bar.btn_process_group.clicked.connect(self.process_group)
+        elif hasattr(self, "group_bar") and hasattr(self.group_bar, "btn_process_group"):
+            self.group_bar.btn_process_group.clicked.connect(self.process_group)
+
         if hasattr(self, "action_bar") and hasattr(self.action_bar, "btn_process_all"):
             self.action_bar.btn_process_all.clicked.connect(self.process_all)
+        elif hasattr(self, "group_bar") and hasattr(self.group_bar, "btn_process_all"):
+            self.group_bar.btn_process_all.clicked.connect(self.process_all)
 
     def set_default_audio(self):
         row = self._current_idx()

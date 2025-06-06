@@ -17,6 +17,9 @@ mkv-cleaner = "mkv_cleaner:main"
 [tool.setuptools]
 py-modules = ["mkv_cleaner"]
 
+[tool.setuptools.data-files]
+"fonts" = ["fonts/*"]
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["core", "gui"]

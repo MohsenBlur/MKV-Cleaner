@@ -47,12 +47,20 @@ class MainWindow(QMainWindow, SettingsLogic, GroupLogic, TableLogic, ActionsLogi
 
         self.group_bar.preferencesClicked.connect(self._open_preferences)
         self._setup_all_logic()
+        self._adjust_window_width()
 
     def _setup_all_logic(self):
         self._setup_settings_logic()
         self._setup_group_logic()
         self._setup_table_logic()
         self._setup_action_logic()
+
+    def _adjust_window_width(self):
+        """Shrink the window horizontally to the width required by the action bar."""
+        if hasattr(self, "action_bar"):
+            w = self.action_bar.required_width()
+            if w:
+                self.resize(w, self.height())
 
     def open_files(self):
         files, _ = QFileDialog.getOpenFileNames(

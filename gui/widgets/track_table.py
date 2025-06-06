@@ -9,6 +9,7 @@ class TrackTable(QTableView):
         self.table_model = TrackTableModel()
         self.setModel(self.table_model)
         self.horizontalHeader().setDefaultAlignment(Qt.AlignCenter)
+        self.horizontalHeader().setStretchLastSection(True)
         self.setItemDelegateForColumn(0, KeepToggleDelegate(self))
         self.setMouseTracking(True)
         # Adjust row spacing whenever the model resets

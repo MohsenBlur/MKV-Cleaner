@@ -1,3 +1,5 @@
+"""Utility functions for reading configuration and setting up logging."""
+
 from __future__ import annotations
 
 import logging
@@ -43,6 +45,8 @@ DEFAULTS: Dict[str, Any] = {
 LOG_FORMAT = "%(asctime)s %(levelname)s [%(name)s] %(message)s"
 
 def setup_logging(level: int | str = logging.INFO) -> None:
+    """Configure application logging."""
+
     logging.basicConfig(format=LOG_FORMAT, level=level)
     logging.getLogger("core").setLevel(level)
 

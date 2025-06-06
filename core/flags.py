@@ -1,3 +1,5 @@
+"""Mapping between language codes and their flag emoji representations."""
+
 # Simple mapping from language codes to flag emojis
 # Supports both 2-letter and 3-letter language codes
 

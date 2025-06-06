@@ -1,3 +1,5 @@
+"""Helpers for querying tracks and building processing commands."""
+
 from __future__ import annotations
 import json
 import subprocess
@@ -12,6 +14,7 @@ logger = logging.getLogger("core.tracks")
 
 @dataclass
 class Track:
+    """Represents a single media track and its attributes."""
     idx: int       # index in the UI/table
     tid: int       # real mkvmerge track id
     type: str
@@ -27,6 +30,8 @@ class Track:
     orig_default_subtitle: bool = False
 
     def signature(self) -> str:
+        """Return a string uniquely identifying the track."""
+
         return (
             f"{self.tid}-{self.type}-{self.codec}-"
             f"{self.language}-{'F' if self.forced else ''}-{self.name}"
@@ -37,6 +42,8 @@ class CommandNotFoundError(RuntimeError):
 
 
 def run_command(cmd: list[str], capture: bool = True) -> subprocess.CompletedProcess:
+    """Run an external command and return the completed process."""
+
     logger.debug("Running: %s", " ".join(cmd))
     try:
         if capture:

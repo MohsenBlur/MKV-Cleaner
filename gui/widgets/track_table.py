@@ -3,6 +3,7 @@ from PySide6.QtWidgets import QTableView, QHeaderView, QAbstractScrollArea
 from PySide6.QtCore import Qt
 from gui.models import TrackTableModel
 from .keep_toggle_delegate import KeepToggleDelegate
+from .flag_delegate import FlagDelegate
 
 class TrackTable(QTableView):
     def __init__(self, parent=None):
@@ -20,6 +21,8 @@ class TrackTable(QTableView):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setItemDelegateForColumn(0, KeepToggleDelegate(self))
+        self.setItemDelegateForColumn(5, FlagDelegate(5, self))
+        self.setItemDelegateForColumn(6, FlagDelegate(6, self))
         self.setMouseTracking(True)
         # Adjust row spacing whenever the model resets
         self.table_model.modelReset.connect(self._apply_row_spacing)

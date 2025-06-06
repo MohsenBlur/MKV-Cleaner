@@ -7,4 +7,4 @@ class TrackTable(QTableView):
         super().__init__(parent)
         self.model = TrackTableModel()
         self.setModel(self.model)
-        self.horizontalHeader().setDefaultAlignment(getattr(Qt, "AlignCenter", 0))
+        self.horizontalHeader().setDefaultAlignment(Qt.AlignCenter)

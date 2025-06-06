@@ -55,6 +55,43 @@ class TrackTableModel(QAbstractTableModel):
                 or getattr(t, "default_subtitle", False)
             ):
                 return self._change_tint
+        if role == Qt.ToolTipRole:
+            if c == 5:
+                cur = getattr(t, "forced", False)
+                orig = getattr(t, "orig_forced", False)
+                if cur and orig:
+                    return (
+                        "Forced subtitle. Faded flag shows it was forced in the "
+                        "original file."
+                    )
+                if cur:
+                    return "Forced subtitle for the cleaned file."
+                if orig:
+                    return (
+                        "Faded flag means this subtitle was forced in the original "
+                        "file."
+                    )
+            if c == 6:
+                if t.type == "audio":
+                    cur = getattr(t, "default_audio", False)
+                    orig = getattr(t, "orig_default_audio", False)
+                    desc = "audio"
+                else:
+                    cur = getattr(t, "default_subtitle", False)
+                    orig = getattr(t, "orig_default_subtitle", False)
+                    desc = "subtitle"
+                if cur and orig:
+                    return (
+                        f"Default {desc} track. Faded icon shows it was default in the "
+                        "original file."
+                    )
+                if cur:
+                    return f"Default {desc} track for the cleaned file."
+                if orig:
+                    return (
+                        f"Faded icon means this {desc} track was default in the original "
+                        "file."
+                    )
         if role == Qt.DisplayRole:
             lang_code = getattr(t, "language", "")
             if t.type in {"audio", "subtitles"}:

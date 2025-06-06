@@ -28,15 +28,17 @@ class TrackTableModel(QAbstractTableModel):
         if role == Qt.CheckStateRole and c == 0:
             return Qt.Checked if not getattr(t, "removed", False) else Qt.Unchecked
         if role == Qt.DisplayRole:
+            lang_code = getattr(t, "language", "")
+            if t.type in {"audio", "subtitles"}:
+                flag = lang_to_flag(lang_code)
+                display_lang = f"{flag} {lang_code}" if flag else lang_code
+            else:
+                display_lang = lang_code
             return {
                 1: getattr(t, "tid", ""),
                 2: getattr(t, "type", ""),
                 3: getattr(t, "codec", ""),
-                4: (
-                    lang_to_flag(getattr(t, "language", ""))
-                    if t.type in {"audio", "subtitles"}
-                    else getattr(t, "language", "")
-                ),
+                4: display_lang,
                 5: "🚩" if getattr(t, "forced", False) else "",
                 6: (
                     "🔊"

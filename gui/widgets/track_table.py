@@ -12,11 +12,10 @@ class TrackTable(QTableView):
         header = self.horizontalHeader()
         header.setDefaultAlignment(Qt.AlignCenter)
         # ensure the table width matches the column widths
-        header.setStretchLastSection(False)
+        # Let the columns automatically resize to fit their contents and
+        # use any remaining space for the last column.
+        header.setStretchLastSection(True)
         header.setSectionResizeMode(QHeaderView.ResizeToContents)
-        # match the name column width with the rest
-        header.setSectionResizeMode(7, QHeaderView.Fixed)
-        self.setColumnWidth(7, header.defaultSectionSize())
         self.resizeColumnsToContents()
         self.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.setItemDelegateForColumn(0, KeepToggleDelegate(self))

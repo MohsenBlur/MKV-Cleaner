@@ -60,8 +60,12 @@ class GroupLogic:
             if sig == self.current_sig and hasattr(self, "file_list"):
                 self.file_list.update_files(self.file_groups[sig])
         if self.group_bar.group_buttons:
-            self.group_bar.set_checked(0)
-            self._on_group_change_idx(0)
+            if self.current_sig is None:
+                self.group_bar.set_checked(0)
+                self._on_group_change_idx(0)
+            else:
+                idx = self._current_group_idx()
+                self.group_bar.update_nav_buttons(idx)
         self._update_process_buttons()
 
     def _reload_all_groups(self):

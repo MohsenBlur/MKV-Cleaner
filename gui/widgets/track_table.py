@@ -16,6 +16,9 @@ class TrackTable(QTableView):
         # Hide vertical header that shows row numbers
         self.verticalHeader().setVisible(False)
         self.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        # Prevent flickering scrollbars when resizing
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setItemDelegateForColumn(0, KeepToggleDelegate(self))
         self.setMouseTracking(True)
         # Adjust row spacing whenever the model resets

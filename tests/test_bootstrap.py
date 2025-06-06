@@ -55,17 +55,17 @@ def test_ensure_python_package(monkeypatch):
     assert called['cmd'][0] == sys.executable
 
 
-def test_config_uses_local_binaries(monkeypatch):
-    import core.config as config
-    monkeypatch.delenv('MKVCLEANER_SKIP_BOOTSTRAP', raising=False)
-    monkeypatch.setattr(bootstrap, 'ensure_binary', lambda exe, url: f'/tmp/{exe}')
+def test_config_uses_system_binaries(monkeypatch):
     import importlib
+    import core.config as config
+
+    called = []
+    monkeypatch.setattr(bootstrap, 'ensure_binary', lambda exe, url: called.append(True))
+
     importlib.reload(config)
     ext = '.exe' if os.name == 'nt' else ''
-    assert config.MKVMERGE == f'/tmp/mkvmerge{ext}'
-    assert config.DEFAULTS['mkvmerge_cmd'] == f'/tmp/mkvmerge{ext}'
-    assert config.DEFAULTS['ffmpeg_cmd'] == f'/tmp/ffmpeg{ext}'
-
-    monkeypatch.setenv('MKVCLEANER_SKIP_BOOTSTRAP', '1')
-    importlib.reload(config)
+    assert config.MKVMERGE == f'mkvmerge{ext}'
+    assert config.DEFAULTS['mkvmerge_cmd'] == f'mkvmerge{ext}'
+    assert config.DEFAULTS['ffmpeg_cmd'] == f'ffmpeg{ext}'
+    assert not called
 

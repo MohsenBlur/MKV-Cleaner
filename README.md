@@ -34,23 +34,6 @@ The prebuilt bundles published in the GitHub releases already include PySide6
 and FFmpeg so no additional installation is required. Copies of their licenses
 are distributed alongside the bundle.
 
-## Downloads
-
-New bundles are uploaded manually through a GitHub workflow whenever changes are ready. Download the archive for your platform from the Releases section and run the `mkv-cleaner` executable contained inside.
-
-## Packaging
-
-Build a self-contained bundle with:
-
-```bash
-pyinstaller mkv-cleaner.spec
-```
-
-
-When packaging on Windows the spec file collects any DLLs located next to
-`ffprobe` (for example in `ffmpeg\bin`) so the bundled executable can run
-`ffprobe` without requiring FFmpeg to be installed separately.
-
 
 ## Usage
 

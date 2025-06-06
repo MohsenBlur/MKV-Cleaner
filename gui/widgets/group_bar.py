@@ -36,6 +36,23 @@ class GroupBar(QWidget):
         self.group_btns_anchor = self.layout.count()
         self.stretch = self.layout.addStretch(1)
 
+        self.btn_process_group = QPushButton("📦 Process Group")
+        self.btn_process_group.setToolTip(
+            "Apply cleaning to the current group only."
+        )
+
+        self.btn_process_all = QPushButton("🚀 Process All")
+        self.btn_process_all.setToolTip("Clean all loaded groups of videos.")
+
+        for btn in (self.btn_process_group, self.btn_process_all):
+            btn.setMinimumHeight(38)
+            btn.setMinimumWidth(110)
+            btn.setStyleSheet(
+                "QPushButton { font-weight: 500; font-size: 14px;" +
+                " border-radius: 8px; padding: 5px 10px; }"
+            )
+            self.layout.addWidget(btn, alignment=Qt.AlignRight)
+
         self.backend_combo = QComboBox(self)
         self.backend_combo.addItems(["mkvtoolnix", "ffmpeg"])
         self.backend_combo.setCurrentText(DEFAULTS.get("backend", "ffmpeg"))

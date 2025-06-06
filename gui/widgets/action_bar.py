@@ -36,13 +36,6 @@ class ActionBar(QWidget):
         self.btn_preview = QPushButton("👁️ Preview Subtitle")
         self.btn_preview.setToolTip("Quickly check the subtitles before processing.")
 
-        self.btn_process_group = QPushButton("📦 Process Group")
-        self.btn_process_group.setToolTip(
-            "Apply cleaning to the current group only."
-        )
-
-        self.btn_process_all = QPushButton("🚀 Process All")
-        self.btn_process_all.setToolTip("Clean all loaded groups of videos.")
 
         for btn in (
             self.btn_open_files,
@@ -51,8 +44,6 @@ class ActionBar(QWidget):
             self.btn_forced,
             self.btn_wipe_all,
             self.btn_preview,
-            self.btn_process_group,
-            self.btn_process_all,
         ):
             btn.setMinimumHeight(38)
             btn.setMinimumWidth(110)

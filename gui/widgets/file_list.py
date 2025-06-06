@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QListWidget, QListWidgetItem, QListView
 from PySide6.QtCore import Qt
+import re
 
 
 class FileList(QListWidget):
@@ -22,7 +23,10 @@ class FileList(QListWidget):
         """Replace the list contents and resize to fit all rows."""
         self.clear()
         for p in files:
-            item = QListWidgetItem(p.stem)
+            display = re.sub(r"\s*\([^)]*\)", "", p.stem).strip()
+            if not display:
+                display = p.stem
+            item = QListWidgetItem(display)
             # Show full filename in a larger font inside the tooltip
             item.setToolTip(f"<span style='font-size:16px'>{p.name}</span>")
             self.addItem(item)

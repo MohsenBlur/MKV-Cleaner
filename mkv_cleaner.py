@@ -43,7 +43,7 @@ def set_dynamic_modern_style(app: QApplication) -> None:
             alternate-background-color: #252b33;
             color: #d0e8f7;
             gridline-color: #34394c;
-            selection-background-color: {accent}33;
+            selection-background-color: {accent};
             selection-color: #fff;
             font-family: 'Segoe UI', 'Noto Color Emoji';
             font-size: 16px;

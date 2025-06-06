@@ -17,6 +17,8 @@ class TrackTable(QTableView):
         self.setModel(self.table_model)
         self.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.setSelectionMode(QAbstractItemView.SingleSelection)
+        # Disable built-in grid lines, we'll draw horizontal lines via CSS
+        self.setShowGrid(False)
         header = self.horizontalHeader()
         header.setDefaultAlignment(Qt.AlignCenter)
         header.setStretchLastSection(False)

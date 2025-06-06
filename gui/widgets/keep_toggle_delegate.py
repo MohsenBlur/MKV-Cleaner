@@ -15,6 +15,8 @@ class KeepToggleDelegate(QStyledItemDelegate):
     def paint(self, painter, option, index):
         opt = QStyleOptionViewItem(option)
         self.initStyleOption(opt, index)
+        # Remove focus state so no cell highlight outline is drawn
+        opt.state &= ~QStyle.State_HasFocus
 
         painter.save()
         style = opt.widget.style() if opt.widget else QApplication.style()

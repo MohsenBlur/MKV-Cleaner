@@ -43,7 +43,8 @@ def set_dynamic_modern_style(app: QApplication) -> None:
             alternate-background-color: #252b33;
             color: #d0e8f7;
             gridline-color: #34394c;
-            selection-background-color: {accent};
+            /* highlight rows via borders, not filled background */
+            selection-background-color: transparent;
             selection-color: #fff;
             font-family: 'Segoe UI', 'Noto Color Emoji';
             font-size: 16px;
@@ -58,6 +59,9 @@ def set_dynamic_modern_style(app: QApplication) -> None:
             border-left: none;
             border-top: 1px solid {accent};
             border-bottom: 1px solid {accent};
+        }}
+        QTableView::item:focus {{
+            outline: none;
         }}
         QHeaderView::section {{
             background-color: #232a34;

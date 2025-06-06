@@ -22,6 +22,8 @@ class FlagDelegate(QStyledItemDelegate):
 
         opt = QStyleOptionViewItem(option)
         self.initStyleOption(opt, index)
+        # Remove focus state so cells don't show selection outlines
+        opt.state &= ~QStyle.State_HasFocus
 
         painter.save()
         style = opt.widget.style() if opt.widget else QApplication.style()

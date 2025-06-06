@@ -1,5 +1,10 @@
 
-from PySide6.QtWidgets import QTableView, QHeaderView, QAbstractScrollArea
+from PySide6.QtWidgets import (
+    QTableView,
+    QHeaderView,
+    QAbstractScrollArea,
+    QAbstractItemView,
+)
 from PySide6.QtCore import Qt
 from gui.models import TrackTableModel
 from .keep_toggle_delegate import KeepToggleDelegate
@@ -10,6 +15,8 @@ class TrackTable(QTableView):
         super().__init__(parent)
         self.table_model = TrackTableModel()
         self.setModel(self.table_model)
+        self.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.setSelectionMode(QAbstractItemView.SingleSelection)
         header = self.horizontalHeader()
         header.setDefaultAlignment(Qt.AlignCenter)
         header.setStretchLastSection(False)

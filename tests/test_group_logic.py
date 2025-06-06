@@ -26,6 +26,8 @@ class DummyButton:
 class DummyGroupBar:
     def __init__(self):
         self.group_buttons = []
+        self.prevClicked = DummySignal()
+        self.nextClicked = DummySignal()
 
     def add_group_button(self, sig, tooltip=None):
         btn = DummyButton()
@@ -43,6 +45,9 @@ class DummyGroupBar:
 
     def clear(self):
         self.group_buttons.clear()
+
+    def update_nav_buttons(self, idx):
+        pass
 
 
 class DummyModel:

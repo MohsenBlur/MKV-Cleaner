@@ -14,6 +14,8 @@ from core.config import DEFAULTS
 class GroupBar(QWidget):
     preferencesClicked = Signal()
     backendChanged = Signal(str)
+    prevClicked = Signal()
+    nextClicked = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -33,7 +35,36 @@ class GroupBar(QWidget):
         )
         self.layout.addWidget(self.group_label, alignment=Qt.AlignVCenter)
 
+        self.btn_prev = QPushButton("◀")
+        self.btn_prev.setCheckable(False)
+        self.btn_prev.setMinimumSize(QSize(32, 40))
+        self.btn_prev.setMaximumSize(QSize(32, 44))
+        self.btn_prev.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.btn_prev.setStyleSheet(
+            "QPushButton {font-size: 18px; border-radius: 8px; border: 2px solid #ccc;"
+            " background: #2a2c34; color: #b9d4ff;}"
+            "QPushButton:hover {background: #51a4fc;}"
+        )
+        self.btn_prev.clicked.connect(lambda checked=False: self.prevClicked.emit())
+        self.btn_prev.hide()
+        self.layout.addWidget(self.btn_prev, alignment=Qt.AlignVCenter)
+
         self.group_btns_anchor = self.layout.count()
+
+        self.btn_next = QPushButton("▶")
+        self.btn_next.setCheckable(False)
+        self.btn_next.setMinimumSize(QSize(32, 40))
+        self.btn_next.setMaximumSize(QSize(32, 44))
+        self.btn_next.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.btn_next.setStyleSheet(
+            "QPushButton {font-size: 18px; border-radius: 8px; border: 2px solid #ccc;"
+            " background: #2a2c34; color: #b9d4ff;}"
+            "QPushButton:hover {background: #51a4fc;}"
+        )
+        self.btn_next.clicked.connect(lambda checked=False: self.nextClicked.emit())
+        self.btn_next.hide()
+        self.layout.addWidget(self.btn_next, alignment=Qt.AlignVCenter)
+
         self.stretch = self.layout.addStretch(1)
 
         self.btn_process_group = QPushButton("📦 Process Group")
@@ -100,7 +131,7 @@ class GroupBar(QWidget):
         )
         if tooltip:
             btn.setToolTip(tooltip)
-        self.layout.insertWidget(1 + len(self.group_buttons), btn)
+        self.layout.insertWidget(self.group_btns_anchor + len(self.group_buttons), btn)
         self.button_group.addButton(btn)
         self.group_buttons.append((sig, btn))
         return btn
@@ -132,3 +163,16 @@ class GroupBar(QWidget):
         self.group_buttons.clear()
         self.button_group = QButtonGroup(self)
         self.button_group.setExclusive(True)
+        self.update_nav_buttons(None)
+
+    def update_nav_buttons(self, current_idx: int | None):
+        """Show arrows when there are more than four groups and update their state."""
+        show_arrows = len(self.group_buttons) > 4
+        self.btn_prev.setVisible(show_arrows)
+        self.btn_next.setVisible(show_arrows)
+        if not show_arrows:
+            return
+        if current_idx is None:
+            current_idx = -1
+        self.btn_prev.setEnabled(current_idx > 0)
+        self.btn_next.setEnabled(current_idx < len(self.group_buttons) - 1)

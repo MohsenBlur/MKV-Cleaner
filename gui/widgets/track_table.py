@@ -22,8 +22,11 @@ class TrackTable(QTableView):
         self.table_model.modelReset.connect(self._apply_row_spacing)
         # Update column widths whenever the model resets
         self.table_model.modelReset.connect(self.adjust_column_widths)
+        # Update height whenever the model resets
+        self.table_model.modelReset.connect(self.adjust_table_height)
         # Initial width distribution
         self.adjust_column_widths()
+        self.adjust_table_height()
 
     def _apply_row_spacing(self):
         """Increase spacing between different track types."""
@@ -36,6 +39,7 @@ class TrackTable(QTableView):
                 height += 10
             self.setRowHeight(row, height)
             prev_type = track.type
+        self.adjust_table_height()
 
     def adjust_column_widths(self):
         """Divide the available width evenly across all columns."""
@@ -51,4 +55,14 @@ class TrackTable(QTableView):
     def resizeEvent(self, event):
         super().resizeEvent(event)
         self.adjust_column_widths()
+
+    def adjust_table_height(self):
+        """Resize the table so all rows are visible without scrolling."""
+        header_h = self.horizontalHeader().height()
+        frame = self.frameWidth() * 2
+        rows = self.table_model.rowCount()
+        total = header_h + frame
+        for r in range(rows):
+            total += self.rowHeight(r)
+        self.setFixedHeight(total)
 

@@ -14,6 +14,7 @@ class GroupLogic:
             self.group_bar.prevClicked.connect(self._on_prev_group)
             self.group_bar.nextClicked.connect(self._on_next_group)
             self.group_bar.update_nav_buttons(None)
+            self._update_process_buttons()
 
     def _on_group_button_clicked(self, btn):
         idx = None
@@ -39,6 +40,7 @@ class GroupLogic:
             self.file_list.update_files(self.file_groups.get(sig, []))
 
         self.group_bar.update_nav_buttons(idx)
+        self._update_process_buttons()
 
     def add_files_to_groups(self, paths):
         for p in paths:
@@ -60,6 +62,7 @@ class GroupLogic:
         if self.group_bar.group_buttons:
             self.group_bar.set_checked(0)
             self._on_group_change_idx(0)
+        self._update_process_buttons()
 
     def _reload_all_groups(self):
         """Re-import already loaded files using the current backend."""
@@ -74,6 +77,7 @@ class GroupLogic:
         self.track_table.table_model.update_tracks([])
         if hasattr(self, "file_list"):
             self.file_list.update_files([])
+        self._update_process_buttons()
 
         if all_paths:
             self.add_files_to_groups(all_paths)
@@ -97,3 +101,13 @@ class GroupLogic:
             return
         self.group_bar.set_checked(idx + 1)
         self._on_group_change_idx(idx + 1)
+
+    def _update_process_buttons(self):
+        if not hasattr(self, "group_bar"):
+            return
+        if hasattr(self.group_bar, "btn_process_group"):
+            files = self.file_groups.get(self.current_sig, [])
+            self.group_bar.btn_process_group.setEnabled(bool(files))
+        if hasattr(self.group_bar, "btn_process_all"):
+            has_files = any(self.file_groups.values())
+            self.group_bar.btn_process_all.setEnabled(has_files)

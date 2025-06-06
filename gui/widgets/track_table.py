@@ -10,4 +10,5 @@ class TrackTable(QTableView):
         self.setModel(self.table_model)
         self.horizontalHeader().setDefaultAlignment(Qt.AlignCenter)
         self.setItemDelegateForColumn(0, KeepToggleDelegate(self))
+        self.setMouseTracking(True)
 

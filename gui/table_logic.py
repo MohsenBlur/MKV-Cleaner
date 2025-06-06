@@ -7,8 +7,7 @@ class TableLogic:
 
     def _on_table_clicked(self, index):
         if index.column() == 0:
-            t = self.track_table.table_model.track_at_row(index.row())
-            t.removed = not t.removed
+            # Delegate handles toggling, just refresh selection state
             self.track_table.table_model.dataChanged.emit(index, index, [Qt.CheckStateRole])
         self._on_selection_change(self.track_table.currentIndex(), None)
 

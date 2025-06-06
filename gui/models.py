@@ -1,4 +1,5 @@
 from PySide6.QtCore import QAbstractTableModel, Qt, QModelIndex
+from PySide6.QtGui import QColor
 from core.tracks import Track
 from core.flags import lang_to_flag
 
@@ -7,6 +8,10 @@ class TrackTableModel(QAbstractTableModel):
     def __init__(self, tracks: list[Track] | None = None):
         super().__init__()
         self.tracks: list[Track] = tracks or []
+        self._change_tint = QColor("#3584e4")
+        self._change_tint.setAlpha(40)
+        self._remove_tint = QColor("#c75f5f")
+        self._remove_tint.setAlpha(40)
 
     def rowCount(self, parent=QModelIndex()):
         return len(self.tracks)
@@ -27,6 +32,16 @@ class TrackTableModel(QAbstractTableModel):
             return Qt.AlignCenter
         if role == Qt.CheckStateRole and c == 0:
             return Qt.Checked if not getattr(t, "removed", False) else Qt.Unchecked
+        if role == Qt.BackgroundRole:
+            if getattr(t, "removed", False):
+                return self._remove_tint
+            if c == 5 and getattr(t, "forced", False):
+                return self._change_tint
+            if c == 6 and (
+                getattr(t, "default_audio", False)
+                or getattr(t, "default_subtitle", False)
+            ):
+                return self._change_tint
         if role == Qt.DisplayRole:
             lang_code = getattr(t, "language", "")
             if t.type in {"audio", "subtitles"}:

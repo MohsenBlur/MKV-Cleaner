@@ -17,6 +17,17 @@ qtcore.Qt = type('Qt', (), {
 qtcore.QAbstractTableModel = object
 qtcore.QModelIndex = object
 sys.modules['PySide6.QtCore'] = qtcore
+qtgui = types.ModuleType('PySide6.QtGui')
+
+class DummyColor:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def setAlpha(self, *args, **kwargs):
+        pass
+
+qtgui.QColor = DummyColor
+sys.modules['PySide6.QtGui'] = qtgui
 from PySide6.QtCore import Qt
 
 from gui.models import TrackTableModel

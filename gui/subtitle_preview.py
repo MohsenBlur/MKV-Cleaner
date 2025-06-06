@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (
     QWidget,
     QPushButton,
 )
+from PySide6.QtCore import QSettings
 from pathlib import Path
 import tempfile
 import re
@@ -41,7 +42,7 @@ def peek_subtitle(fp: Path, tid: int, run_command, extract_cmd, backend, maxlen=
     return out
 
 
-def srt_to_html(raw):
+def srt_to_html(raw, font_size: int = 13):
     """Convert SRT subtitle text to formatted HTML for preview."""
     raw = raw.lstrip("\ufeffï»¿")
     blocks = re.split(r"\n\s*\n", raw.strip())
@@ -68,7 +69,7 @@ def srt_to_html(raw):
             "<div style='margin-bottom:10px'>" + "".join(html) + "</div>"
         )
     return (
-        "<div style='font-family:Consolas,monospace;font-size:13px;"
+        f"<div style='font-family:Consolas,monospace;font-size:{font_size}px;"
         "background:#20232b;padding:16px 20px;color:#fff;"
         " border-radius:8px;line-height:1.7;'>"
         + "".join(html_blocks)
@@ -76,7 +77,7 @@ def srt_to_html(raw):
     )
 
 
-def ass_to_html(raw):
+def ass_to_html(raw, font_size: int = 13):
     """Convert ASS/SSA subtitle text to formatted HTML for preview."""
     raw = raw.lstrip("\ufeffï»¿")
     lines = raw.splitlines()
@@ -93,14 +94,16 @@ def ass_to_html(raw):
             )
             continue
         if lstripped.startswith("Format:"):
+            small = max(font_size - 2, 8)
             html.append(
-                "<div style='color:#888; font-size:11px; margin-bottom:2px;'>"
+                f"<div style='color:#888; font-size:{small}px; margin-bottom:2px;'>"
                 f"{lstripped}</div>"
             )
             continue
         if lstripped.startswith("Style:"):
+            small = max(font_size - 2, 8)
             html.append(
-                "<div style='color:#aaa; font-size:11px; margin-bottom:2px;'>"
+                f"<div style='color:#aaa; font-size:{small}px; margin-bottom:2px;'>"
                 f"{lstripped}</div>"
             )
             continue
@@ -115,11 +118,11 @@ def ass_to_html(raw):
                 text = text.replace(r"\N", "<br>")
                 html.append(
                     f"<div style='margin-bottom:10px;'>"
-                    f"<span style='font-weight:bold; color:#fa4; font-size:13px;'>"
+                    f"<span style='font-weight:bold; color:#fa4; font-size:{font_size}px;'>"
                     f"{start}</span> "
                     f"<span style='font-weight:normal; color:#4bc;'>&rarr; {end}</span>"
                     + (
-                        f" <span style='color:#888; font-size:11px;'>[{actor}]</span>"
+                        f" <span style='color:#888; font-size:{small}px;'>[{actor}]</span>"
                         if actor.strip()
                         else ""
                     )
@@ -129,11 +132,11 @@ def ass_to_html(raw):
                 html.append(f"<div style='color:#fff'>{lstripped}</div>")
             continue
         if section:
-            html.append(f"<div style='color:#aaa; font-size:11px;'>{lstripped}</div>")
+            html.append(f"<div style='color:#aaa; font-size:{small}px;'>{lstripped}</div>")
         else:
             html.append(f"<div style='color:#fff'>{lstripped}</div>")
     return (
-        "<div style='font-family:Consolas,monospace;font-size:13px;"
+        f"<div style='font-family:Consolas,monospace;font-size:{font_size}px;"
         "background:#20232b;padding:16px 20px;color:#fff;"
         " border-radius:8px;line-height:1.7;'>"
         + "".join(html)
@@ -163,6 +166,10 @@ class SubtitlePreviewWindow(QMainWindow):
         self.run_command = run_command
         self.extract_cmd = extract_cmd
         self.backend = backend
+        self.settings = QSettings("MKVToolsCorp", "MKVCleaner")
+        self.font_size = int(self.settings.value("font_size", 16))
+        if self.font_size < 8:
+            self.font_size = 8
         self.pos = 0
 
         self.txt = QTextEdit(readOnly=True)
@@ -193,9 +200,9 @@ class SubtitlePreviewWindow(QMainWindow):
             self.backend,
         )
         if "[Events]" in raw and "Dialogue:" in raw:
-            self.txt.setHtml(ass_to_html(raw))
+            self.txt.setHtml(ass_to_html(raw, self.font_size))
         else:
-            self.txt.setHtml(srt_to_html(raw))
+            self.txt.setHtml(srt_to_html(raw, self.font_size))
         self.setWindowTitle(f"{fp.name} — track {self.tid} {self.language} {self.name}")
         self.prev.setEnabled(self.pos > 0)
         self.nxt.setEnabled(self.pos < len(self.files) - 1)

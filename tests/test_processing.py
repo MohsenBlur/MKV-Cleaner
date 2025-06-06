@@ -117,3 +117,42 @@ def test_cancel_shutdown(monkeypatch):
 
     assert len(commands) == 1
     assert exec_instance.shutdown_called.get("cancel_futures") is True
+
+
+def test_output_dir_created(monkeypatch, tmp_path):
+    jobs = [(tmp_path / "a.mkv", [])]
+    commands = []
+
+    def query_tracks(src):
+        return []
+
+    def build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=False):
+        return ["cmd", str(src), str(dst)]
+
+    def run_command(cmd):
+        commands.append(cmd)
+
+    dlg = DummyDialog()
+
+    monkeypatch.setattr(processing, "QProgressDialog", lambda *a, **kw: dlg)
+    monkeypatch.setattr(
+        processing,
+        "QMetaObject",
+        type("_", (), {"invokeMethod": lambda *a: a[0].setValue(a[3])}),
+    )
+    monkeypatch.setattr(processing, "Q_ARG", lambda *a: a[1])
+    exec_instance = DummyExecutor()
+    monkeypatch.setattr(processing, "ThreadPoolExecutor", lambda *a, **kw: exec_instance)
+    monkeypatch.setattr(processing, "as_completed", dummy_as_completed)
+
+    processing.process_files(
+        jobs,
+        max_workers=2,
+        query_tracks=query_tracks,
+        build_cmd=build_cmd,
+        run_command=run_command,
+        output_dir="out/sub",
+        wipe_all_flag=False,
+    )
+
+    assert (tmp_path / "out" / "sub").is_dir()

@@ -8,6 +8,10 @@ class GroupLogic:
         self.groups = {}  # {sig: [Track]}
         self.file_groups = {}  # {sig: [Path]}
         self.current_sig = None
+        if hasattr(self, "group_bar") and hasattr(self.group_bar, "prevClicked"):
+            self.group_bar.prevClicked.connect(self._on_prev_group)
+            self.group_bar.nextClicked.connect(self._on_next_group)
+            self.group_bar.update_nav_buttons(None)
 
 
     def _on_group_button_clicked(self, btn):
@@ -24,9 +28,11 @@ class GroupLogic:
         if sig is None:
             self.current_sig = None
             self.track_table.table_model.update_tracks([])
+            self.group_bar.update_nav_buttons(idx)
             return
         self.current_sig = sig
         self.track_table.table_model.update_tracks(self.groups[sig])
+        self.group_bar.update_nav_buttons(idx)
 
     def add_files_to_groups(self, paths):
         for p in paths:
@@ -61,3 +67,23 @@ class GroupLogic:
 
         if all_paths:
             self.add_files_to_groups(all_paths)
+
+    def _current_group_idx(self):
+        for i, (sig, _) in enumerate(self.group_bar.group_buttons):
+            if sig == self.current_sig:
+                return i
+        return None
+
+    def _on_prev_group(self):
+        idx = self._current_group_idx()
+        if idx is None or idx <= 0:
+            return
+        self.group_bar.set_checked(idx - 1)
+        self._on_group_change_idx(idx - 1)
+
+    def _on_next_group(self):
+        idx = self._current_group_idx()
+        if idx is None or idx >= len(self.group_bar.group_buttons) - 1:
+            return
+        self.group_bar.set_checked(idx + 1)
+        self._on_group_change_idx(idx + 1)

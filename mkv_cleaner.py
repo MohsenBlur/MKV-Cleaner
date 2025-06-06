@@ -5,11 +5,18 @@ randomized modern style and opens the main window. Run the ``mkv-cleaner``
 console script or execute this module directly to launch the application.
 """
 
+import sys
+import random
+
+from core.bootstrap import ensure_python_package
+
+ensure_python_package('PySide6')
+if sys.version_info < (3, 11):
+    ensure_python_package('tomli')
+
 from gui.main_window import MainWindow
 from gui.widgets.fast_tooltip_style import FastToolTipStyle
 from PySide6.QtWidgets import QApplication
-import sys
-import random
 
 def set_dynamic_modern_style(app: QApplication) -> None:
     """Apply a dark theme with a random accent color to ``app``."""

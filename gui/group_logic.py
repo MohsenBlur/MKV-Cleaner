@@ -8,6 +8,8 @@ class GroupLogic:
         self.groups = {}  # {sig: [Track]}
         self.file_groups = {}  # {sig: [Path]}
         self.current_sig = None
+        if hasattr(self, "file_list"):
+            self.file_list.clear()
 
 
     def _on_group_button_clicked(self, btn):
@@ -24,9 +26,13 @@ class GroupLogic:
         if sig is None:
             self.current_sig = None
             self.track_table.table_model.update_tracks([])
+            if hasattr(self, "file_list"):
+                self.file_list.update_files([])
             return
         self.current_sig = sig
         self.track_table.table_model.update_tracks(self.groups[sig])
+        if hasattr(self, "file_list"):
+            self.file_list.update_files(self.file_groups.get(sig, []))
 
     def add_files_to_groups(self, paths):
         for p in paths:
@@ -43,6 +49,8 @@ class GroupLogic:
             self.file_groups[sig].append(Path(p))
             filestr = "\n".join(str(x.name) for x in self.file_groups[sig])
             self.group_bar.update_button_tooltip(sig, filestr)
+            if sig == self.current_sig and hasattr(self, "file_list"):
+                self.file_list.update_files(self.file_groups[sig])
         if self.group_bar.group_buttons:
             self.group_bar.set_checked(0)
             self._on_group_change_idx(0)
@@ -58,6 +66,8 @@ class GroupLogic:
         self.current_sig = None
         self.group_bar.clear()
         self.track_table.table_model.update_tracks([])
+        if hasattr(self, "file_list"):
+            self.file_list.update_files([])
 
         if all_paths:
             self.add_files_to_groups(all_paths)

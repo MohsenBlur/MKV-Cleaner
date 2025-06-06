@@ -11,6 +11,7 @@ import os
 from gui.widgets.group_bar import GroupBar
 from gui.widgets.action_bar import ActionBar
 from gui.widgets.track_table import TrackTable
+from gui.widgets.file_list import FileList
 
 from .settings_logic import SettingsLogic
 from .group_logic import GroupLogic
@@ -30,6 +31,7 @@ class MainWindow(QMainWindow, SettingsLogic, GroupLogic, TableLogic, ActionsLogi
         self.group_bar = GroupBar(self)
         self.action_bar = ActionBar(self)
         self.track_table = TrackTable(self)
+        self.file_list = FileList(self)
         self.status_bar = QStatusBar(self)
         self.status_bar.setSizeGripEnabled(False)
 
@@ -38,6 +40,7 @@ class MainWindow(QMainWindow, SettingsLogic, GroupLogic, TableLogic, ActionsLogi
         main_vbox.setSpacing(0)
         main_vbox.addWidget(self.group_bar)
         main_vbox.addWidget(self.track_table)
+        main_vbox.addWidget(self.file_list)
         main_vbox.addWidget(self.status_bar)
         main_vbox.addWidget(self.action_bar)
 

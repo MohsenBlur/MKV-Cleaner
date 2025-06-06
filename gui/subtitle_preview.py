@@ -83,6 +83,7 @@ def ass_to_html(raw, font_size: int = 13):
     lines = raw.splitlines()
     html = []
     section = None
+    small = max(font_size - 2, 8)
     for line in lines:
         lstripped = line.lstrip()
         if lstripped.startswith("[") and lstripped.endswith("]"):

@@ -1,7 +1,6 @@
 
 from PySide6.QtWidgets import QTableView, QHeaderView, QAbstractScrollArea
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QFontMetrics
 from gui.models import TrackTableModel
 from .keep_toggle_delegate import KeepToggleDelegate
 
@@ -37,25 +36,15 @@ class TrackTable(QTableView):
             prev_type = track.type
 
     def adjust_column_widths(self):
-        """Distribute available width between columns based on average content size."""
-        fm = QFontMetrics(self.font())
+        """Divide the available width evenly across all columns."""
         cols = self.table_model.columnCount()
-        rows = self.table_model.rowCount()
-        averages = []
-        for c in range(cols):
-            total = fm.horizontalAdvance(str(self.table_model.headerData(c, Qt.Horizontal)))
-            for r in range(rows):
-                idx = self.table_model.index(r, c)
-                data = self.table_model.data(idx, Qt.DisplayRole) or ""
-                total += fm.horizontalAdvance(str(data))
-            averages.append(total / max(rows + 1, 1))
-        total_avg = sum(averages)
-        if not total_avg:
+        if cols == 0:
             return
         width = self.viewport().width()
-        for c, avg in enumerate(averages):
-            w = int(width * avg / total_avg)
-            self.setColumnWidth(c, w)
+        base = width // cols
+        for c in range(cols - 1):
+            self.setColumnWidth(c, base)
+        self.setColumnWidth(cols - 1, width - base * (cols - 1))
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

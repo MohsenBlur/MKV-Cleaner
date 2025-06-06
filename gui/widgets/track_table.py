@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QTableView, QHeaderView
+from PySide6.QtWidgets import QTableView, QHeaderView, QAbstractScrollArea
 from PySide6.QtCore import Qt
 from gui.models import TrackTableModel
 from .keep_toggle_delegate import KeepToggleDelegate
@@ -10,11 +10,14 @@ class TrackTable(QTableView):
         self.setModel(self.table_model)
         header = self.horizontalHeader()
         header.setDefaultAlignment(Qt.AlignCenter)
-        # keep the table from stretching past the last column
+        # ensure the table width matches the column widths
         header.setStretchLastSection(False)
+        header.setSectionResizeMode(QHeaderView.ResizeToContents)
         # match the name column width with the rest
         header.setSectionResizeMode(7, QHeaderView.Fixed)
         self.setColumnWidth(7, header.defaultSectionSize())
+        self.resizeColumnsToContents()
+        self.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.setItemDelegateForColumn(0, KeepToggleDelegate(self))
         self.setMouseTracking(True)
         # Adjust row spacing whenever the model resets

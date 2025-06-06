@@ -42,15 +42,34 @@ class TrackTable(QTableView):
         self.adjust_table_height()
 
     def adjust_column_widths(self):
-        """Divide the available width evenly across all columns."""
+        """Distribute space while keeping certain columns fixed."""
         cols = self.table_model.columnCount()
         if cols == 0:
             return
-        width = self.viewport().width()
-        base = width // cols
-        for c in range(cols - 1):
+
+        header = self.horizontalHeader()
+
+        # Determine widths for ID, Forced and Default columns based on header text
+        fixed_cols = [1, 5, 6]
+        fixed_widths = {}
+        for c in fixed_cols:
+            text = self.table_model.headerData(c, Qt.Horizontal, Qt.DisplayRole)
+            fm = header.fontMetrics()
+            fixed_widths[c] = fm.horizontalAdvance(str(text)) + 20
+            self.setColumnWidth(c, fixed_widths[c])
+
+        total_fixed = sum(fixed_widths.values())
+        available = self.viewport().width() - total_fixed
+        if available < 0:
+            available = self.viewport().width()
+
+        remaining_cols = [c for c in range(cols) if c not in fixed_cols]
+        if not remaining_cols:
+            return
+        base = available // len(remaining_cols)
+        for c in remaining_cols[:-1]:
             self.setColumnWidth(c, base)
-        self.setColumnWidth(cols - 1, width - base * (cols - 1))
+        self.setColumnWidth(remaining_cols[-1], available - base * (len(remaining_cols) - 1))
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

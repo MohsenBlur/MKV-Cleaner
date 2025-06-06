@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QStyledItemDelegate, QStyle
+from PySide6.QtWidgets import QStyledItemDelegate, QStyle, QStyleOptionViewItem, QApplication
 from PySide6.QtGui import QColor
 from PySide6.QtCore import Qt, QEvent
 
@@ -13,18 +13,28 @@ class KeepToggleDelegate(QStyledItemDelegate):
         self.hover_color = QColor("#51a4fc")
 
     def paint(self, painter, option, index):
+        opt = QStyleOptionViewItem(option)
+        self.initStyleOption(opt, index)
+
         painter.save()
+        style = opt.widget.style() if opt.widget else QApplication.style()
+        style.drawPrimitive(QStyle.PE_PanelItemViewItem, opt, painter, opt.widget)
+
         state = index.data(Qt.CheckStateRole)
-        if option.state & QStyle.State_MouseOver:
-            color = self.hover_color
-        elif state == Qt.Checked:
-            color = self.checked_color
-        else:
-            color = self.unchecked_color
-        painter.fillRect(option.rect, color)
-        painter.setPen(Qt.white)
+
+        if not (opt.state & QStyle.State_Selected):
+            if opt.state & QStyle.State_MouseOver:
+                color = self.hover_color
+            elif state == Qt.Checked:
+                color = self.checked_color
+            else:
+                color = self.unchecked_color
+            painter.fillRect(opt.rect, color)
+
+        pen = opt.palette.highlightedText().color() if opt.state & QStyle.State_Selected else Qt.white
+        painter.setPen(pen)
         text = "Keep" if state == Qt.Checked else "Skip"
-        painter.drawText(option.rect, Qt.AlignCenter, text)
+        painter.drawText(opt.rect, Qt.AlignCenter, text)
         painter.restore()
 
     def editorEvent(self, event, model, option, index):

@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QStyledItemDelegate
+from PySide6.QtWidgets import QStyledItemDelegate, QStyleOptionViewItem, QStyle, QApplication
 from PySide6.QtCore import Qt, QRect
 
 class FlagDelegate(QStyledItemDelegate):
@@ -19,9 +19,16 @@ class FlagDelegate(QStyledItemDelegate):
             char = "🔊" if track.type == "audio" else "CC"
             cur = bool(index.data(model.DefaultRole))
             orig = bool(index.data(model.OrigDefaultRole))
+
+        opt = QStyleOptionViewItem(option)
+        self.initStyleOption(opt, index)
+
         painter.save()
-        rect = option.rect
-        color = option.palette.text().color()
+        style = opt.widget.style() if opt.widget else QApplication.style()
+        style.drawPrimitive(QStyle.PE_PanelItemViewItem, opt, painter, opt.widget)
+
+        rect = opt.rect
+        color = opt.palette.highlightedText().color() if opt.state & QStyle.State_Selected else opt.palette.text().color()
         faded_opacity = 0.3
         if cur and orig:
             half = rect.width() // 2

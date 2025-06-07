@@ -1,7 +1,9 @@
-from PySide6.QtCore import QMetaObject, Q_ARG, Qt
-from PySide6.QtWidgets import QMessageBox, QProgressDialog
+from PySide6.QtCore import QMetaObject, Q_ARG
+from PySide6.QtWidgets import QMessageBox
 from pathlib import Path
 import logging
+
+from .widgets.logo_splash import LogoSplash
 
 logger = logging.getLogger(__name__)
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -20,12 +22,6 @@ def process_files(
     """Process multiple files in parallel and report progress/errors in the GUI."""
     if parent is not None:
         parent.setEnabled(False)
-
-    progress = QProgressDialog("Processing files...", "Cancel", 0, len(jobs), parent)
-    progress.setWindowModality(Qt.ApplicationModal)
-    progress.setMinimumDuration(0)
-    progress.show()
-    progress.activateWindow()
 
     errors = []
     import threading
@@ -69,22 +65,11 @@ def process_files(
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = [executor.submit(process_one, src, tracks) for src, tracks in jobs]
-        processed = 0
         for fut in as_completed(futures):
             fut.result()
-            processed += 1
-            progress.setValue(processed)
-            if progress.wasCanceled():
-                executor.shutdown(wait=False, cancel_futures=True)
-                break
-
-    progress.close()
 
     if parent is not None:
         parent.setEnabled(True)
-
-    if progress.wasCanceled():
-        return
 
     if errors:
         msg = "\n".join([f"{f}: {err}" for f, err in errors])

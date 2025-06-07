@@ -140,4 +140,50 @@ class GroupLogic:
         if hasattr(self, "file_list"):
             self.file_list.update_files([])
         self.group_bar.update_button_tooltip(sig, "")
+        self._delete_group(sig)
+
+    def _delete_group(self, sig: str) -> None:
+        """Remove a group completely if it exists."""
+        if sig not in self.groups:
+            return
+        self.groups.pop(sig, None)
+        self.file_groups.pop(sig, None)
+        self.wipe_sub_state.pop(sig, None)
+
+        idx = None
+        for i, (s, btn) in enumerate(self.group_bar.group_buttons):
+            if s == sig:
+                idx = i
+                if hasattr(self.group_bar, "layout"):
+                    self.group_bar.layout.removeWidget(btn)
+                if hasattr(btn, "deleteLater"):
+                    btn.deleteLater()
+                if hasattr(self.group_bar, "button_group"):
+                    try:
+                        self.group_bar.button_group.removeButton(btn)
+                    except Exception:
+                        pass
+                self.group_bar.group_buttons.pop(i)
+                break
+
+        # Renumber remaining buttons
+        for j, (_, b) in enumerate(self.group_bar.group_buttons):
+            if hasattr(b, "setText"):
+                b.setText(str(j + 1))
+
+        if self.current_sig == sig:
+            self.current_sig = None
+            if self.group_bar.group_buttons:
+                new_idx = min(idx or 0, len(self.group_bar.group_buttons) - 1)
+                self.group_bar.set_checked(new_idx)
+                self._on_group_change_idx(new_idx)
+            else:
+                self.track_table.table_model.update_tracks([])
+                if hasattr(self, "file_list"):
+                    self.file_list.update_files([])
+                self.group_bar.update_nav_buttons(None)
+        else:
+            idx_cur = self._current_group_idx()
+            self.group_bar.update_nav_buttons(idx_cur)
+
         self._update_process_buttons()

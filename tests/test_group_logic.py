@@ -34,6 +34,12 @@ class DummyGroupBar:
         self.group_buttons.append((sig, btn))
         return btn
 
+    def remove_group_button(self, sig):
+        for i, (s, _) in enumerate(self.group_buttons):
+            if s == sig:
+                self.group_buttons.pop(i)
+                break
+
     def update_button_tooltip(self, sig, tooltip):
         pass
 
@@ -99,4 +105,7 @@ def test_empty_current_group():
 
     logic._empty_current_group()
 
-    assert logic.file_groups["sig1"] == []
+    assert "sig1" not in logic.file_groups
+    assert "sig1" not in logic.groups
+    assert logic.current_sig is None
+    assert not logic.group_bar.group_buttons

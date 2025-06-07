@@ -142,6 +142,18 @@ class GroupBar(QWidget):
         self.group_buttons.append((sig, btn))
         return btn
 
+    def remove_group_button(self, sig):
+        for i, (s, btn) in enumerate(self.group_buttons):
+            if s == sig:
+                self.layout.removeWidget(btn)
+                btn.deleteLater()
+                self.button_group.removeButton(btn)
+                self.group_buttons.pop(i)
+                break
+        for j, (_, b) in enumerate(self.group_buttons):
+            b.setText(str(j + 1))
+        self.update_nav_buttons(None)
+
     def update_button_tooltip(self, sig, tooltip):
         for s, b in self.group_buttons:
             if s == sig:

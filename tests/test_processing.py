@@ -5,29 +5,37 @@ from pathlib import Path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import types
-sys.modules['PySide6'] = types.ModuleType('PySide6')
-qtcore = types.ModuleType('PySide6.QtCore')
-qtcore.QMetaObject = type('QMetaObject', (), {'invokeMethod': lambda *a, **k: None})
-qtcore.Q_ARG = lambda typ, val: val
-qtcore.Qt = type('Qt', (), {'WindowModal': 0, 'ApplicationModal': 1, 'QueuedConnection': 0})
-sys.modules['PySide6.QtCore'] = qtcore
 
-qtwidgets = types.ModuleType('PySide6.QtWidgets')
+sys.modules["PySide6"] = types.ModuleType("PySide6")
+qtcore = types.ModuleType("PySide6.QtCore")
+qtcore.QMetaObject = type("QMetaObject", (), {"invokeMethod": lambda *a, **k: None})
+qtcore.Q_ARG = lambda typ, val: val
+qtcore.Qt = type(
+    "Qt", (), {"WindowModal": 0, "ApplicationModal": 1, "QueuedConnection": 0}
+)
+sys.modules["PySide6.QtCore"] = qtcore
+
+qtwidgets = types.ModuleType("PySide6.QtWidgets")
 qtwidgets.LogoSplash = object
 qtwidgets.QWidget = object
 qtwidgets.QLabel = object
 qtwidgets.QVBoxLayout = object
-qtwidgets.QMessageBox = type('QMessageBox', (), {
-    'warning': staticmethod(lambda *a, **k: None),
-    'information': staticmethod(lambda *a, **k: None),
-})
-sys.modules['PySide6.QtWidgets'] = qtwidgets
-qtgui = types.ModuleType('PySide6.QtGui')
+qtwidgets.QMessageBox = type(
+    "QMessageBox",
+    (),
+    {
+        "warning": staticmethod(lambda *a, **k: None),
+        "information": staticmethod(lambda *a, **k: None),
+    },
+)
+sys.modules["PySide6.QtWidgets"] = qtwidgets
+qtgui = types.ModuleType("PySide6.QtGui")
 qtgui.QPixmap = object
-sys.modules['PySide6.QtGui'] = qtgui
+sys.modules["PySide6.QtGui"] = qtgui
 
 import importlib
 import gui.processing as processing  # noqa: E402
+
 processing = importlib.reload(processing)
 
 
@@ -116,22 +124,26 @@ def test_cancel_shutdown(monkeypatch):
     def run_command(cmd, capture=True):
         commands.append((cmd, capture))
 
-    dlg = DummyDialog()
-
-    monkeypatch.setattr(processing, "LogoSplash", lambda *a, **kw: dlg)
-    monkeypatch.setattr(processing, "QMetaObject", type("_", (), {"invokeMethod": lambda *a: a[0].setValue(a[3])}))
-    monkeypatch.setattr(processing, "Q_ARG", lambda *a: a[1])
     exec_instance = DummyExecutor()
-    monkeypatch.setattr(processing, "ThreadPoolExecutor", lambda *a, **kw: exec_instance)
+    monkeypatch.setattr(
+        processing, "ThreadPoolExecutor", lambda *a, **kw: exec_instance
+    )
     monkeypatch.setattr(processing, "as_completed", dummy_as_completed)
 
-    processing.process_files(jobs, max_workers=2, query_tracks=query_tracks,
-                             build_cmd=build_cmd, run_command=run_command,
-                             output_dir="out", wipe_all_flag=False)
+    processing.process_files(
+        jobs,
+        max_workers=2,
+        query_tracks=query_tracks,
+        build_cmd=build_cmd,
+        run_command=run_command,
+        output_dir="out",
+        wipe_all_flag=False,
+    )
 
-    assert len(commands) == 1
+    assert len(commands) == 2
     assert commands[0][1] is False
-    assert exec_instance.shutdown_called.get("cancel_futures") is True
+    assert commands[1][1] is False
+    assert exec_instance.shutdown_called == {"wait": True, "cancel_futures": False}
 
 
 def test_output_dir_created(monkeypatch, tmp_path):
@@ -147,17 +159,10 @@ def test_output_dir_created(monkeypatch, tmp_path):
     def run_command(cmd, capture=True):
         commands.append((cmd, capture))
 
-    dlg = DummyDialog()
-
-    monkeypatch.setattr(processing, "LogoSplash", lambda *a, **kw: dlg)
-    monkeypatch.setattr(
-        processing,
-        "QMetaObject",
-        type("_", (), {"invokeMethod": lambda *a: a[0].setValue(a[3])}),
-    )
-    monkeypatch.setattr(processing, "Q_ARG", lambda *a: a[1])
     exec_instance = DummyExecutor()
-    monkeypatch.setattr(processing, "ThreadPoolExecutor", lambda *a, **kw: exec_instance)
+    monkeypatch.setattr(
+        processing, "ThreadPoolExecutor", lambda *a, **kw: exec_instance
+    )
     monkeypatch.setattr(processing, "as_completed", dummy_as_completed)
 
     processing.process_files(

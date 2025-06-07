@@ -41,6 +41,7 @@ class ActionsLogic:
                 tr.default_audio = False
         t.default_audio = True
         self.track_table.table_model.update_tracks(self.track_table.table_model.tracks)
+        self.track_table.selectRow(row)
         if hasattr(self, "status_bar"):
             msg = f"Default audio set to track {t.tid} ({t.language})"
             if t.name:
@@ -59,6 +60,7 @@ class ActionsLogic:
                 tr.default_subtitle = False
         t.default_subtitle = True
         self.track_table.table_model.update_tracks(self.track_table.table_model.tracks)
+        self.track_table.selectRow(row)
         if hasattr(self, "status_bar"):
             msg = f"Default subtitle set to track {t.tid} ({t.language})"
             if t.name:
@@ -82,6 +84,7 @@ class ActionsLogic:
             t.forced = False
             state = "disabled"
         self.track_table.table_model.update_tracks(self.track_table.table_model.tracks)
+        self.track_table.selectRow(row)
         if hasattr(self, "status_bar"):
             msg = f"Forced flag {state} on track {t.tid} ({t.language})"
             if t.name:
@@ -92,6 +95,8 @@ class ActionsLogic:
         sig = getattr(self, "current_sig", None)
         if sig is None:
             return
+
+        row = self._current_idx()
 
         btn = getattr(getattr(self, "action_bar", None), "btn_wipe_all", None)
         wiping = btn.isChecked() if btn is not None else True
@@ -120,6 +125,8 @@ class ActionsLogic:
             self.track_table.table_model.update_tracks(
                 self.track_table.table_model.tracks
             )
+            if row is not None:
+                self.track_table.selectRow(row)
             if hasattr(self, "status_bar"):
                 self.status_bar.showMessage(msg, 2000)
 

@@ -44,6 +44,10 @@ class DummyModel:
 class DummyTrackTable:
     def __init__(self, tracks):
         self.table_model = DummyModel(tracks)
+        self.selected = None
+
+    def selectRow(self, row):
+        self.selected = row
 
 class DummyButton:
     def __init__(self):
@@ -89,6 +93,31 @@ def test_only_one_forced_subtitle():
     actions.set_forced_subtitle()
     assert tracks[0].forced is False
     assert tracks[1].forced is False
+
+
+def test_selection_preserved_after_actions():
+    tracks = [
+        Track(idx=0, tid=1, type="subtitles", codec="srt", language="eng", forced=False, name="English"),
+        Track(idx=1, tid=2, type="subtitles", codec="srt", language="spa", forced=False, name="Spanish"),
+        Track(idx=2, tid=3, type="audio", codec="aac", language="eng", forced=False, name="Audio"),
+    ]
+    actions = DummyActions(tracks)
+
+    actions.cur_idx = 1
+    actions.set_default_subtitle()
+    assert actions.track_table.selected == 1
+
+    actions.set_forced_subtitle()
+    assert actions.track_table.selected == 1
+
+    actions.cur_idx = 2
+    actions.set_default_audio()
+    assert actions.track_table.selected == 2
+
+    actions.cur_idx = 1
+    actions.action_bar.btn_wipe_all.setChecked(True)
+    actions.wipe_all_subs()
+    assert actions.track_table.selected == 1
 
 
 def test_wipe_all_toggle_restores_tracks():

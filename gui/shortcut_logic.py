@@ -1,71 +1,110 @@
+from typing import Dict, List
 from PySide6.QtGui import QKeySequence, QShortcut
 from PySide6.QtCore import Qt
 
 
 class ShortcutLogic:
+    """Mixin that defines application keyboard shortcuts."""
+
+    hotkey_map: Dict[str, List[QShortcut]]
+
+    def _append_hotkey_tooltip(self, widget, shortcut: QShortcut) -> None:
+        """Add ``Hotkey: <keys>`` line to ``widget`` tooltip."""
+        if widget is None:
+            return
+        tip = widget.toolTip() or ""
+        seq = shortcut.key().toString(QKeySequence.NativeText)
+        if seq in tip:
+            return
+        if tip and not tip.endswith("\n"):
+            tip += "\n"
+        tip += f"Hotkey: {seq}"
+        widget.setToolTip(tip)
+
+    def _register_shortcut(self, name: str, shortcut: QShortcut, widget=None) -> None:
+        self.hotkey_map.setdefault(name, []).append(shortcut)
+        if widget is not None:
+            self._append_hotkey_tooltip(widget, shortcut)
+
     def _setup_shortcut_logic(self):
         """Create application shortcuts and connect them to actions."""
+        self.hotkey_map = {}
+
         # Navigate between groups
-        self.shortcut_next_group = QShortcut(QKeySequence("Ctrl+Tab"), self)
-        self.shortcut_next_group.setContext(Qt.ApplicationShortcut)
-        self.shortcut_next_group.activated.connect(
-            lambda: self._on_next_group(loop=True)
-        )
-        self.shortcut_prev_group = QShortcut(QKeySequence("Ctrl+Shift+Tab"), self)
-        self.shortcut_prev_group.setContext(Qt.ApplicationShortcut)
-        self.shortcut_prev_group.activated.connect(
-            lambda: self._on_prev_group(loop=True)
-        )
-        self.shortcut_prev_group_shift = QShortcut(QKeySequence("Shift+Tab"), self)
-        self.shortcut_prev_group_shift.setContext(Qt.ApplicationShortcut)
-        self.shortcut_prev_group_shift.activated.connect(
-            lambda: self._on_prev_group(loop=True)
-        )
+        sc = QShortcut(QKeySequence("Ctrl+Tab"), self)
+        sc.setContext(Qt.ApplicationShortcut)
+        sc.activated.connect(lambda: self._on_next_group(loop=True))
+        self._register_shortcut("Next group", sc)
+
+        sc = QShortcut(QKeySequence("Ctrl+Shift+Tab"), self)
+        sc.setContext(Qt.ApplicationShortcut)
+        sc.activated.connect(lambda: self._on_prev_group(loop=True))
+        self._register_shortcut("Previous group", sc)
+
+        sc = QShortcut(QKeySequence("Shift+Tab"), self)
+        sc.setContext(Qt.ApplicationShortcut)
+        sc.activated.connect(lambda: self._on_prev_group(loop=True))
+        self._register_shortcut("Previous group", sc)
 
         # Action bar shortcuts
         if hasattr(self, "action_bar"):
             ab = self.action_bar
+
             sc = QShortcut(QKeySequence("A"), self)
             sc.setContext(Qt.ApplicationShortcut)
             sc.activated.connect(ab.btn_def_audio.click)
+            self._register_shortcut("Default audio", sc, ab.btn_def_audio)
 
             sc = QShortcut(QKeySequence("S"), self)
             sc.setContext(Qt.ApplicationShortcut)
             sc.activated.connect(ab.btn_def_sub.click)
+            self._register_shortcut("Default subtitle", sc, ab.btn_def_sub)
 
             sc = QShortcut(QKeySequence("F"), self)
             sc.setContext(Qt.ApplicationShortcut)
             sc.activated.connect(ab.btn_forced.click)
+            self._register_shortcut("Set forced", sc, ab.btn_forced)
 
             sc = QShortcut(QKeySequence("W"), self)
             sc.setContext(Qt.ApplicationShortcut)
             sc.activated.connect(lambda: ab.btn_wipe_all.isEnabled() and ab.btn_wipe_all.click())
+            self._register_shortcut("Wipe all subtitles", sc, ab.btn_wipe_all)
 
             sc = QShortcut(QKeySequence("O"), self)
             sc.setContext(Qt.ApplicationShortcut)
             sc.activated.connect(lambda: ab.btn_open_files.isEnabled() and ab.btn_open_files.click())
+            self._register_shortcut("Open files", sc, ab.btn_open_files)
 
             sc = QShortcut(QKeySequence("Ctrl+O"), self)
             sc.setContext(Qt.ApplicationShortcut)
             sc.activated.connect(lambda: ab.btn_open_files.isEnabled() and ab.btn_open_files.click())
+            self._register_shortcut("Open files", sc, ab.btn_open_files)
 
             if hasattr(self.group_bar, "btn_process_group"):
                 sc = QShortcut(QKeySequence("Ctrl+G"), self)
                 sc.setContext(Qt.ApplicationShortcut)
                 sc.activated.connect(lambda: self.group_bar.btn_process_group.isEnabled() and self.group_bar.btn_process_group.click())
+                self._register_shortcut("Process group", sc, self.group_bar.btn_process_group)
 
             if hasattr(self.group_bar, "btn_process_all"):
                 sc = QShortcut(QKeySequence("Ctrl+Return"), self)
                 sc.setContext(Qt.ApplicationShortcut)
                 sc.activated.connect(lambda: self.group_bar.btn_process_all.isEnabled() and self.group_bar.btn_process_all.click())
+                self._register_shortcut("Process all", sc, self.group_bar.btn_process_all)
 
             sc = QShortcut(QKeySequence(Qt.Key_Escape), self)
             sc.setContext(Qt.ApplicationShortcut)
             sc.activated.connect(self._open_preferences)
+            # preferences button is on group bar
+            if hasattr(self, "group_bar"):
+                self._register_shortcut("Preferences", sc, self.group_bar.btn_prefs)
+            else:
+                self._register_shortcut("Preferences", sc)
 
             sc = QShortcut(QKeySequence("P"), self)
             sc.setContext(Qt.ApplicationShortcut)
             sc.activated.connect(ab.btn_preview.click)
+            self._register_shortcut("Preview subtitle", sc, ab.btn_preview)
 
         # Number keys for selecting groups
         if hasattr(self, "group_bar"):
@@ -73,6 +112,7 @@ class ShortcutLogic:
                 sc = QShortcut(QKeySequence(str(i)), self)
                 sc.setContext(Qt.ApplicationShortcut)
                 sc.activated.connect(lambda i=i: self._activate_group_index(i - 1))
+                self._register_shortcut(f"Select group {i}", sc)
 
         # Toggle keep/skip on the selected track
         if hasattr(self, "track_table"):
@@ -80,6 +120,7 @@ class ShortcutLogic:
             sc.setContext(Qt.WidgetWithChildrenShortcut)
             sc.activated.connect(self._toggle_keep_selected)
             self.shortcut_toggle_keep = sc
+            self._register_shortcut("Toggle keep track", sc)
 
     def _toggle_keep_selected(self):
         row = self._current_idx()

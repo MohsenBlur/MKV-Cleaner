@@ -9,8 +9,23 @@ from PySide6.QtWidgets import (
     QWidget,
     QHBoxLayout,
     QComboBox,
+    QLabel,
 )
 from PySide6.QtCore import QSettings
+from PySide6.QtGui import QKeySequence
+
+
+class HotkeysDialog(QDialog):
+    def __init__(self, hotkeys: dict[str, list[str]], parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Hotkeys")
+        layout = QFormLayout(self)
+        for name, seqs in hotkeys.items():
+            label = QLabel(", ".join(seqs), self)
+            layout.addRow(f"{name}:", label)
+        btn = QDialogButtonBox(QDialogButtonBox.Close, parent=self)
+        btn.rejected.connect(self.reject)
+        layout.addRow(btn)
 
 class PreferencesDialog(QDialog):
     def __init__(self, parent=None):
@@ -77,6 +92,10 @@ class PreferencesDialog(QDialog):
         self.accent_edit.setText(self.settings.value("accent_color", ""))
         layout.addRow("Accent color:", self.accent_edit)
 
+        self.btn_hotkeys = QPushButton("Hotkeys", self)
+        self.btn_hotkeys.clicked.connect(self._open_hotkeys)
+        layout.addRow(self.btn_hotkeys)
+
         self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, parent=self)
         self.buttons.accepted.connect(self.accept)
         self.buttons.rejected.connect(self.reject)
@@ -109,3 +128,13 @@ class PreferencesDialog(QDialog):
         )
         self.settings.setValue("accent_color", self.accent_edit.text())
         super().accept()
+
+    def _open_hotkeys(self) -> None:
+        parent = self.parent()
+        hotkeys = {}
+        if parent is not None and hasattr(parent, "hotkey_map"):
+            for name, shortcuts in parent.hotkey_map.items():
+                seqs = [sc.key().toString(QKeySequence.NativeText) for sc in shortcuts]
+                hotkeys[name] = seqs
+        dlg = HotkeysDialog(hotkeys, self)
+        dlg.exec()

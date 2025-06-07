@@ -84,8 +84,8 @@ class GroupBar(QWidget):
         self.btn_groups.clicked.connect(self._open_drawer)
         self.layout.addWidget(self.btn_groups, alignment=Qt.AlignVCenter)
 
-        # Use plain arrow characters so they are visible without color emoji support
-        self.btn_prev = QPushButton("⬅")
+        # Use emoji arrows now that we bundle NotoColorEmoji for consistent color
+        self.btn_prev = QPushButton("⬅️")
         self.btn_prev.setCheckable(False)
         self.btn_prev.setMinimumSize(QSize(32, 40))
         self.btn_prev.setMaximumSize(QSize(32, 44))
@@ -108,7 +108,7 @@ class GroupBar(QWidget):
         self.group_btns_layout.setContentsMargins(0, 0, 0, 0)
         self.group_btns_layout.setSpacing(6)
 
-        self.btn_next = QPushButton("➡")
+        self.btn_next = QPushButton("➡️")
         self.btn_next.setCheckable(False)
         self.btn_next.setMinimumSize(QSize(32, 40))
         self.btn_next.setMaximumSize(QSize(32, 44))

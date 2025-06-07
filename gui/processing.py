@@ -72,16 +72,6 @@ def process_files(
 
             helper = _DialogHelper()
 
-            if (
-                parent is not None
-                and hasattr(helper, "moveToThread")
-                and hasattr(parent, "thread")
-            ):
-                try:
-                    helper.moveToThread(parent.thread())
-                except Exception:
-                    pass
-
             try:
                 res = QMetaObject.invokeMethod(
                     helper, "ask", Qt.BlockingQueuedConnection, Q_ARG(str, msg)

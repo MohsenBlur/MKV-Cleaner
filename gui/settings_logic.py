@@ -1,6 +1,7 @@
 from PySide6.QtCore import QSettings
 from gui.dialogs import PreferencesDialog
 from core.config import load_config, AppConfig
+from gui.theme import FONT_SIZES
 
 class SettingsLogic:
     def _setup_settings_logic(self):

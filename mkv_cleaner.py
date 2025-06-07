@@ -21,18 +21,12 @@ from pathlib import Path
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QFont, QFontDatabase
 from PySide6.QtCore import QSettings, QTimer, QPropertyAnimation, QAbstractAnimation
+from gui.theme import COLORS, FONT_SIZES, ACCENT_OPTIONS
 
 
 def set_dynamic_modern_style(app: QApplication) -> None:
     """Apply a dark theme with an accent color to ``app``."""
-    accents = [
-        "#429aff",  # blue
-        "#30d0c6",  # teal
-        "#ab47bc",  # purple
-        "#ffa726",  # orange
-        "#6fc3df",  # light blue/teal
-        "#ff79c6",  # pink/magenta
-    ]
+    accents = ACCENT_OPTIONS
     settings = QSettings("MKVToolsCorp", "MKVCleaner")
     accent = settings.value("accent_color", "")
     if not accent:
@@ -41,24 +35,24 @@ def set_dynamic_modern_style(app: QApplication) -> None:
     app.setStyleSheet(
         f"""
         QMainWindow, QWidget {{
-            background-color: #181a20;
-            color: #d2e0f0;
+            background-color: {COLORS['bg_main']};
+            color: {COLORS['text_main']};
             font-family: 'Segoe UI', 'Noto Color Emoji';
         }}
         QTableView {{
-            background: #22242a;
-            alternate-background-color: #252b33;
-            color: #d0e8f7;
-            gridline-color: #34394c;
+            background: {COLORS['table_bg']};
+            alternate-background-color: {COLORS['table_alt_bg']};
+            color: {COLORS['table_text']};
+            gridline-color: {COLORS['gridline']};
             /* highlight rows via borders, not filled background */
             selection-background-color: transparent;
-            selection-color: #fff;
+            selection-color: {COLORS['white']};
             font-family: 'Segoe UI', 'Noto Color Emoji';
-            font-size: 16px;
+            font-size: {FONT_SIZES['default']}px;
         }}
         QTableView::item {{
             border-right: none;
-            border-bottom: 1px solid #34394c;
+            border-bottom: 1px solid {COLORS['gridline']};
         }}
         QTableView::item:selected {{
             /* highlight row with accent color */
@@ -71,48 +65,48 @@ def set_dynamic_modern_style(app: QApplication) -> None:
             outline: none;
         }}
         QHeaderView::section {{
-            background-color: #232a34;
-            color: #8fdfff;
+            background-color: {COLORS['header_bg']};
+            color: {COLORS['header_text']};
             border-bottom: 2px solid {accent}88;
             font-weight: bold;
             font-family: 'Segoe UI', 'Noto Color Emoji';
-            font-size: 16px;
+            font-size: {FONT_SIZES['default']}px;
         }}
         QPushButton {{
-            background: #262e36;
-            color: #bddcff;
+            background: {COLORS['btn_bg']};
+            color: {COLORS['btn_text']};
             border-radius: 8px;
-            border: 2px solid #344b60;
+            border: 2px solid {COLORS['btn_border']};
             padding: 5px 16px;
-            font-size: 15px;
+            font-size: {FONT_SIZES['medium']}px;
             font-family: 'Segoe UI', 'Noto Color Emoji';
         }}
         QPushButton:hover {{
             background: {accent}55;
-            color: #fff;
+            color: {COLORS['white']};
             border: 2px solid {accent};
         }}
         QPushButton:checked, QPushButton:default {{
             background: {accent};
-            color: #fff;
-            border: 2px solid #39aacc;
+            color: {COLORS['white']};
+            border: 2px solid {COLORS['checked_border']};
         }}
         QLineEdit, QComboBox, QSpinBox {{
-            background: #1e232c;
-            color: #b5e3ff;
+            background: {COLORS['input_bg']};
+            color: {COLORS['input_text']};
             border-radius: 6px;
-            border: 1.5px solid #2d3c4c;
+            border: 1.5px solid {COLORS['input_border']};
             font-family: 'Segoe UI', 'Noto Color Emoji';
         }}
         QToolTip {{
-            background: #2a4154;
-            color: #fff;
+            background: {COLORS['tooltip_bg']};
+            color: {COLORS['white']};
             border: 1px solid {accent};
             font-family: 'Segoe UI', 'Noto Color Emoji';
         }}
         /* GroupBar specific: */
         #GroupBar QLabel {{
-            color: #fff;
+            color: {COLORS['white']};
         }}
     """
     )

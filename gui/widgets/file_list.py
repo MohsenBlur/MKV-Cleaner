@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QListWidget, QListWidgetItem, QListView
 from PySide6.QtCore import Qt
+from ..theme import FONT_SIZES
 import re
 
 
@@ -28,7 +29,9 @@ class FileList(QListWidget):
                 display = p.stem
             item = QListWidgetItem(display)
             # Show full filename in a larger font inside the tooltip
-            item.setToolTip(f"<span style='font-size:16px'>{p.name}</span>")
+            item.setToolTip(
+                f"<span style='font-size:{FONT_SIZES['default']}px'>{p.name}</span>"
+            )
             self.addItem(item)
 
         self._update_height()

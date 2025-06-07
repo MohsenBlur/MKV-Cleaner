@@ -8,6 +8,7 @@ from PySide6.QtWidgets import (
 )
 from .widgets.fade_disabled import apply_fade_on_disable
 from PySide6.QtCore import QSettings
+from .theme import COLORS, FONT_SIZES
 from pathlib import Path
 import tempfile
 import re
@@ -55,23 +56,23 @@ def srt_to_html(raw, font_size: int = 13):
         html = []
         if re.match(r"^\d+$", lines[0]):
             html.append(
-                f"<span style='font-weight:bold;color:#fa4;'>{lines[0]}</span><br>"
+                f"<span style='font-weight:bold;color:{COLORS['text_em']};'>{lines[0]}</span><br>"
             )
             lines = lines[1:]
         if lines and re.match(r"^\d{2}:\d{2}:\d{2},\d{3} -->", lines[0]):
             html.append(
-                f"<span style='color:#4bc;font-weight:bold'>{lines[0]}</span><br>"
+                f"<span style='color:{COLORS['text_teal']};font-weight:bold'>{lines[0]}</span><br>"
             )
             lines = lines[1:]
         for line in lines:
             line = re.sub(r"^<i>(.*?)</i>$", r"<i>\1</i>", line)
-            html.append(f"<span style='color:#fff'>{line}</span>")
+            html.append(f"<span style='color:{COLORS['white']}'>{line}</span>")
         html_blocks.append(
             "<div style='margin-bottom:10px'>" + "".join(html) + "</div>"
         )
     return (
         f"<div style='font-family:Consolas,monospace;font-size:{font_size}px;"
-        "background:#20232b;padding:16px 20px;color:#fff;"
+        f"background:{COLORS['preview_bg']};padding:16px 20px;color:{COLORS['white']};"
         " border-radius:8px;line-height:1.7;'>"
         + "".join(html_blocks)
         + "</div>"
@@ -91,21 +92,21 @@ def ass_to_html(raw, font_size: int = 13):
             section = lstripped
             html.append(
                 "<div style='margin-top:10px;margin-bottom:2px;'><span style='"
-                "font-weight:bold; color:#4bc;'>"
+                f"font-weight:bold; color:{COLORS['text_teal']};'>"
                 f"{section}</span></div>"
             )
             continue
         if lstripped.startswith("Format:"):
             small = max(font_size - 2, 8)
             html.append(
-                f"<div style='color:#888; font-size:{small}px; margin-bottom:2px;'>"
+                f"<div style='color:{COLORS['text_dim']}; font-size:{small}px; margin-bottom:2px;'>"
                 f"{lstripped}</div>"
             )
             continue
         if lstripped.startswith("Style:"):
             small = max(font_size - 2, 8)
             html.append(
-                f"<div style='color:#aaa; font-size:{small}px; margin-bottom:2px;'>"
+                f"<div style='color:{COLORS['text_muted']}; font-size:{small}px; margin-bottom:2px;'>"
                 f"{lstripped}</div>"
             )
             continue
@@ -120,26 +121,26 @@ def ass_to_html(raw, font_size: int = 13):
                 text = text.replace(r"\N", "<br>")
                 html.append(
                     f"<div style='margin-bottom:10px;'>"
-                    f"<span style='font-weight:bold; color:#fa4; font-size:{font_size}px;'>"
+                    f"<span style='font-weight:bold; color:{COLORS['text_em']}; font-size:{font_size}px;'>"
                     f"{start}</span> "
-                    f"<span style='font-weight:normal; color:#4bc;'>&rarr; {end}</span>"
+                    f"<span style='font-weight:normal; color:{COLORS['text_teal']}'>&rarr; {end}</span>"
                     + (
-                        f" <span style='color:#888; font-size:{small}px;'>[{actor}]</span>"
+                        f" <span style='color:{COLORS['text_dim']}; font-size:{small}px;'>[{actor}]</span>"
                         if actor.strip()
                         else ""
                     )
-                    + f"<br><span style='color:#fff;'>{text}</span></div>"
+                    + f"<br><span style='color:{COLORS['white']};'>{text}</span></div>"
                 )
             else:
-                html.append(f"<div style='color:#fff'>{lstripped}</div>")
+                html.append(f"<div style='color:{COLORS['white']}'>{lstripped}</div>")
             continue
         if section:
-            html.append(f"<div style='color:#aaa; font-size:{small}px;'>{lstripped}</div>")
+            html.append(f"<div style='color:{COLORS['text_muted']}; font-size:{small}px;'>{lstripped}</div>")
         else:
-            html.append(f"<div style='color:#fff'>{lstripped}</div>")
+            html.append(f"<div style='color:{COLORS['white']}'>{lstripped}</div>")
     return (
         f"<div style='font-family:Consolas,monospace;font-size:{font_size}px;"
-        "background:#20232b;padding:16px 20px;color:#fff;"
+        f"background:{COLORS['preview_bg']};padding:16px 20px;color:{COLORS['white']};"
         " border-radius:8px;line-height:1.7;'>"
         + "".join(html)
         + "</div>"

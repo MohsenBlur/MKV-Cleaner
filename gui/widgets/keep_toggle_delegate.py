@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QStyledItemDelegate, QStyle, QStyleOptionViewItem, QApplication
 from PySide6.QtGui import QColor
 from PySide6.QtCore import Qt, QEvent
+from ..theme import COLORS
 
 
 class KeepToggleDelegate(QStyledItemDelegate):
@@ -8,9 +9,9 @@ class KeepToggleDelegate(QStyledItemDelegate):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.checked_color = QColor("#3584e4")
-        self.unchecked_color = QColor("#2a2c34")
-        self.hover_color = QColor("#51a4fc")
+        self.checked_color = QColor(COLORS['accent'])
+        self.unchecked_color = QColor(COLORS['background'])
+        self.hover_color = QColor(COLORS['hover'])
 
     def paint(self, painter, option, index):
         opt = QStyleOptionViewItem(option)

@@ -25,6 +25,7 @@ qtcore.QSettings = object
 sys.modules['PySide6.QtCore'] = qtcore
 
 from gui.subtitle_preview import srt_to_html, ass_to_html, peek_subtitle
+from gui.theme import COLORS
 
 
 def test_srt_to_html_basic():
@@ -39,12 +40,14 @@ def test_srt_to_html_basic():
         "Bye"
     )
     html = srt_to_html(raw, font_size=13)
-    assert "<span style='font-weight:bold;color:#fa4;'>1</span><br>" in html
     assert (
-        "<span style='color:#4bc;font-weight:bold'>00:00:01,000 --> 00:00:04,000</span><br>"
+        f"<span style='font-weight:bold;color:{COLORS['text_em']};'>1</span><br>" in html
+    )
+    assert (
+        f"<span style='color:{COLORS['text_teal']};font-weight:bold'>00:00:01,000 --> 00:00:04,000</span><br>"
         in html
     )
-    assert "<span style='color:#fff'><i>World</i></span>" in html
+    assert f"<span style='color:{COLORS['white']}'><i>World</i></span>" in html
     assert html.count("margin-bottom:10px") == 2
 
 
@@ -58,8 +61,12 @@ def test_ass_to_html_basic():
         "Dialogue: 0,0:00:05.00,0:00:06.00,Default,John,0,0,0,,{\\i1}World{\\i0}\\NLine2"
     )
     html = ass_to_html(raw, font_size=13)
-    assert "<span style='font-weight:bold; color:#4bc;'>[Script Info]</span>" in html
-    assert "<div style='color:#aaa; font-size:11px;'>Title: Example</div>" in html
+    assert (
+        f"<span style='font-weight:bold; color:{COLORS['text_teal']};'>[Script Info]</span>" in html
+    )
+    assert (
+        f"<div style='color:{COLORS['text_muted']}; font-size:11px;'>Title: Example</div>" in html
+    )
     assert "&rarr; 0:00:04.00" in html
     assert "[John]</span>" in html
     assert "<i>World</i><br>Line2" in html

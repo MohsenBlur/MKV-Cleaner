@@ -1,5 +1,6 @@
 from PySide6.QtCore import QAbstractTableModel, Qt, QModelIndex
 from PySide6.QtGui import QColor
+from .theme import COLORS
 from core.tracks import Track
 from core.flags import lang_to_flag
 
@@ -13,14 +14,14 @@ class TrackTableModel(QAbstractTableModel):
     def __init__(self, tracks: list[Track] | None = None):
         super().__init__()
         self.tracks: list[Track] = tracks or []
-        self._change_tint = QColor("#3584e4")
+        self._change_tint = QColor(COLORS['accent'])
         self._change_tint.setAlpha(40)
-        self._remove_tint = QColor("#c75f5f")
+        self._remove_tint = QColor(COLORS['remove_tint'])
         self._remove_tint.setAlpha(40)
         self._type_colors = {
-            "video": QColor("#4e9a06"),
-            "audio": QColor("#3465a4"),
-            "subtitles": QColor("#c17d11"),
+            "video": QColor(COLORS['video_tint']),
+            "audio": QColor(COLORS['audio_tint']),
+            "subtitles": QColor(COLORS['sub_tint']),
         }
         for col in self._type_colors.values():
             col.setAlpha(40)
@@ -67,7 +68,7 @@ class TrackTableModel(QAbstractTableModel):
             ):
                 return self._change_tint
         if role == Qt.ForegroundRole and getattr(t, "removed", False):
-            col = QColor("#888888")
+            col = QColor(COLORS['line_fg'])
             return col
         if role == Qt.ToolTipRole:
             if c == 0:

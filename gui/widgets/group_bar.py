@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QSize, Signal, QPoint
 
 from .fade_disabled import apply_fade_on_disable
+from ..theme import COLORS, FONT_SIZES
 
 
 class GroupDrawer(QDialog):
@@ -24,8 +25,8 @@ class GroupDrawer(QDialog):
         self.setObjectName("GroupDrawer")
         self.setStyleSheet(
             "#GroupDrawer {"
-            " background: #20222a;"
-            " border: 2px solid #333;"
+            f" background: {COLORS['background_dark']};"
+            f" border: 2px solid {COLORS['border_dark']};"
             " border-radius: 8px;"
             " }"
         )
@@ -74,8 +75,8 @@ class GroupBar(QWidget):
         self.btn_groups.setMinimumHeight(38)
         self.btn_groups.setMinimumWidth(110)
         self.btn_groups.setStyleSheet(
-            "QPushButton { font-weight: 500; font-size: 14px;"
-            " border-radius: 8px; padding: 5px 10px; }"
+            f"QPushButton {{ font-weight: 500; font-size: {FONT_SIZES['small']}px;"
+            " border-radius: 8px; padding: 5px 10px; }}"
         )
         apply_fade_on_disable(self.btn_groups)
         self.btn_groups.setToolTip(
@@ -91,9 +92,9 @@ class GroupBar(QWidget):
         self.btn_prev.setMaximumSize(QSize(32, 44))
         self.btn_prev.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.btn_prev.setStyleSheet(
-            "QPushButton {font-size: 18px; border-radius: 8px; border: 2px solid #ccc;"
-            " background: #2a2c34; color: #b9d4ff;}"
-            "QPushButton:hover {background: #51a4fc;}"
+            f"QPushButton {{font-size: {FONT_SIZES['xlarge']}px; border-radius: 8px; border: 2px solid {COLORS['border_light']};"
+            f" background: {COLORS['background']}; color: {COLORS['text_primary']};}}"
+            f"QPushButton:hover {{background: {COLORS['hover']};}}"
         )
         apply_fade_on_disable(self.btn_prev)
         self.btn_prev.setToolTip(
@@ -114,9 +115,9 @@ class GroupBar(QWidget):
         self.btn_next.setMaximumSize(QSize(32, 44))
         self.btn_next.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.btn_next.setStyleSheet(
-            "QPushButton {font-size: 18px; border-radius: 8px; border: 2px solid #ccc;"
-            " background: #2a2c34; color: #b9d4ff;}"
-            "QPushButton:hover {background: #51a4fc;}"
+            f"QPushButton {{font-size: {FONT_SIZES['xlarge']}px; border-radius: 8px; border: 2px solid {COLORS['border_light']};"
+            f" background: {COLORS['background']}; color: {COLORS['text_primary']};}}"
+            f"QPushButton:hover {{background: {COLORS['hover']};}}"
         )
         apply_fade_on_disable(self.btn_next)
         self.btn_next.setToolTip(
@@ -157,8 +158,8 @@ class GroupBar(QWidget):
             btn.setMinimumHeight(38)
             btn.setMinimumWidth(110)
             btn.setStyleSheet(
-                "QPushButton { font-weight: 500; font-size: 14px;" +
-                " border-radius: 8px; padding: 5px 10px; }"
+                f"QPushButton {{ font-weight: 500; font-size: {FONT_SIZES['small']}px;" +
+                " border-radius: 8px; padding: 5px 10px; }}"
             )
             apply_fade_on_disable(btn)
             self.right_layout.addWidget(btn)
@@ -171,7 +172,9 @@ class GroupBar(QWidget):
         )
         self.backend_combo.currentTextChanged.connect(self.backendChanged.emit)
         self.backend_combo.setMinimumHeight(38)
-        self.backend_combo.setStyleSheet("QComboBox { font-size: 14px; }")
+        self.backend_combo.setStyleSheet(
+            f"QComboBox {{ font-size: {FONT_SIZES['small']}px; }}"
+        )
         self.right_layout.addWidget(self.backend_combo)
 
         self.btn_prefs = QPushButton("⚙️")
@@ -181,10 +184,10 @@ class GroupBar(QWidget):
             "Open the preferences window to change paths, fonts and other options."
         )
         self.btn_prefs.setStyleSheet(
-            "QPushButton { font-size: 19px; border-radius: 8px; background: #20222a;"
-            " color: #ccc; border: 2px solid #333; padding: 0; }"
-            "QPushButton:hover { background: #363947; color: #fff;"
-            " border: 2px solid #555; }"
+            f"QPushButton {{ font-size: {FONT_SIZES['xxlarge']}px; border-radius: 8px; background: {COLORS['background_dark']};"
+            f" color: {COLORS['border_light']}; border: 2px solid {COLORS['border_dark']}; padding: 0; }}"
+            f"QPushButton:hover {{ background: {COLORS['background_hover']}; color: {COLORS['white']};"
+            f" border: 2px solid {COLORS['border_hover']}; }}"
         )
         apply_fade_on_disable(self.btn_prefs)
         self.right_layout.addWidget(self.btn_prefs)
@@ -222,11 +225,11 @@ class GroupBar(QWidget):
         btn.setMaximumSize(QSize(48, 44))
         btn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         btn.setStyleSheet(
-            "QPushButton {font-weight: bold; font-size: 17px; border-radius: 8px;"
-            " border: 2px solid #ccc; background: #2a2c34; color: #b9d4ff;}"
-            "QPushButton:checked {background: #3584e4; color: white;"
-            " border: 2px solid #1c71d8;}"
-            "QPushButton:hover {background: #51a4fc;}"
+            f"QPushButton {{font-weight: bold; font-size: {FONT_SIZES['large']}px; border-radius: 8px;"
+            f" border: 2px solid {COLORS['border_light']}; background: {COLORS['background']}; color: {COLORS['text_primary']};}}"
+            f"QPushButton:checked {{background: {COLORS['accent']}; color: {COLORS['white']};"
+            f" border: 2px solid {COLORS['check_border']};}}"
+            f"QPushButton:hover {{background: {COLORS['hover']};}}"
         )
         apply_fade_on_disable(btn)
         if tooltip:

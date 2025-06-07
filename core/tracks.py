@@ -54,7 +54,8 @@ def run_command(cmd: list[str], capture: bool = True) -> subprocess.CompletedPro
         logger.error(msg)
         raise CommandNotFoundError(msg) from exc
     except subprocess.CalledProcessError as exc:
-        logger.error("Command failed: %s\n%s", exc, exc.stderr)
+        err_msg = exc.stderr or ""
+        logger.error("Command failed: %s\n%s", exc, err_msg)
         raise
 
 def query_tracks(source: Path, cfg: AppConfig) -> List[Track]:

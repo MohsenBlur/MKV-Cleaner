@@ -1,3 +1,5 @@
+"""Mixin for loading, storing and editing application preferences."""
+
 from PySide6.QtCore import QSettings
 from gui.dialogs import PreferencesDialog
 from core.config import load_config, AppConfig

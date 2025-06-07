@@ -1,3 +1,5 @@
+"""Widget containing the main action buttons used by the application."""
+
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton
 from PySide6.QtCore import Qt
 
@@ -5,6 +7,7 @@ from .fade_disabled import apply_fade_on_disable
 
 
 class ActionBar(QWidget):
+    """Horizontal bar exposing file and processing actions as buttons."""
     def __init__(self, parent=None):
         super().__init__(parent)
         self._setup_ui()

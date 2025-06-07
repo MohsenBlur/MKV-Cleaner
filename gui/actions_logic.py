@@ -1,3 +1,5 @@
+"""Mixin implementing handlers for the action bar buttons."""
+
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMessageBox
 from core.tracks import query_tracks, build_cmd, run_command

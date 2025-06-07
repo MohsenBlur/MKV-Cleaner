@@ -1,3 +1,5 @@
+"""Small dialog windows used throughout the GUI."""
+
 from PySide6.QtWidgets import (
     QDialog,
     QFormLayout,
@@ -16,6 +18,7 @@ from PySide6.QtGui import QKeySequence
 
 
 class HotkeysDialog(QDialog):
+    """Display a list of configured keyboard shortcuts."""
     def __init__(self, hotkeys: dict[str, list[str]], parent=None):
         super().__init__(parent)
         self.setWindowTitle("Hotkeys")
@@ -28,6 +31,7 @@ class HotkeysDialog(QDialog):
         layout.addRow(btn)
 
 class PreferencesDialog(QDialog):
+    """Dialog for editing application preferences like backend and paths."""
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Preferences")

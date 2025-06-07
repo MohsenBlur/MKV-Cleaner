@@ -1,3 +1,5 @@
+"""Utilities and window for previewing subtitles extracted from files."""
+
 from PySide6.QtWidgets import (
     QMainWindow,
     QTextEdit,

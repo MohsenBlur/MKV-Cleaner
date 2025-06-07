@@ -1,3 +1,5 @@
+"""Mixin with helper methods for interacting with the track table."""
+
 from PySide6.QtCore import Qt
 
 class TableLogic:

@@ -1,3 +1,5 @@
+"""Mixin containing logic for grouping and navigating multiple files."""
+
 from pathlib import Path
 import copy
 from core.tracks import query_tracks

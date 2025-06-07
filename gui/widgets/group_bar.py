@@ -1,3 +1,5 @@
+"""Top bar widget for navigating and processing groups of files."""
+
 from PySide6.QtWidgets import (
     QWidget,
     QHBoxLayout,
@@ -13,6 +15,7 @@ from .fade_disabled import apply_fade_on_disable
 
 
 class GroupBar(QWidget):
+    """Navigation bar listing groups and exposing processing controls."""
     preferencesClicked = Signal()
     backendChanged = Signal(str)
     prevClicked = Signal()

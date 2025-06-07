@@ -1,3 +1,5 @@
+"""Functions for running file processing jobs with a progress dialog."""
+
 from PySide6.QtCore import QMetaObject, Q_ARG
 from PySide6.QtWidgets import QMessageBox
 from pathlib import Path

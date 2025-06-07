@@ -1,3 +1,5 @@
+"""Main application window assembling all GUI widgets and logic."""
+
 from PySide6.QtWidgets import (
     QMainWindow,
     QVBoxLayout,

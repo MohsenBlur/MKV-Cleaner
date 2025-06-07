@@ -1,3 +1,5 @@
+"""Utility to fade widgets whenever they become disabled."""
+
 try:
     from PySide6.QtWidgets import QGraphicsOpacityEffect
     from PySide6.QtCore import QObject, QEvent

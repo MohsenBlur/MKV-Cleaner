@@ -1,3 +1,5 @@
+"""Delegate drawing a toggle button for keeping or removing a track."""
+
 from PySide6.QtWidgets import QStyledItemDelegate, QStyle, QStyleOptionViewItem, QApplication
 from PySide6.QtGui import QColor
 from PySide6.QtCore import Qt, QEvent

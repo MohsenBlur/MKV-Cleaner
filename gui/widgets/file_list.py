@@ -1,3 +1,5 @@
+"""List widget that displays input files for the selected group."""
+
 from PySide6.QtWidgets import QListWidget, QListWidgetItem, QListView
 from PySide6.QtCore import Qt
 import re

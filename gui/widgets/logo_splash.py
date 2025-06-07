@@ -1,3 +1,5 @@
+"""Splash screen displaying the application logo during start-up."""
+
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QSplashScreen

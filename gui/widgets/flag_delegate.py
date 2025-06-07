@@ -1,3 +1,5 @@
+"""Item delegate that paints flag icons for forced/default states."""
+
 from PySide6.QtWidgets import QStyledItemDelegate, QStyleOptionViewItem, QStyle, QApplication
 from PySide6.QtCore import Qt, QRect
 

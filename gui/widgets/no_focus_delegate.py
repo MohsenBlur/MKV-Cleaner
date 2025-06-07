@@ -1,3 +1,5 @@
+"""Item delegate that hides focus highlighting for cleaner look."""
+
 from PySide6.QtWidgets import (
     QStyledItemDelegate,
     QStyleOptionViewItem,

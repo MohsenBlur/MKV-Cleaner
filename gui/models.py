@@ -1,3 +1,5 @@
+"""Qt table models representing MKV track information."""
+
 from PySide6.QtCore import QAbstractTableModel, Qt, QModelIndex
 from PySide6.QtGui import QColor
 from core.tracks import Track

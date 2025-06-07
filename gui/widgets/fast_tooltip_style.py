@@ -1,3 +1,5 @@
+"""Proxy style that displays tooltips almost immediately."""
+
 from PySide6.QtWidgets import QProxyStyle, QStyle
 
 

@@ -1,3 +1,4 @@
+"""Table view displaying track metadata with custom delegates."""
 
 from PySide6.QtWidgets import (
     QTableView,
@@ -12,6 +13,7 @@ from .flag_delegate import FlagDelegate
 from .no_focus_delegate import NoFocusDelegate
 
 class TrackTable(QTableView):
+    """Table listing tracks with delegates for editing flags and states."""
     def __init__(self, parent=None):
         super().__init__(parent)
         self.table_model = TrackTableModel()

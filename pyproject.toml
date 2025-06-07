@@ -19,6 +19,7 @@ py-modules = ["mkv_cleaner"]
 
 [tool.setuptools.data-files]
 "fonts" = ["fonts/*"]
+"" = ["MKV-Cleaner_logo.png"]
 
 [tool.setuptools.packages.find]
 where = ["."]

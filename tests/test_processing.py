@@ -13,12 +13,18 @@ qtcore.Qt = type('Qt', (), {'WindowModal': 0, 'ApplicationModal': 1, 'QueuedConn
 sys.modules['PySide6.QtCore'] = qtcore
 
 qtwidgets = types.ModuleType('PySide6.QtWidgets')
-qtwidgets.QProgressDialog = object
+qtwidgets.LogoSplash = object
+qtwidgets.QWidget = object
+qtwidgets.QLabel = object
+qtwidgets.QVBoxLayout = object
 qtwidgets.QMessageBox = type('QMessageBox', (), {
     'warning': staticmethod(lambda *a, **k: None),
     'information': staticmethod(lambda *a, **k: None),
 })
 sys.modules['PySide6.QtWidgets'] = qtwidgets
+qtgui = types.ModuleType('PySide6.QtGui')
+qtgui.QPixmap = object
+sys.modules['PySide6.QtGui'] = qtgui
 
 import importlib
 import gui.processing as processing  # noqa: E402
@@ -112,7 +118,7 @@ def test_cancel_shutdown(monkeypatch):
 
     dlg = DummyDialog()
 
-    monkeypatch.setattr(processing, "QProgressDialog", lambda *a, **kw: dlg)
+    monkeypatch.setattr(processing, "LogoSplash", lambda *a, **kw: dlg)
     monkeypatch.setattr(processing, "QMetaObject", type("_", (), {"invokeMethod": lambda *a: a[0].setValue(a[3])}))
     monkeypatch.setattr(processing, "Q_ARG", lambda *a: a[1])
     exec_instance = DummyExecutor()
@@ -143,7 +149,7 @@ def test_output_dir_created(monkeypatch, tmp_path):
 
     dlg = DummyDialog()
 
-    monkeypatch.setattr(processing, "QProgressDialog", lambda *a, **kw: dlg)
+    monkeypatch.setattr(processing, "LogoSplash", lambda *a, **kw: dlg)
     monkeypatch.setattr(
         processing,
         "QMetaObject",

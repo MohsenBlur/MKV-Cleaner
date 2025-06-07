@@ -17,10 +17,13 @@ qtwidgets.QMessageBox = type('QMessageBox', (), {
 # Additional classes used by subtitle_preview imports
 for cls in (
     'QMainWindow', 'QTextEdit', 'QHBoxLayout', 'QVBoxLayout',
-    'QWidget', 'QPushButton', 'QProgressDialog'
+    'QWidget', 'QPushButton', 'QLabel', 'LogoSplash'
 ):
     setattr(qtwidgets, cls, object)
 sys.modules['PySide6.QtWidgets'] = qtwidgets
+qtgui = types.ModuleType('PySide6.QtGui')
+qtgui.QPixmap = object
+sys.modules['PySide6.QtGui'] = qtgui
 
 from gui.actions_logic import ActionsLogic
 from core.tracks import Track

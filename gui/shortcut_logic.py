@@ -14,11 +14,12 @@ class ShortcutLogic:
             return
         tip = widget.toolTip() or ""
         seq = shortcut.key().toString(QKeySequence.NativeText)
-        if seq in tip:
+        hotkey_line = f"Hotkey: {seq}"
+        if hotkey_line in tip:
             return
         if tip and not tip.endswith("\n"):
             tip += "\n"
-        tip += f"Hotkey: {seq}"
+        tip += hotkey_line
         widget.setToolTip(tip)
 
     def _register_shortcut(self, name: str, shortcut: QShortcut, widget=None) -> None:

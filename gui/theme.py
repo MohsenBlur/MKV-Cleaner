@@ -3,6 +3,7 @@ COLORS = {
     'hover': '#51a4fc',
     'background': '#2a2c34',
     'background_dark': '#20222a',
+    'background_hover': '#262830',
     'border_light': '#ccc',
     'border_dark': '#333',
     'border_hover': '#555',

@@ -170,7 +170,8 @@ class GroupBar(QWidget):
             "Choose which program is used for cleaning: MKVToolNix or FFmpeg."
         )
         self.backend_combo.currentTextChanged.connect(self.backendChanged.emit)
-        self.backend_combo.setFixedHeight(32)
+        self.backend_combo.setMinimumHeight(38)
+        self.backend_combo.setStyleSheet("QComboBox { font-size: 14px; }")
         self.right_layout.addWidget(self.backend_combo)
 
         self.btn_prefs = QPushButton("⚙️")

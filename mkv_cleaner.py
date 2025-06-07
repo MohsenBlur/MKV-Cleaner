@@ -139,12 +139,12 @@ def main() -> None:
     # Show tooltips faster than the Qt default
     app.setStyle(FastToolTipStyle(app.style()))
     set_dynamic_modern_style(app)
+    splash = LogoSplash()
+    splash.show()
+    app.processEvents()
     win = MainWindow()
     win.show()
-    splash = LogoSplash(win)
-    splash.show()
-    splash.raise_()
-    QTimer.singleShot(1000, splash.close)
+    QTimer.singleShot(1000, lambda: splash.finish(win))
     sys.exit(app.exec())
 
 

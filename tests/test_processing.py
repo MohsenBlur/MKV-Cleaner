@@ -17,6 +17,7 @@ sys.modules["PySide6.QtCore"] = qtcore
 
 qtwidgets = types.ModuleType("PySide6.QtWidgets")
 qtwidgets.LogoSplash = object
+qtwidgets.QSplashScreen = object
 qtwidgets.QWidget = object
 qtwidgets.QLabel = object
 qtwidgets.QVBoxLayout = object

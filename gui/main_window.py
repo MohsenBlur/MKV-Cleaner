@@ -6,7 +6,6 @@ from PySide6.QtWidgets import (
     QStatusBar,
 )
 from PySide6.QtCore import QSettings, Qt
-from PySide6.QtGui import QKeySequence, QShortcut
 import os
 
 from gui.widgets.group_bar import GroupBar
@@ -18,9 +17,10 @@ from .settings_logic import SettingsLogic
 from .group_logic import GroupLogic
 from .table_logic import TableLogic
 from .actions_logic import ActionsLogic
+from .shortcut_logic import ShortcutLogic
 
 
-class MainWindow(QMainWindow, SettingsLogic, GroupLogic, TableLogic, ActionsLogic):
+class MainWindow(QMainWindow, SettingsLogic, GroupLogic, TableLogic, ActionsLogic, ShortcutLogic):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("MKV Cleaner")
@@ -49,22 +49,7 @@ class MainWindow(QMainWindow, SettingsLogic, GroupLogic, TableLogic, ActionsLogi
         container.setLayout(main_vbox)
         self.setCentralWidget(container)
 
-        # Keyboard shortcuts for cycling through groups
-        self.shortcut_next_group = QShortcut(QKeySequence("Ctrl+Tab"), self)
-        self.shortcut_next_group.setContext(Qt.ApplicationShortcut)
-        self.shortcut_next_group.activated.connect(
-            lambda: self._on_next_group(loop=True)
-        )
-        self.shortcut_prev_group = QShortcut(QKeySequence("Ctrl+Shift+Tab"), self)
-        self.shortcut_prev_group.setContext(Qt.ApplicationShortcut)
-        self.shortcut_prev_group.activated.connect(
-            lambda: self._on_prev_group(loop=True)
-        )
-        self.shortcut_prev_group_shift = QShortcut(QKeySequence("Shift+Tab"), self)
-        self.shortcut_prev_group_shift.setContext(Qt.ApplicationShortcut)
-        self.shortcut_prev_group_shift.activated.connect(
-            lambda: self._on_prev_group(loop=True)
-        )
+
 
         self.group_bar.preferencesClicked.connect(self._open_preferences)
         self._setup_all_logic()
@@ -75,6 +60,7 @@ class MainWindow(QMainWindow, SettingsLogic, GroupLogic, TableLogic, ActionsLogi
         self._setup_group_logic()
         self._setup_table_logic()
         self._setup_action_logic()
+        self._setup_shortcut_logic()
 
     def _adjust_window_width(self):
         """Shrink the window horizontally to the width required by the action bar."""

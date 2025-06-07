@@ -70,6 +70,8 @@ class TrackTableModel(QAbstractTableModel):
             col = QColor("#888888")
             return col
         if role == Qt.ToolTipRole:
+            if c == 0:
+                return "Click to keep this track or skip it when cleaning."
             if c == 5:
                 cur = getattr(t, "forced", False)
                 orig = getattr(t, "orig_forced", False)
@@ -152,6 +154,18 @@ class TrackTableModel(QAbstractTableModel):
                 ]
             if role == Qt.TextAlignmentRole:
                 return Qt.AlignCenter
+            if role == Qt.ToolTipRole:
+                tips = [
+                    "Toggle to keep or remove this track from the output file.",
+                    "Track number inside the original MKV file.",
+                    "Whether the track is video, audio or subtitles.",
+                    "The encoding format used for this track.",
+                    "Two-letter language code of the track, if present.",
+                    "Shows if a subtitle is marked as forced.",
+                    "Indicates which track will play automatically.",
+                    "Optional descriptive name of the track.",
+                ]
+                return tips[section]
         return super().headerData(section, orientation, role)
 
     def update_tracks(self, tracks):

@@ -44,6 +44,9 @@ class TrackTable(QTableView):
         # Initial width distribution
         self.adjust_column_widths()
         self.adjust_table_height()
+        self.setToolTip(
+            "Select a track here, then use the buttons below to set defaults or remove subtitles."
+        )
 
     def _apply_row_spacing(self):
         """Increase spacing between different track types."""

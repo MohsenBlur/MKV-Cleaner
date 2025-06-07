@@ -15,30 +15,36 @@ class ActionBar(QWidget):
         layout.setSpacing(8)
 
         self.btn_open_files = QPushButton("📂 Open Files...")
-        self.btn_open_files.setToolTip("Choose one or more MKV videos.")
+        self.btn_open_files.setToolTip(
+            "Load MKV files into the program so you can clean them."
+        )
 
         # Use ampersand to mark shortcut letters
         self.btn_def_audio = QPushButton("🔊 Default &Audio")
         self.btn_def_audio.setToolTip(
-            "Set which audio track should play by default."
+            "Pick an audio track in the list and mark it as the default track."
         )
 
         self.btn_def_sub = QPushButton("💬 Default &Subtitle")
         self.btn_def_sub.setToolTip(
-            "Set which subtitle track is shown automatically."
+            "Pick a subtitle track and make it show by default when the video plays."
         )
 
         self.btn_forced = QPushButton("🏳️‍🌈 Set &Forced")
         self.btn_forced.setToolTip(
-            "Mark selected subtitles as forced so players show them."
+            "Mark a subtitle track as forced so video players always display it."
         )
 
         self.btn_wipe_all = QPushButton("🧹 &Wipe All Subs")
-        self.btn_wipe_all.setToolTip("Remove every subtitle from these videos.")
+        self.btn_wipe_all.setToolTip(
+            "Toggle to remove all subtitle tracks from the cleaned videos."
+        )
         # Allow toggling so the state can be used when processing files
         self.btn_wipe_all.setCheckable(True)
         self.btn_preview = QPushButton("👁️ &Preview Subtitle")
-        self.btn_preview.setToolTip("Quickly check the subtitles before processing.")
+        self.btn_preview.setToolTip(
+            "Open a window to quickly view the subtitle text before cleaning."
+        )
 
 
         for btn in (

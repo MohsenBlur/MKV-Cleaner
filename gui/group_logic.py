@@ -7,6 +7,7 @@ class GroupLogic:
     def _setup_group_logic(self):
         self.groups = {}  # {sig: [Track]}
         self.file_groups = {}  # {sig: [Path]}
+        self.wipe_sub_state = {}
         self.current_sig = None
         if hasattr(self, "file_list"):
             self.file_list.clear()
@@ -76,6 +77,7 @@ class GroupLogic:
 
         self.groups.clear()
         self.file_groups.clear()
+        self.wipe_sub_state.clear()
         self.current_sig = None
         self.group_bar.clear()
         self.track_table.table_model.update_tracks([])

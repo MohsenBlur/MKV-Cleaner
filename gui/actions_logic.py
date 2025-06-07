@@ -89,15 +89,39 @@ class ActionsLogic:
             self.status_bar.showMessage(msg, 2000)
 
     def wipe_all_subs(self):
+        sig = getattr(self, "current_sig", None)
+        if sig is None:
+            return
+
+        btn = getattr(getattr(self, "action_bar", None), "btn_wipe_all", None)
+        wiping = btn.isChecked() if btn is not None else True
+
+        tracks = self.track_table.table_model.get_tracks()
         changed = False
-        for tr in self.track_table.table_model.get_tracks():
-            if tr.type == "subtitles" and not tr.removed:
-                tr.removed = True
-                changed = True
+
+        if wiping:
+            self.wipe_sub_state[sig] = [
+                t.tid for t in tracks if t.type == "subtitles" and not t.removed
+            ]
+            for tr in tracks:
+                if tr.type == "subtitles" and not tr.removed:
+                    tr.removed = True
+                    changed = True
+            msg = "All subtitles marked for removal"
+        else:
+            prev = self.wipe_sub_state.get(sig, [])
+            for tr in tracks:
+                if tr.type == "subtitles" and tr.tid in prev and tr.removed:
+                    tr.removed = False
+                    changed = True
+            msg = "Subtitle selections restored"
+
         if changed:
-            self.track_table.table_model.update_tracks(self.track_table.table_model.tracks)
+            self.track_table.table_model.update_tracks(
+                self.track_table.table_model.tracks
+            )
             if hasattr(self, "status_bar"):
-                self.status_bar.showMessage("All subtitles marked for removal", 2000)
+                self.status_bar.showMessage(msg, 2000)
 
     def preview_subtitle(self):
         row = self._current_idx()

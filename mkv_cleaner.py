@@ -20,7 +20,7 @@ from gui.widgets.logo_splash import LogoSplash
 from pathlib import Path
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QFont, QFontDatabase
-from PySide6.QtCore import QSettings, QTimer
+from PySide6.QtCore import QSettings, QTimer, QPropertyAnimation, QAbstractAnimation
 
 
 def set_dynamic_modern_style(app: QApplication) -> None:
@@ -144,7 +144,18 @@ def main() -> None:
     app.processEvents()
     win = MainWindow()
     win.show()
-    QTimer.singleShot(1000, lambda: splash.finish(win))
+
+    def fade_and_finish():
+        anim = QPropertyAnimation(splash, b"windowOpacity")
+        anim.setDuration(500)
+        anim.setStartValue(1.0)
+        anim.setEndValue(0.0)
+        anim.finished.connect(lambda: splash.finish(win))
+        anim.start(QAbstractAnimation.DeleteWhenStopped)
+        # keep reference so it doesn't get garbage collected
+        splash._fade_anim = anim
+
+    QTimer.singleShot(1000, fade_and_finish)
     sys.exit(app.exec())
 
 

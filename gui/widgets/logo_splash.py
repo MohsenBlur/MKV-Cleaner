@@ -14,6 +14,12 @@ class LogoSplash(QSplashScreen):
         # root where ``MKV-Cleaner_logo.png`` is located.
         pixmap_path = Path(__file__).resolve().parents[2] / "MKV-Cleaner_logo.png"
         pixmap = QPixmap(str(pixmap_path))
+        pixmap = pixmap.scaled(
+            pixmap.width() // 2,
+            pixmap.height() // 2,
+            Qt.KeepAspectRatio,
+            Qt.SmoothTransformation,
+        )
         if parent is not None:
             max_size = parent.size()
             if pixmap.width() > max_size.width() or pixmap.height() > max_size.height():

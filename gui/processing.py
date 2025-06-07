@@ -56,6 +56,18 @@ def process_files(
         )
         dst_dir.mkdir(parents=True, exist_ok=True)
         dst = dst_dir / src.name
+        if dst.exists() and parent is not None:
+            size_mb = dst.stat().st_size / (1024 * 1024)
+            msg = f"{dst} already exists ({size_mb:.1f} MB). Overwrite?"
+            res = QMessageBox.question(
+                parent,
+                "Overwrite File?",
+                msg,
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.No,
+            )
+            if res != QMessageBox.Yes:
+                return src
         cmd = build_cmd(
             src, dst, real_tracks, wipe_forced=False, wipe_all=wipe_all_flag
         )

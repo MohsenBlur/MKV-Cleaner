@@ -1,17 +1,43 @@
 from PySide6.QtCore import QMetaObject, Q_ARG, Qt
-from PySide6.QtWidgets import QProgressDialog, QMessageBox
+from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout, QMessageBox
+from pathlib import Path
 import logging
+
+
+class LogoSplash(QWidget):
+    """Simple splash screen showing the application logo."""
+
+    def __init__(self, parent=None):
+        super().__init__(None, Qt.FramelessWindowHint | Qt.SplashScreen)
+        pixmap = QPixmap(str(Path(__file__).resolve().parent.parent / "MKV-Cleaner_logo.png"))
+        if parent is not None:
+            max_size = parent.size()
+            if pixmap.width() > max_size.width() or pixmap.height() > max_size.height():
+                pixmap = pixmap.scaled(max_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        label = QLabel(self)
+        label.setPixmap(pixmap)
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(label)
+        self.setFixedSize(pixmap.size())
+        if parent is not None:
+            center = parent.geometry().center()
+            self.move(center.x() - self.width() // 2, center.y() - self.height() // 2)
+        self._canceled = False
+
+    def setValue(self, val):
+        pass  # kept for API compatibility
+
+    def wasCanceled(self):
+        return False
 
 logger = logging.getLogger(__name__)
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from pathlib import Path
 
 def process_files(jobs, max_workers, query_tracks, build_cmd, run_command, output_dir, wipe_all_flag, parent=None):
     """Process multiple files in parallel and report progress/errors in the GUI."""
-    dlg = QProgressDialog("Processing...", "Cancel", 0, len(jobs), parent)
-    dlg.setWindowModality(Qt.ApplicationModal)
-    dlg.setMinimumDuration(0)
-    dlg.setValue(0)
+    dlg = LogoSplash(parent)
     dlg.show()
     dlg.activateWindow()
     if parent is not None:

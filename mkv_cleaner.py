@@ -21,7 +21,7 @@ from pathlib import Path
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QFont, QFontDatabase
 from PySide6.QtCore import QSettings, QTimer, QPropertyAnimation, QAbstractAnimation
-from gui.theme import COLORS, FONT_SIZES, ACCENT_OPTIONS
+from gui.theme import COLORS, FONT_SIZES, ACCENT_OPTIONS, SIZES
 
 
 def set_dynamic_modern_style(app: QApplication) -> None:
@@ -75,9 +75,9 @@ def set_dynamic_modern_style(app: QApplication) -> None:
         QPushButton {{
             background: {COLORS['btn_bg']};
             color: {COLORS['btn_text']};
-            border-radius: 8px;
+            border-radius: {SIZES['border_radius']}px;
             border: 2px solid {COLORS['btn_border']};
-            padding: 5px 16px;
+            padding: {SIZES['button_padding_wide']};
             font-size: {FONT_SIZES['medium']}px;
             font-family: 'Segoe UI', 'Noto Color Emoji';
         }}
@@ -94,7 +94,7 @@ def set_dynamic_modern_style(app: QApplication) -> None:
         QLineEdit, QComboBox, QSpinBox {{
             background: {COLORS['input_bg']};
             color: {COLORS['input_text']};
-            border-radius: 6px;
+            border-radius: {SIZES['input_radius']}px;
             border: 1.5px solid {COLORS['input_border']};
             font-family: 'Segoe UI', 'Noto Color Emoji';
         }}

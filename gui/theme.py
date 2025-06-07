@@ -55,3 +55,29 @@ ACCENT_OPTIONS = [
     '#6fc3df',
     '#ff79c6',
 ]
+
+# Common sizing and spacing values shared across the UI.  Having them in
+# one place avoids magic numbers sprinkled throughout the widgets and makes
+# tweaking the look of the application easier.
+SIZES = {
+    'border_radius': 8,
+    # Standard button dimensions
+    'button_height': 38,
+    'button_min_width': 110,
+    # Padding used for most text buttons
+    'button_padding': '5px 10px',
+    # Padding for wider application buttons
+    'button_padding_wide': '5px 16px',
+    # Rounded corners for input fields
+    'input_radius': 6,
+    # Default margins/spacing for toolbars
+    'margin_h': 8,
+    'margin_v': 4,
+    'spacing': 8,
+    # Smaller spacing used for grouped buttons
+    'spacing_small': 6,
+    # Spacing for the main group bar layout
+    'spacing_wide': 14,
+    # Padding for popup dialogs such as the group drawer
+    'drawer_margin': 10,
+}

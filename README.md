@@ -33,6 +33,19 @@ The prebuilt bundles published in the GitHub releases already include PySide6
 and FFmpeg so no additional installation is required. Copies of their licenses
 are distributed alongside the bundle.
 
+## Installation
+
+Install MKV Cleaner with `pip` after cloning the repository:
+
+```bash
+pip install .
+```
+
+For development you can use an editable install:
+
+```bash
+pip install -e .
+```
 
 ## Usage
 

@@ -20,6 +20,15 @@ class GroupDrawer(QDialog):
     def __init__(self, bar: "GroupBar"):
         super().__init__(bar)
         self.setWindowFlags(Qt.Popup | Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_StyledBackground, True)
+        self.setObjectName("GroupDrawer")
+        self.setStyleSheet(
+            "#GroupDrawer {"
+            " background: #20222a;"
+            " border: 2px solid #333;"
+            " border-radius: 8px;"
+            " }"
+        )
         self.bar = bar
         layout = QGridLayout(self)
         layout.setContentsMargins(10, 10, 10, 10)

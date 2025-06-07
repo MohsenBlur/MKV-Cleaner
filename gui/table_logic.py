@@ -9,6 +9,7 @@ class TableLogic:
         self.track_table.table_model.modelReset.connect(
             lambda: self._on_selection_change(self.track_table.currentIndex(), None)
         )
+        self.track_table.doubleClicked.connect(self._on_table_double_clicked)
         self._on_selection_change(self.track_table.currentIndex(), None)
 
     def _on_table_clicked(self, index):
@@ -40,3 +41,10 @@ class TableLogic:
     def _current_idx(self):
         ci = self.track_table.currentIndex()
         return None if not ci.isValid() else ci.row()
+
+    def _on_table_double_clicked(self, index):
+        if not index.isValid():
+            return
+        t = self.track_table.table_model.track_at_row(index.row())
+        if t.type == "subtitles" and self.action_bar.btn_preview.isEnabled():
+            self.preview_subtitle()

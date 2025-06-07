@@ -39,13 +39,40 @@ class ShortcutLogic:
 
             sc = QShortcut(QKeySequence("W"), self)
             sc.setContext(Qt.ApplicationShortcut)
-            sc.activated.connect(
-                lambda: ab.btn_wipe_all.setChecked(not ab.btn_wipe_all.isChecked())
-            )
+            sc.activated.connect(lambda: ab.btn_wipe_all.isEnabled() and ab.btn_wipe_all.click())
+
+            sc = QShortcut(QKeySequence("O"), self)
+            sc.setContext(Qt.ApplicationShortcut)
+            sc.activated.connect(lambda: ab.btn_open_files.isEnabled() and ab.btn_open_files.click())
+
+            sc = QShortcut(QKeySequence("Ctrl+O"), self)
+            sc.setContext(Qt.ApplicationShortcut)
+            sc.activated.connect(lambda: ab.btn_open_files.isEnabled() and ab.btn_open_files.click())
+
+            if hasattr(self.group_bar, "btn_process_group"):
+                sc = QShortcut(QKeySequence("Ctrl+G"), self)
+                sc.setContext(Qt.ApplicationShortcut)
+                sc.activated.connect(lambda: self.group_bar.btn_process_group.isEnabled() and self.group_bar.btn_process_group.click())
+
+            if hasattr(self.group_bar, "btn_process_all"):
+                sc = QShortcut(QKeySequence("Ctrl+Return"), self)
+                sc.setContext(Qt.ApplicationShortcut)
+                sc.activated.connect(lambda: self.group_bar.btn_process_all.isEnabled() and self.group_bar.btn_process_all.click())
+
+            sc = QShortcut(QKeySequence(Qt.Key_Escape), self)
+            sc.setContext(Qt.ApplicationShortcut)
+            sc.activated.connect(self._open_preferences)
 
             sc = QShortcut(QKeySequence("P"), self)
             sc.setContext(Qt.ApplicationShortcut)
             sc.activated.connect(ab.btn_preview.click)
+
+        # Number keys for selecting groups
+        if hasattr(self, "group_bar"):
+            for i in range(1, 10):
+                sc = QShortcut(QKeySequence(str(i)), self)
+                sc.setContext(Qt.ApplicationShortcut)
+                sc.activated.connect(lambda i=i: self._activate_group_index(i - 1))
 
         # Toggle keep/skip on the selected track
         if hasattr(self, "track_table"):
@@ -63,3 +90,10 @@ class ShortcutLogic:
         state = model.data(idx, Qt.CheckStateRole)
         new_state = Qt.Unchecked if state == Qt.Checked else Qt.Checked
         model.setData(idx, new_state, Qt.CheckStateRole)
+
+    def _activate_group_index(self, idx: int) -> None:
+        if not hasattr(self, "group_bar"):
+            return
+        btn = self.group_bar.button_at(idx)
+        if btn and btn.isEnabled():
+            btn.click()

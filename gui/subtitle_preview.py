@@ -176,10 +176,10 @@ class SubtitlePreviewWindow(QMainWindow):
 
         self.txt = QTextEdit(readOnly=True)
         nav = QHBoxLayout()
-        self.prev = QPushButton("◀ Prev")
+        self.prev = QPushButton("◀️ Prev")
         apply_fade_on_disable(self.prev)
         self.prev.setToolTip("Show subtitles from the previous file in the group.")
-        self.nxt = QPushButton("Next ▶")
+        self.nxt = QPushButton("Next ▶️")
         apply_fade_on_disable(self.nxt)
         self.nxt.setToolTip("Show subtitles from the next file in the group.")
         nav.addWidget(self.prev)

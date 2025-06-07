@@ -1,6 +1,4 @@
 ![MKV-Cleaner logo](https://github.com/user-attachments/assets/12e97868-79b2-4dce-a4a4-e50df257e568)
-
-
 # MKV Cleaner
 
 MKV Cleaner is an easy-to-use GUI for tidying Matroska (`.mkv`) files. You can quickly remove unwanted audio or subtitle tracks, choose which track should be default or forced and even process many files at once.

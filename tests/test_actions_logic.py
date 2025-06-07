@@ -20,7 +20,6 @@ for cls in (
     'QWidget', 'QPushButton', 'QLabel', 'LogoSplash', 'QSplashScreen'
 ):
     setattr(qtwidgets, cls, object)
-qtwidgets.QProgressDialog = object
 sys.modules['PySide6.QtWidgets'] = qtwidgets
 qtgui = types.ModuleType('PySide6.QtGui')
 qtgui.QPixmap = object

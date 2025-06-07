@@ -41,7 +41,7 @@ def process_files(
                 return
 
         parent.setEnabled(False)
-    
+
     errors = []
     import threading
 

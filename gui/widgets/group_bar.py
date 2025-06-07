@@ -6,10 +6,36 @@ from PySide6.QtWidgets import (
     QButtonGroup,
     QSizePolicy,
     QComboBox,
+    QDialog,
+    QVBoxLayout,
 )
 from PySide6.QtCore import Qt, QSize, Signal
 
 from .fade_disabled import apply_fade_on_disable
+
+
+class GroupDrawer(QDialog):
+    """Popup dialog listing all group buttons."""
+
+    def __init__(self, bar: "GroupBar"):
+        super().__init__(bar)
+        self.setWindowFlags(Qt.Popup | Qt.FramelessWindowHint)
+        self.bar = bar
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(6)
+        for idx, (_, btn) in enumerate(bar.group_buttons):
+            b = QPushButton(btn.text(), self)
+            b.setFixedSize(btn.size())
+            b.setStyleSheet(btn.styleSheet())
+            b.clicked.connect(lambda checked=False, i=idx: self._choose(i))
+            layout.addWidget(b)
+
+    def _choose(self, idx: int):
+        btn = self.bar.button_at(idx)
+        if btn is not None:
+            btn.click()
+        self.accept()
 
 
 class GroupBar(QWidget):
@@ -30,10 +56,14 @@ class GroupBar(QWidget):
         self.layout.setContentsMargins(16, 4, 16, 4)
         self.layout.setSpacing(14)
 
-        self.group_label = QLabel("Groups")
+        self.group_label = QPushButton("Groups")
+        self.group_label.setCheckable(False)
+        self.group_label.setFlat(True)
         self.group_label.setStyleSheet(
-            "font-weight: bold; font-size: 17px; color: white; padding-right: 10px;"
+            "QPushButton {font-weight: bold; font-size: 17px; color: white; padding-right: 10px; border: none; background: transparent;}"
+            "QPushButton:hover {text-decoration: underline;}"
         )
+        self.group_label.clicked.connect(self._open_drawer)
         self.layout.addWidget(self.group_label, alignment=Qt.AlignVCenter)
 
         self.btn_prev = QPushButton("◀")
@@ -125,6 +155,14 @@ class GroupBar(QWidget):
         self.setLayout(self.layout)
         self.setFixedHeight(54)
 
+    def _open_drawer(self):
+        if len(self.group_buttons) <= 4:
+            return
+        dlg = GroupDrawer(self)
+        pos = self.mapToGlobal(self.group_label.geometry().bottomLeft())
+        dlg.move(pos)
+        dlg.exec()
+
     def set_backend(self, backend: str):
         """Update dropdown to reflect the selected backend."""
         if backend not in {"mkvtoolnix", "ffmpeg"}:
@@ -196,13 +234,31 @@ class GroupBar(QWidget):
         self.update_nav_buttons(None)
 
     def update_nav_buttons(self, current_idx: int | None):
-        """Show arrows when there are more than four groups and update their state."""
-        show_arrows = len(self.group_buttons) > 4
+        """Update arrow states and which group buttons are visible."""
+        total = len(self.group_buttons)
+        show_arrows = total > 4
         self.btn_prev.setVisible(show_arrows)
         self.btn_next.setVisible(show_arrows)
-        if not show_arrows:
+        self.group_label.setEnabled(show_arrows)
+
+        for _, b in self.group_buttons:
+            b.hide()
+
+        if total == 0:
             return
-        if current_idx is None:
-            current_idx = -1
-        self.btn_prev.setEnabled(current_idx > 0)
-        self.btn_next.setEnabled(current_idx < len(self.group_buttons) - 1)
+
+        if current_idx is None or current_idx < 0:
+            current_idx = 0
+
+        start = max(0, current_idx - 1)
+        end = start + 4
+        if end > total:
+            end = total
+            start = max(0, end - 4)
+
+        for i in range(start, end):
+            self.group_buttons[i][1].show()
+
+        if show_arrows:
+            self.btn_prev.setEnabled(current_idx > 0)
+            self.btn_next.setEnabled(current_idx < total - 1)

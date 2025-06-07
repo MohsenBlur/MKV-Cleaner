@@ -47,6 +47,9 @@ class GroupBar(QWidget):
             "QPushButton:hover {background: #51a4fc;}"
         )
         apply_fade_on_disable(self.btn_prev)
+        self.btn_prev.setToolTip(
+            "Go to the previous group of videos that share the same track layout."
+        )
         self.btn_prev.clicked.connect(lambda checked=False: self.prevClicked.emit())
         self.btn_prev.hide()
         self.layout.addWidget(self.btn_prev, alignment=Qt.AlignVCenter)
@@ -64,6 +67,9 @@ class GroupBar(QWidget):
             "QPushButton:hover {background: #51a4fc;}"
         )
         apply_fade_on_disable(self.btn_next)
+        self.btn_next.setToolTip(
+            "Go to the next group of videos that share the same track layout."
+        )
         self.btn_next.clicked.connect(lambda checked=False: self.nextClicked.emit())
         self.btn_next.hide()
         self.layout.addWidget(self.btn_next, alignment=Qt.AlignVCenter)
@@ -72,11 +78,13 @@ class GroupBar(QWidget):
 
         self.btn_process_group = QPushButton("📦 Process Group")
         self.btn_process_group.setToolTip(
-            "Apply cleaning to the current group only."
+            "Clean only the videos in the group that is currently selected."
         )
 
         self.btn_process_all = QPushButton("🚀 Process All")
-        self.btn_process_all.setToolTip("Clean all loaded groups of videos.")
+        self.btn_process_all.setToolTip(
+            "Clean every loaded group of videos in one go."
+        )
 
         for btn in (self.btn_process_group, self.btn_process_all):
             btn.setMinimumHeight(38)
@@ -91,7 +99,9 @@ class GroupBar(QWidget):
         self.backend_combo = QComboBox(self)
         self.backend_combo.addItems(["mkvtoolnix", "ffmpeg"])
         self.backend_combo.setCurrentText("ffmpeg")
-        self.backend_combo.setToolTip("Select backend")
+        self.backend_combo.setToolTip(
+            "Choose which program is used for cleaning: MKVToolNix or FFmpeg."
+        )
         self.backend_combo.currentTextChanged.connect(self.backendChanged.emit)
         self.backend_combo.setFixedHeight(32)
         self.layout.addWidget(self.backend_combo, alignment=Qt.AlignRight)
@@ -99,7 +109,9 @@ class GroupBar(QWidget):
         self.btn_prefs = QPushButton("⚙️")
         self.btn_prefs.setMinimumSize(QSize(44, 42))
         self.btn_prefs.setMaximumSize(QSize(44, 42))
-        self.btn_prefs.setToolTip("Preferences")
+        self.btn_prefs.setToolTip(
+            "Open the preferences window to change paths, fonts and other options."
+        )
         self.btn_prefs.setStyleSheet(
             "QPushButton { font-size: 19px; border-radius: 8px; background: #20222a;"
             " color: #ccc; border: 2px solid #333; padding: 0; }"

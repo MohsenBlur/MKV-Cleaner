@@ -9,7 +9,7 @@ sys.modules['PySide6'] = types.ModuleType('PySide6')
 qtcore = types.ModuleType('PySide6.QtCore')
 qtcore.QMetaObject = type('QMetaObject', (), {'invokeMethod': lambda *a, **k: None})
 qtcore.Q_ARG = lambda typ, val: val
-qtcore.Qt = type('Qt', (), {'WindowModal': 0, 'QueuedConnection': 0})
+qtcore.Qt = type('Qt', (), {'WindowModal': 0, 'ApplicationModal': 1, 'QueuedConnection': 0})
 sys.modules['PySide6.QtCore'] = qtcore
 
 qtwidgets = types.ModuleType('PySide6.QtWidgets')
@@ -20,7 +20,9 @@ qtwidgets.QMessageBox = type('QMessageBox', (), {
 })
 sys.modules['PySide6.QtWidgets'] = qtwidgets
 
+import importlib
 import gui.processing as processing  # noqa: E402
+processing = importlib.reload(processing)
 
 
 class DummyDialog:
@@ -43,6 +45,12 @@ class DummyDialog:
         return self._canceled
 
     def close(self):
+        pass
+
+    def show(self):
+        pass
+
+    def activateWindow(self):
         pass
 
 

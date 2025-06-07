@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QSize, Signal, QPoint
 
 from .fade_disabled import apply_fade_on_disable
-from ..theme import COLORS, FONT_SIZES
+from ..theme import COLORS, FONT_SIZES, SIZES
 
 
 class GroupDrawer(QDialog):
@@ -27,14 +27,15 @@ class GroupDrawer(QDialog):
             "#GroupDrawer {"
             f" background: {COLORS['background_dark']};"
             f" border: 2px solid {COLORS['border_dark']};"
-            " border-radius: 8px;"
+            f" border-radius: {SIZES['border_radius']}px;"
             " }"
         )
         self.bar = bar
         layout = QGridLayout(self)
-        layout.setContentsMargins(10, 10, 10, 10)
-        layout.setHorizontalSpacing(6)
-        layout.setVerticalSpacing(6)
+        margin = SIZES['drawer_margin']
+        layout.setContentsMargins(margin, margin, margin, margin)
+        layout.setHorizontalSpacing(SIZES['spacing_small'])
+        layout.setVerticalSpacing(SIZES['spacing_small'])
         for idx, (_, btn) in enumerate(bar.group_buttons):
             b = QPushButton(btn.text(), self)
             b.setFixedSize(btn.size())
@@ -67,16 +68,18 @@ class GroupBar(QWidget):
         self.layout = QHBoxLayout(self)
         # Match the left margin of the action bar so the Groups button lines up
         # with the Open Files button
-        self.layout.setContentsMargins(8, 4, 16, 4)
-        self.layout.setSpacing(14)
+        self.layout.setContentsMargins(
+            SIZES['margin_h'], SIZES['margin_v'], SIZES['margin_h'] * 2, SIZES['margin_v']
+        )
+        self.layout.setSpacing(SIZES['spacing_wide'])
 
         self.btn_groups = QPushButton("Groups")
         self.btn_groups.setCheckable(False)
-        self.btn_groups.setMinimumHeight(38)
-        self.btn_groups.setMinimumWidth(110)
+        self.btn_groups.setMinimumHeight(SIZES['button_height'])
+        self.btn_groups.setMinimumWidth(SIZES['button_min_width'])
         self.btn_groups.setStyleSheet(
             f"QPushButton {{ font-weight: 500; font-size: {FONT_SIZES['small']}px;"
-            " border-radius: 8px; padding: 5px 10px; }}"
+            f" border-radius: {SIZES['border_radius']}px; padding: {SIZES['button_padding']}; }}"
         )
         apply_fade_on_disable(self.btn_groups)
         self.btn_groups.setToolTip(
@@ -88,11 +91,11 @@ class GroupBar(QWidget):
         # Use emoji arrows now that we bundle NotoColorEmoji for consistent color
         self.btn_prev = QPushButton("⬅️")
         self.btn_prev.setCheckable(False)
-        self.btn_prev.setMinimumSize(QSize(32, 40))
-        self.btn_prev.setMaximumSize(QSize(32, 44))
+        self.btn_prev.setMinimumSize(QSize(32, SIZES['button_height']))
+        self.btn_prev.setMaximumSize(QSize(32, SIZES['button_height'] + 4))
         self.btn_prev.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.btn_prev.setStyleSheet(
-            f"QPushButton {{font-size: {FONT_SIZES['xlarge']}px; border-radius: 8px; border: 2px solid {COLORS['border_light']};"
+            f"QPushButton {{font-size: {FONT_SIZES['xlarge']}px; border-radius: {SIZES['border_radius']}px; border: 2px solid {COLORS['border_light']};"
             f" background: {COLORS['background']}; color: {COLORS['text_primary']};}}"
             f"QPushButton:hover {{background: {COLORS['hover']};}}"
         )
@@ -107,15 +110,15 @@ class GroupBar(QWidget):
         self.group_btn_container = QWidget(self)
         self.group_btns_layout = QHBoxLayout(self.group_btn_container)
         self.group_btns_layout.setContentsMargins(0, 0, 0, 0)
-        self.group_btns_layout.setSpacing(6)
+        self.group_btns_layout.setSpacing(SIZES['spacing_small'])
 
         self.btn_next = QPushButton("➡️")
         self.btn_next.setCheckable(False)
-        self.btn_next.setMinimumSize(QSize(32, 40))
-        self.btn_next.setMaximumSize(QSize(32, 44))
+        self.btn_next.setMinimumSize(QSize(32, SIZES['button_height']))
+        self.btn_next.setMaximumSize(QSize(32, SIZES['button_height'] + 4))
         self.btn_next.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.btn_next.setStyleSheet(
-            f"QPushButton {{font-size: {FONT_SIZES['xlarge']}px; border-radius: 8px; border: 2px solid {COLORS['border_light']};"
+            f"QPushButton {{font-size: {FONT_SIZES['xlarge']}px; border-radius: {SIZES['border_radius']}px; border: 2px solid {COLORS['border_light']};"
             f" background: {COLORS['background']}; color: {COLORS['text_primary']};}}"
             f"QPushButton:hover {{background: {COLORS['hover']};}}"
         )
@@ -130,7 +133,7 @@ class GroupBar(QWidget):
         # sub-layout that matches the spacing of the group buttons
         self.nav_layout = QHBoxLayout()
         self.nav_layout.setContentsMargins(0, 0, 0, 0)
-        self.nav_layout.setSpacing(6)
+        self.nav_layout.setSpacing(SIZES['spacing_small'])
         self.nav_layout.addWidget(self.btn_prev, alignment=Qt.AlignVCenter)
         self.nav_layout.addWidget(self.group_btn_container, alignment=Qt.AlignVCenter)
         self.nav_layout.addWidget(self.btn_next, alignment=Qt.AlignVCenter)
@@ -152,14 +155,14 @@ class GroupBar(QWidget):
         self.right_layout = QHBoxLayout()
         self.right_layout.setContentsMargins(0, 0, 0, 0)
         # Match the spacing used in ActionBar
-        self.right_layout.setSpacing(8)
+        self.right_layout.setSpacing(SIZES['spacing'])
 
         for btn in (self.btn_process_group, self.btn_process_all):
-            btn.setMinimumHeight(38)
-            btn.setMinimumWidth(110)
+            btn.setMinimumHeight(SIZES['button_height'])
+            btn.setMinimumWidth(SIZES['button_min_width'])
             btn.setStyleSheet(
-                f"QPushButton {{ font-weight: 500; font-size: {FONT_SIZES['small']}px;" +
-                " border-radius: 8px; padding: 5px 10px; }}"
+                f"QPushButton {{ font-weight: 500; font-size: {FONT_SIZES['small']}px;"
+                f" border-radius: {SIZES['border_radius']}px; padding: {SIZES['button_padding']}; }}"
             )
             apply_fade_on_disable(btn)
             self.right_layout.addWidget(btn)
@@ -171,20 +174,20 @@ class GroupBar(QWidget):
             "Choose which program is used for cleaning: MKVToolNix or FFmpeg."
         )
         self.backend_combo.currentTextChanged.connect(self.backendChanged.emit)
-        self.backend_combo.setMinimumHeight(38)
+        self.backend_combo.setMinimumHeight(SIZES['button_height'])
         self.backend_combo.setStyleSheet(
             f"QComboBox {{ font-size: {FONT_SIZES['small']}px; }}"
         )
         self.right_layout.addWidget(self.backend_combo)
 
         self.btn_prefs = QPushButton("⚙️")
-        self.btn_prefs.setMinimumSize(QSize(44, 42))
-        self.btn_prefs.setMaximumSize(QSize(44, 42))
+        self.btn_prefs.setMinimumSize(QSize(44, SIZES['button_height'] + 4))
+        self.btn_prefs.setMaximumSize(QSize(44, SIZES['button_height'] + 4))
         self.btn_prefs.setToolTip(
             "Open the preferences window to change paths, fonts and other options."
         )
         self.btn_prefs.setStyleSheet(
-            f"QPushButton {{ font-size: {FONT_SIZES['xxlarge']}px; border-radius: 8px; background: {COLORS['background_dark']};"
+            f"QPushButton {{ font-size: {FONT_SIZES['xxlarge']}px; border-radius: {SIZES['border_radius']}px; background: {COLORS['background_dark']};"
             f" color: {COLORS['border_light']}; border: 2px solid {COLORS['border_dark']}; padding: 0; }}"
             f"QPushButton:hover {{ background: {COLORS['background_hover']}; color: {COLORS['white']};"
             f" border: 2px solid {COLORS['border_hover']}; }}"
@@ -225,7 +228,7 @@ class GroupBar(QWidget):
         btn.setMaximumSize(QSize(48, 44))
         btn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         btn.setStyleSheet(
-            f"QPushButton {{font-weight: bold; font-size: {FONT_SIZES['large']}px; border-radius: 8px;"
+            f"QPushButton {{font-weight: bold; font-size: {FONT_SIZES['large']}px; border-radius: {SIZES['border_radius']}px;"
             f" border: 2px solid {COLORS['border_light']}; background: {COLORS['background']}; color: {COLORS['text_primary']};}}"
             f"QPushButton:checked {{background: {COLORS['accent']}; color: {COLORS['white']};"
             f" border: 2px solid {COLORS['check_border']};}}"

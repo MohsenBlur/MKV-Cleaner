@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton
 from PySide6.QtCore import Qt
-from ..theme import FONT_SIZES
+from ..theme import FONT_SIZES, SIZES
 
 from .fade_disabled import apply_fade_on_disable
 
@@ -12,8 +12,10 @@ class ActionBar(QWidget):
 
     def _setup_ui(self):
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(8, 4, 8, 4)
-        layout.setSpacing(8)
+        layout.setContentsMargins(
+            SIZES['margin_h'], SIZES['margin_v'], SIZES['margin_h'], SIZES['margin_v']
+        )
+        layout.setSpacing(SIZES['spacing'])
 
         self.btn_open_files = QPushButton("📂 Open Files...")
         self.btn_open_files.setToolTip(
@@ -56,12 +58,12 @@ class ActionBar(QWidget):
             self.btn_wipe_all,
             self.btn_preview,
         ):
-            btn.setMinimumHeight(38)
-            btn.setMinimumWidth(110)
+            btn.setMinimumHeight(SIZES['button_height'])
+            btn.setMinimumWidth(SIZES['button_min_width'])
             btn.setFocusPolicy(Qt.NoFocus)
             btn.setStyleSheet(
-                f"QPushButton {{ font-weight: 500; font-size: {FONT_SIZES['small']}px;" +
-                " border-radius: 8px; padding: 5px 10px; }}"
+                f"QPushButton {{ font-weight: 500; font-size: {FONT_SIZES['small']}px;"
+                f" border-radius: {SIZES['border_radius']}px; padding: {SIZES['button_padding']}; }}"
             )
             apply_fade_on_disable(btn)
             layout.addWidget(btn)

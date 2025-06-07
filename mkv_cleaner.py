@@ -140,8 +140,37 @@ def main() -> None:
     app.setStyle(FastToolTipStyle(app.style()))
     set_dynamic_modern_style(app)
     splash = LogoSplash()
+    splash.setWindowOpacity(0.0)
     splash.show()
     app.processEvents()
+
+    center_pos = splash.pos()
+    shake_timer = QTimer()
+    shake_timer.setInterval(15)
+
+    def _shake():
+        splash.move(
+            center_pos.x() + random.randint(-3, 3),
+            center_pos.y() + random.randint(-3, 3),
+        )
+
+    shake_timer.timeout.connect(_shake)
+
+    fade_in_anim = QPropertyAnimation(splash, b"windowOpacity")
+    fade_in_anim.setDuration(100)
+    fade_in_anim.setStartValue(0.0)
+    fade_in_anim.setEndValue(1.0)
+
+    def _finish_fade_in():
+        shake_timer.stop()
+        splash.move(center_pos)
+
+    fade_in_anim.finished.connect(_finish_fade_in)
+    shake_timer.start()
+    fade_in_anim.start(QAbstractAnimation.DeleteWhenStopped)
+
+    splash._fade_in_anim = fade_in_anim
+    splash._shake_timer = shake_timer
     win = MainWindow()
     win.show()
 

@@ -85,3 +85,18 @@ def test_button_click_triggers_once(monkeypatch):
     btn.clicked.emit(False)
 
     assert len(calls) == 1
+
+
+def test_empty_current_group():
+    logic = GroupLogic()
+    logic.group_bar = DummyGroupBar()
+    logic.track_table = DummyTrackTable()
+    logic.file_list = type("FL", (), {"update_files": lambda self, f: None, "clear": lambda self: None})()
+    logic._setup_group_logic()
+    logic.groups["sig1"] = []
+    logic.file_groups["sig1"] = ["f1", "f2"]
+    logic.current_sig = "sig1"
+
+    logic._empty_current_group()
+
+    assert logic.file_groups["sig1"] == []

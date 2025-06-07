@@ -64,7 +64,9 @@ class GroupBar(QWidget):
 
     def _setup_ui(self):
         self.layout = QHBoxLayout(self)
-        self.layout.setContentsMargins(16, 4, 16, 4)
+        # Match the left margin of the action bar so the Groups button lines up
+        # with the Open Files button
+        self.layout.setContentsMargins(8, 4, 16, 4)
         self.layout.setSpacing(14)
 
         self.btn_groups = QPushButton("Groups")
@@ -95,14 +97,12 @@ class GroupBar(QWidget):
         )
         self.btn_prev.clicked.connect(lambda checked=False: self.prevClicked.emit())
         self.btn_prev.hide()
-        self.layout.addWidget(self.btn_prev, alignment=Qt.AlignVCenter)
 
         # container holding the numbered group buttons
         self.group_btn_container = QWidget(self)
         self.group_btns_layout = QHBoxLayout(self.group_btn_container)
         self.group_btns_layout.setContentsMargins(0, 0, 0, 0)
         self.group_btns_layout.setSpacing(6)
-        self.layout.addWidget(self.group_btn_container, alignment=Qt.AlignVCenter)
 
         self.btn_next = QPushButton("▶")
         self.btn_next.setCheckable(False)
@@ -120,7 +120,16 @@ class GroupBar(QWidget):
         )
         self.btn_next.clicked.connect(lambda checked=False: self.nextClicked.emit())
         self.btn_next.hide()
-        self.layout.addWidget(self.btn_next, alignment=Qt.AlignVCenter)
+
+        # Keep prev/next arrows close to the group buttons by using a
+        # sub-layout that matches the spacing of the group buttons
+        self.nav_layout = QHBoxLayout()
+        self.nav_layout.setContentsMargins(0, 0, 0, 0)
+        self.nav_layout.setSpacing(6)
+        self.nav_layout.addWidget(self.btn_prev, alignment=Qt.AlignVCenter)
+        self.nav_layout.addWidget(self.group_btn_container, alignment=Qt.AlignVCenter)
+        self.nav_layout.addWidget(self.btn_next, alignment=Qt.AlignVCenter)
+        self.layout.addLayout(self.nav_layout)
 
         self.stretch = self.layout.addStretch(1)
 

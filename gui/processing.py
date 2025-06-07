@@ -1,5 +1,5 @@
 from PySide6.QtCore import QMetaObject, Q_ARG, Qt
-from PySide6.QtWidgets import QMessageBox, QProgressDialog
+from PySide6.QtWidgets import QMessageBox
 from pathlib import Path
 import logging
 
@@ -17,8 +17,7 @@ def process_files(
     wipe_all_flag,
     parent=None,
 ):
-    """Process multiple files in parallel and report progress/errors in the GUI."""
-    progress = None
+    """Process multiple files in parallel and report errors in the GUI."""
     # If running in the GUI, warn the user about existing output files
     if parent is not None:
         existing = []
@@ -42,17 +41,6 @@ def process_files(
                 return
 
         parent.setEnabled(False)
-        progress = QProgressDialog(
-            "Processing files...",
-            "Cancel",
-            0,
-            len(jobs),
-            parent,
-        )
-        progress.setWindowModality(Qt.WindowModal)
-        progress.setMinimumDuration(0)
-        progress.show()
-        progress.activateWindow()
     
     errors = []
     import threading
@@ -96,29 +84,8 @@ def process_files(
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = [executor.submit(process_one, src, tracks) for src, tracks in jobs]
-        completed = 0
         for fut in as_completed(futures):
             fut.result()
-            completed += 1
-            if progress is not None:
-                QMetaObject.invokeMethod(
-                    progress,
-                    "setValue",
-                    Qt.QueuedConnection,
-                    Q_ARG(int, completed),
-                )
-                if progress.wasCanceled():
-                    executor.shutdown(wait=False, cancel_futures=True)
-                    break
-
-    if progress is not None:
-        QMetaObject.invokeMethod(
-            progress,
-            "setValue",
-            Qt.QueuedConnection,
-            Q_ARG(int, len(jobs)),
-        )
-        QMetaObject.invokeMethod(progress, "close", Qt.QueuedConnection)
 
     if parent is not None:
         parent.setEnabled(True)

@@ -52,7 +52,6 @@ are distributed alongside the bundle.
     - wipe all subtitles if desired
     - the status bar shows which track became default or forced
 5. Use **Process Group** or **Process All** to create cleaned files in the output directory (by default `cleaned/`).
-   A progress dialog shows how many files have finished.
 
 Paths to the command line tools, the output directory and the preferred backend (MKVToolNix or FFmpeg) can be configured via the Preferences dialog (⚙️ icon).
 

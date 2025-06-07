@@ -21,20 +21,6 @@ qtwidgets.QSplashScreen = object
 qtwidgets.QWidget = object
 qtwidgets.QLabel = object
 qtwidgets.QVBoxLayout = object
-qtwidgets.QProgressDialog = type(
-    "QProgressDialog",
-    (),
-    {
-        "__init__": lambda self, *a, **k: None,
-        "setWindowModality": lambda *a, **k: None,
-        "setMinimumDuration": lambda *a, **k: None,
-        "setValue": lambda *a, **k: None,
-        "wasCanceled": lambda *a, **k: False,
-        "close": lambda *a, **k: None,
-        "show": lambda *a, **k: None,
-        "activateWindow": lambda *a, **k: None,
-    },
-)
 qtwidgets.QMessageBox = type(
     "QMessageBox",
     (),
@@ -56,34 +42,6 @@ import gui.processing as processing  # noqa: E402
 
 processing = importlib.reload(processing)
 
-
-class DummyDialog:
-    def __init__(self):
-        self._val = 0
-        self._canceled = False
-
-    def setWindowModality(self, *a):
-        pass
-
-    def setMinimumDuration(self, *a):
-        pass
-
-    def setValue(self, val):
-        self._val = val
-        if val >= 1:
-            self._canceled = True
-
-    def wasCanceled(self):
-        return self._canceled
-
-    def close(self):
-        pass
-
-    def show(self):
-        pass
-
-    def activateWindow(self):
-        pass
 
 
 class DummyExecutor:

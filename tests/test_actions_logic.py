@@ -21,7 +21,7 @@ qtwidgets.QMessageBox = type('QMessageBox', (), {
 for cls in (
     'QMainWindow', 'QTextEdit', 'QHBoxLayout', 'QVBoxLayout',
     'QWidget', 'QPushButton', 'QLabel', 'LogoSplash',
-    'QSplashScreen', 'QProgressDialog'
+    'QSplashScreen'
 ):
     setattr(qtwidgets, cls, object)
 sys.modules['PySide6.QtWidgets'] = qtwidgets

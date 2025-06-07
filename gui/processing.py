@@ -59,14 +59,26 @@ def process_files(
         if dst.exists() and parent is not None:
             size_mb = dst.stat().st_size / (1024 * 1024)
             msg = f"{dst} already exists ({size_mb:.1f} MB). Overwrite?"
-            res = QMessageBox.question(
-                parent,
-                "Overwrite File?",
-                msg,
-                QMessageBox.Yes | QMessageBox.No,
-                QMessageBox.No,
-            )
-            if res != QMessageBox.Yes:
+            result = {}
+
+            def _ask():
+                result["res"] = QMessageBox.question(
+                    parent,
+                    "Overwrite File?",
+                    msg,
+                    QMessageBox.Yes | QMessageBox.No,
+                    QMessageBox.No,
+                )
+
+            try:
+                QMetaObject.invokeMethod(parent, _ask, Qt.BlockingQueuedConnection)
+            except Exception:
+                pass
+
+            if "res" not in result:
+                _ask()
+
+            if result.get("res") != QMessageBox.Yes:
                 return src
         cmd = build_cmd(
             src, dst, real_tracks, wipe_forced=False, wipe_all=wipe_all_flag

@@ -21,6 +21,20 @@ qtwidgets.QSplashScreen = object
 qtwidgets.QWidget = object
 qtwidgets.QLabel = object
 qtwidgets.QVBoxLayout = object
+qtwidgets.QProgressDialog = type(
+    "QProgressDialog",
+    (),
+    {
+        "__init__": lambda self, *a, **k: None,
+        "setWindowModality": lambda *a, **k: None,
+        "setMinimumDuration": lambda *a, **k: None,
+        "setValue": lambda *a, **k: None,
+        "wasCanceled": lambda *a, **k: False,
+        "close": lambda *a, **k: None,
+        "show": lambda *a, **k: None,
+        "activateWindow": lambda *a, **k: None,
+    },
+)
 qtwidgets.QMessageBox = type(
     "QMessageBox",
     (),

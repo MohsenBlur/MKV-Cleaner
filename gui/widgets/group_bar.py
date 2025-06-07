@@ -95,7 +95,8 @@ class GroupBar(QWidget):
         self.btn_prev.setMaximumSize(QSize(32, SIZES['button_height'] + 4))
         self.btn_prev.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.btn_prev.setStyleSheet(
-            f"QPushButton {{font-size: {FONT_SIZES['xlarge']}px; border-radius: {SIZES['border_radius']}px; border: 2px solid {COLORS['border_light']};"
+            f"QPushButton {{font-size: {FONT_SIZES['xlarge']}px; border-radius: {SIZES['border_radius']}px;"
+            f" border: 2px solid {COLORS['border_light']}; padding: 0;"
             f" background: {COLORS['background']}; color: {COLORS['text_primary']};}}"
             f"QPushButton:hover {{background: {COLORS['hover']};}}"
         )
@@ -118,7 +119,8 @@ class GroupBar(QWidget):
         self.btn_next.setMaximumSize(QSize(32, SIZES['button_height'] + 4))
         self.btn_next.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.btn_next.setStyleSheet(
-            f"QPushButton {{font-size: {FONT_SIZES['xlarge']}px; border-radius: {SIZES['border_radius']}px; border: 2px solid {COLORS['border_light']};"
+            f"QPushButton {{font-size: {FONT_SIZES['xlarge']}px; border-radius: {SIZES['border_radius']}px;"
+            f" border: 2px solid {COLORS['border_light']}; padding: 0;"
             f" background: {COLORS['background']}; color: {COLORS['text_primary']};}}"
             f"QPushButton:hover {{background: {COLORS['hover']};}}"
         )

@@ -13,8 +13,6 @@ qtcore.Q_ARG = lambda typ, val: val
 qtcore.Qt = type(
     "Qt", (), {"WindowModal": 0, "ApplicationModal": 1, "QueuedConnection": 0}
 )
-qtcore.QObject = object
-qtcore.Slot = lambda *a, **kw: (lambda f: f)
 sys.modules["PySide6.QtCore"] = qtcore
 
 qtwidgets = types.ModuleType("PySide6.QtWidgets")
@@ -24,35 +22,17 @@ qtwidgets.QWidget = object
 qtwidgets.QLabel = object
 qtwidgets.QVBoxLayout = object
 qtwidgets.QProgressDialog = object
-
-class DummyMsgBox:
-    Yes = 1
-    No = 0
-
-    def __init__(self, *a, **kw):
-        pass
-
-    def setIcon(self, *a, **kw):
-        pass
-
-    def setWindowTitle(self, *a, **kw):
-        pass
-
-    def setText(self, text):
-        self.text = text
-
-    def setStandardButtons(self, *a, **kw):
-        pass
-
-    def setDefaultButton(self, *a, **kw):
-        pass
-
-    def exec(self):
-        return DummyMsgBox.No
-
-qtwidgets.QMessageBox = DummyMsgBox
-qtwidgets.QMessageBox.warning = staticmethod(lambda *a, **k: None)
-qtwidgets.QMessageBox.information = staticmethod(lambda *a, **k: None)
+qtwidgets.QMessageBox = type(
+    "QMessageBox",
+    (),
+    {
+        "warning": staticmethod(lambda *a, **k: None),
+        "information": staticmethod(lambda *a, **k: None),
+        "question": staticmethod(lambda *a, **k: qtwidgets.QMessageBox.No),
+        "Yes": 1,
+        "No": 0,
+    },
+)
 sys.modules["PySide6.QtWidgets"] = qtwidgets
 qtgui = types.ModuleType("PySide6.QtGui")
 qtgui.QPixmap = object
@@ -268,14 +248,14 @@ def test_overwrite_prompt(monkeypatch, tmp_path):
     def run_command(cmd, capture=True):
         asked["ran"] = True
 
-    def exec_question(self):
-        asked["msg"] = getattr(self, "text", "")
+    def question(parent, title, text, buttons, default):
+        asked["msg"] = text
         return processing.QMessageBox.Yes
 
     exec_instance = DummyExecutor()
     monkeypatch.setattr(processing, "ThreadPoolExecutor", lambda *a, **kw: exec_instance)
     monkeypatch.setattr(processing, "as_completed", dummy_as_completed)
-    monkeypatch.setattr(processing.QMessageBox, "exec", exec_question)
+    monkeypatch.setattr(processing.QMessageBox, "question", staticmethod(question))
 
     processing.process_files(
         jobs,
@@ -308,13 +288,13 @@ def test_overwrite_skip(monkeypatch, tmp_path):
     def run_command(cmd, capture=True):
         called["ran"] = True
 
-    def exec_question(self):
+    def question(parent, title, text, buttons, default):
         return processing.QMessageBox.No
 
     exec_instance = DummyExecutor()
     monkeypatch.setattr(processing, "ThreadPoolExecutor", lambda *a, **kw: exec_instance)
     monkeypatch.setattr(processing, "as_completed", dummy_as_completed)
-    monkeypatch.setattr(processing.QMessageBox, "exec", exec_question)
+    monkeypatch.setattr(processing.QMessageBox, "question", staticmethod(question))
 
     processing.process_files(
         jobs,

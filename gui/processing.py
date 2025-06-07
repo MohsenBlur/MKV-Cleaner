@@ -1,4 +1,4 @@
-from PySide6.QtCore import QMetaObject, Q_ARG, Qt, QObject, Slot
+from PySide6.QtCore import QMetaObject, Q_ARG, Qt
 from PySide6.QtWidgets import QMessageBox, QProgressDialog
 from pathlib import Path
 import logging
@@ -59,18 +59,16 @@ def process_files(
         if dst.exists() and parent is not None:
             size_mb = dst.stat().st_size / (1024 * 1024)
             msg = f"{dst} already exists ({size_mb:.1f} MB). Overwrite?"
+            result = {}
 
-            class _DialogHelper(QObject):
-                @Slot(str, result=int)
-                def ask(self, m):
-                    box = QMessageBox(parent)
-                    box.setWindowTitle("Overwrite File?")
-                    box.setText(m)
-                    box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-                    box.setDefaultButton(QMessageBox.No)
-                    return box.exec()
-
-            helper = _DialogHelper()
+            def _ask():
+                result["res"] = QMessageBox.question(
+                    parent,
+                    "Overwrite File?",
+                    msg,
+                    QMessageBox.Yes | QMessageBox.No,
+                    QMessageBox.No,
+                )
 
             if (
                 parent is not None
@@ -83,16 +81,14 @@ def process_files(
                     pass
 
             try:
-                res = QMetaObject.invokeMethod(
-                    helper, "ask", Qt.BlockingQueuedConnection, Q_ARG(str, msg)
-                )
+                QMetaObject.invokeMethod(parent, _ask, Qt.BlockingQueuedConnection)
             except Exception:
-                res = None
+                pass
 
-            if res is None:
-                res = helper.ask(msg)
+            if "res" not in result:
+                _ask()
 
-            if res != QMessageBox.Yes:
+            if result.get("res") != QMessageBox.Yes:
                 return src
         cmd = build_cmd(
             src, dst, real_tracks, wipe_forced=False, wipe_all=wipe_all_flag

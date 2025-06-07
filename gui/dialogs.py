@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
     QLabel,
 )
 from PySide6.QtCore import QSettings
-from PySide6.QtGui import QKeySequence
+from PySide6.QtGui import QKeySequence, QShortcut
 
 
 class HotkeysDialog(QDialog):
@@ -155,7 +155,12 @@ class PreferencesDialog(QDialog):
         hotkeys = {}
         if parent is not None and hasattr(parent, "hotkey_map"):
             for name, shortcuts in parent.hotkey_map.items():
-                seqs = [sc.key().toString(QKeySequence.NativeText) for sc in shortcuts]
+                seqs = []
+                for sc in shortcuts:
+                    if isinstance(sc, QShortcut):
+                        seqs.append(sc.key().toString(QKeySequence.NativeText))
+                    else:
+                        seqs.append(str(sc))
                 hotkeys[name] = seqs
         dlg = HotkeysDialog(hotkeys, self)
         dlg.exec()

@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Union
 from PySide6.QtGui import QKeySequence, QShortcut
 from PySide6.QtCore import Qt
 
@@ -6,15 +6,14 @@ from PySide6.QtCore import Qt
 class ShortcutLogic:
     """Mixin that defines application keyboard shortcuts."""
 
-    hotkey_map: Dict[str, List[QShortcut]]
+    hotkey_map: Dict[str, List[Union[QShortcut, str]]]
 
-    def _append_hotkey_tooltip(self, widget, shortcut: QShortcut) -> None:
+    def _append_hotkey_tooltip(self, widget, key: str) -> None:
         """Add ``Hotkey: <keys>`` line to ``widget`` tooltip."""
         if widget is None:
             return
         tip = widget.toolTip() or ""
-        seq = shortcut.key().toString(QKeySequence.NativeText)
-        hotkey_line = f"Hotkey: {seq}"
+        hotkey_line = f"Hotkey: {key}"
         if hotkey_line in tip:
             return
         if tip and not tip.endswith("\n"):
@@ -22,10 +21,15 @@ class ShortcutLogic:
         tip += hotkey_line
         widget.setToolTip(tip)
 
-    def _register_shortcut(self, name: str, shortcut: QShortcut, widget=None) -> None:
+    def _register_shortcut(self, name: str, shortcut: Union[QShortcut, str], widget=None) -> None:
+        """Record a shortcut for display and optionally add tooltip info."""
         self.hotkey_map.setdefault(name, []).append(shortcut)
         if widget is not None:
-            self._append_hotkey_tooltip(widget, shortcut)
+            if isinstance(shortcut, QShortcut):
+                key = shortcut.key().toString(QKeySequence.NativeText)
+            else:
+                key = str(shortcut)
+            self._append_hotkey_tooltip(widget, key)
 
     def _setup_shortcut_logic(self):
         """Create application shortcuts and connect them to actions."""
@@ -56,6 +60,11 @@ class ShortcutLogic:
         sc.setContext(Qt.ApplicationShortcut)
         sc.activated.connect(self._on_prev_group)
         self._register_shortcut("Previous group", sc)
+
+        if hasattr(self, "group_bar"):
+            # Mouse wheel over group bar navigates between groups
+            self._register_shortcut("Previous group", "Mouse wheel up", self.group_bar.btn_prev)
+            self._register_shortcut("Next group", "Mouse wheel down", self.group_bar.btn_next)
 
         # Action bar shortcuts
         if hasattr(self, "action_bar"):

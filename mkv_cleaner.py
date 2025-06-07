@@ -146,7 +146,7 @@ def main() -> None:
 
     center_pos = splash.pos()
     shake_timer = QTimer()
-    shake_timer.setInterval(15)
+    shake_timer.setInterval(5)
 
     def _shake():
         splash.move(
@@ -157,7 +157,7 @@ def main() -> None:
     shake_timer.timeout.connect(_shake)
 
     fade_in_anim = QPropertyAnimation(splash, b"windowOpacity")
-    fade_in_anim.setDuration(100)
+    fade_in_anim.setDuration(200)
     fade_in_anim.setStartValue(0.0)
     fade_in_anim.setEndValue(1.0)
 

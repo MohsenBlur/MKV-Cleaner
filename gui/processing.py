@@ -9,9 +9,13 @@ from pathlib import Path
 def process_files(jobs, max_workers, query_tracks, build_cmd, run_command, output_dir, wipe_all_flag, parent=None):
     """Process multiple files in parallel and report progress/errors in the GUI."""
     dlg = QProgressDialog("Processing...", "Cancel", 0, len(jobs), parent)
-    dlg.setWindowModality(Qt.WindowModal)
+    dlg.setWindowModality(Qt.ApplicationModal)
     dlg.setMinimumDuration(0)
     dlg.setValue(0)
+    dlg.show()
+    dlg.activateWindow()
+    if parent is not None:
+        parent.setEnabled(False)
 
     errors = []
     import threading
@@ -58,6 +62,8 @@ def process_files(jobs, max_workers, query_tracks, build_cmd, run_command, outpu
                 break
 
     dlg.close()
+    if parent is not None:
+        parent.setEnabled(True)
 
     if errors:
         msg = "\n".join([f"{f}: {err}" for f, err in errors])

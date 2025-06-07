@@ -41,6 +41,8 @@ class GroupDrawer(QDialog):
             b = QPushButton(btn.text(), self)
             b.setFixedSize(btn.size())
             b.setStyleSheet(btn.styleSheet())
+            b.setCheckable(True)
+            b.setChecked(btn.isChecked())
             b.clicked.connect(lambda checked=False, i=idx: self._choose(i))
             row, col = divmod(idx, 4)
             layout.addWidget(b, row, col)

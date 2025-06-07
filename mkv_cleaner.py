@@ -10,16 +10,18 @@ import random
 
 from core.bootstrap import ensure_python_package
 
-ensure_python_package('PySide6')
+ensure_python_package("PySide6")
 if sys.version_info < (3, 11):
-    ensure_python_package('tomli')
+    ensure_python_package("tomli")
 
 from gui.main_window import MainWindow
 from gui.widgets.fast_tooltip_style import FastToolTipStyle
+from gui.widgets.logo_splash import LogoSplash
 from pathlib import Path
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QFont, QFontDatabase
-from PySide6.QtCore import QSettings
+from PySide6.QtCore import QSettings, QTimer
+
 
 def set_dynamic_modern_style(app: QApplication) -> None:
     """Apply a dark theme with an accent color to ``app``."""
@@ -36,7 +38,8 @@ def set_dynamic_modern_style(app: QApplication) -> None:
     if not accent:
         accent = random.choice(accents)
 
-    app.setStyleSheet(f"""
+    app.setStyleSheet(
+        f"""
         QMainWindow, QWidget {{
             background-color: #181a20;
             color: #d2e0f0;
@@ -111,7 +114,9 @@ def set_dynamic_modern_style(app: QApplication) -> None:
         #GroupBar QLabel {{
             color: #fff;
         }}
-    """)
+    """
+    )
+
 
 def main() -> None:
     """Create the application and show the main window."""
@@ -136,7 +141,12 @@ def main() -> None:
     set_dynamic_modern_style(app)
     win = MainWindow()
     win.show()
+    splash = LogoSplash(win)
+    splash.show()
+    splash.raise_()
+    QTimer.singleShot(1000, splash.close)
     sys.exit(app.exec())
+
 
 if __name__ == "__main__":
     main()

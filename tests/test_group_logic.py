@@ -1,9 +1,14 @@
 import os
 import sys
+from pathlib import Path
+
+from core.tracks import Track
+from core.config import AppConfig
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from gui.group_logic import GroupLogic  # noqa: E402
+import gui.group_logic as group_logic
 
 
 class DummySignal:
@@ -109,3 +114,23 @@ def test_empty_current_group():
     assert "sig1" not in logic.groups
     assert logic.current_sig is None
     assert not logic.group_bar.group_buttons
+
+
+def test_add_files_no_duplicates(monkeypatch):
+    tracks = [Track(idx=0, tid=1, type="video", codec="h264", language="und", forced=False, name="")]
+
+    monkeypatch.setattr(group_logic, "query_tracks", lambda p, cfg: tracks)
+
+    logic = GroupLogic()
+    logic.group_bar = DummyGroupBar()
+    logic.track_table = DummyTrackTable()
+    logic.file_list = type("FL", (), {"update_files": lambda self, f: None, "clear": lambda self: None})()
+    logic.app_config = AppConfig()
+    logic._setup_group_logic()
+
+    logic.add_files_to_groups(["dup.mkv"])
+    logic.add_files_to_groups(["dup.mkv"])
+
+    sig = ";".join(t.signature() for t in tracks)
+    assert len(logic.file_groups[sig]) == 1
+    assert len(logic.group_bar.group_buttons) == 1

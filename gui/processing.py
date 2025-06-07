@@ -20,7 +20,28 @@ def process_files(
     parent=None,
 ):
     """Process multiple files in parallel and report progress/errors in the GUI."""
+    # If running in the GUI, warn the user about existing output files
     if parent is not None:
+        existing = []
+        out_path = Path(output_dir)
+        for src, _ in jobs:
+            dst_dir = out_path if out_path.is_absolute() else (src.parent / out_path)
+            dst = dst_dir / src.name
+            if dst.exists():
+                existing.append(dst)
+
+        if existing:
+            msg = "The following files already exist and will be overwritten:\n" + "\n".join(str(p) for p in existing)
+            res = QMessageBox.question(
+                parent,
+                "Overwrite files?",
+                msg,
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.No,
+            )
+            if res != QMessageBox.Yes:
+                return
+
         parent.setEnabled(False)
 
     errors = []

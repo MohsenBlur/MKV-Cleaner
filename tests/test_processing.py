@@ -27,6 +27,9 @@ qtwidgets.QMessageBox = type(
     {
         "warning": staticmethod(lambda *a, **k: None),
         "information": staticmethod(lambda *a, **k: None),
+        "question": staticmethod(lambda *a, **k: qtwidgets.QMessageBox.Yes),
+        "Yes": 1,
+        "No": 0,
     },
 )
 sys.modules["PySide6.QtWidgets"] = qtwidgets
@@ -178,3 +181,81 @@ def test_output_dir_created(monkeypatch, tmp_path):
 
     assert (tmp_path / "out" / "sub").is_dir()
     assert commands and commands[0][1] is False
+
+
+def test_overwrite_prompt_cancel(monkeypatch, tmp_path):
+    src = tmp_path / "a.mkv"
+    src.write_text("data")
+    out_dir = tmp_path / "out"
+    out_dir.mkdir()
+    (out_dir / "a.mkv").write_text("old")
+
+    jobs = [(src, [])]
+    commands = []
+
+    def query_tracks(src):
+        return []
+
+    def build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=False):
+        return ["cmd", str(src), str(dst)]
+
+    def run_command(cmd, capture=True):
+        commands.append(cmd)
+
+    exec_instance = DummyExecutor()
+    monkeypatch.setattr(processing, "ThreadPoolExecutor", lambda *a, **kw: exec_instance)
+    monkeypatch.setattr(processing, "as_completed", dummy_as_completed)
+    monkeypatch.setattr(processing.QMessageBox, "question", lambda *a, **k: processing.QMessageBox.No)
+
+    parent = type("P", (), {"setEnabled": lambda self, val: None})()
+    processing.process_files(
+        jobs,
+        max_workers=1,
+        query_tracks=query_tracks,
+        build_cmd=build_cmd,
+        run_command=run_command,
+        output_dir=str(out_dir),
+        wipe_all_flag=False,
+        parent=parent,
+    )
+
+    assert not commands
+
+
+def test_overwrite_prompt_continue(monkeypatch, tmp_path):
+    src = tmp_path / "a.mkv"
+    src.write_text("data")
+    out_dir = tmp_path / "out"
+    out_dir.mkdir()
+    (out_dir / "a.mkv").write_text("old")
+
+    jobs = [(src, [])]
+    commands = []
+
+    def query_tracks(src):
+        return []
+
+    def build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=False):
+        return ["cmd", str(src), str(dst)]
+
+    def run_command(cmd, capture=True):
+        commands.append(cmd)
+
+    exec_instance = DummyExecutor()
+    monkeypatch.setattr(processing, "ThreadPoolExecutor", lambda *a, **kw: exec_instance)
+    monkeypatch.setattr(processing, "as_completed", dummy_as_completed)
+    monkeypatch.setattr(processing.QMessageBox, "question", lambda *a, **k: processing.QMessageBox.Yes)
+
+    parent = type("P", (), {"setEnabled": lambda self, val: None})()
+    processing.process_files(
+        jobs,
+        max_workers=1,
+        query_tracks=query_tracks,
+        build_cmd=build_cmd,
+        run_command=run_command,
+        output_dir=str(out_dir),
+        wipe_all_flag=False,
+        parent=parent,
+    )
+
+    assert commands

@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (
     QSizePolicy,
     QComboBox,
     QDialog,
-    QVBoxLayout,
+    QGridLayout,
 )
 from PySide6.QtCore import Qt, QSize, Signal
 
@@ -21,15 +21,17 @@ class GroupDrawer(QDialog):
         super().__init__(bar)
         self.setWindowFlags(Qt.Popup | Qt.FramelessWindowHint)
         self.bar = bar
-        layout = QVBoxLayout(self)
+        layout = QGridLayout(self)
         layout.setContentsMargins(10, 10, 10, 10)
-        layout.setSpacing(6)
+        layout.setHorizontalSpacing(6)
+        layout.setVerticalSpacing(6)
         for idx, (_, btn) in enumerate(bar.group_buttons):
             b = QPushButton(btn.text(), self)
             b.setFixedSize(btn.size())
             b.setStyleSheet(btn.styleSheet())
             b.clicked.connect(lambda checked=False, i=idx: self._choose(i))
-            layout.addWidget(b)
+            row, col = divmod(idx, 4)
+            layout.addWidget(b, row, col)
 
     def _choose(self, idx: int):
         btn = self.bar.button_at(idx)
@@ -161,7 +163,7 @@ class GroupBar(QWidget):
         if len(self.group_buttons) <= 4:
             return
         dlg = GroupDrawer(self)
-        pos = self.mapToGlobal(self.btn_groups.geometry().bottomLeft())
+        pos = self.mapToGlobal(self.rect().topLeft())
         dlg.move(pos)
         dlg.exec()
 

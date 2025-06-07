@@ -8,7 +8,12 @@ class LogoSplash(QSplashScreen):
     """Simple splash screen showing the application logo."""
 
     def __init__(self, parent=None):
-        pixmap = QPixmap(str(Path(__file__).resolve().parent.parent / "MKV-Cleaner_logo.png"))
+        # Resolve the application root directory to load the logo image
+        # correctly regardless of the execution context. ``__file__`` lives
+        # under ``gui/widgets`` so ``parents[2]`` points to the repository
+        # root where ``MKV-Cleaner_logo.png`` is located.
+        pixmap_path = Path(__file__).resolve().parents[2] / "MKV-Cleaner_logo.png"
+        pixmap = QPixmap(str(pixmap_path))
         if parent is not None:
             max_size = parent.size()
             if pixmap.width() > max_size.width() or pixmap.height() > max_size.height():

@@ -1,5 +1,4 @@
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton
-from PySide6.QtGui import QKeySequence
 from PySide6.QtCore import Qt
 
 from .fade_disabled import apply_fade_on_disable
@@ -23,28 +22,23 @@ class ActionBar(QWidget):
         self.btn_def_audio.setToolTip(
             "Set which audio track should play by default."
         )
-        self.btn_def_audio.setShortcut(QKeySequence("A"))
 
         self.btn_def_sub = QPushButton("💬 Default &Subtitle")
         self.btn_def_sub.setToolTip(
             "Set which subtitle track is shown automatically."
         )
-        self.btn_def_sub.setShortcut(QKeySequence("S"))
 
         self.btn_forced = QPushButton("🏳️‍🌈 Set &Forced")
         self.btn_forced.setToolTip(
             "Mark selected subtitles as forced so players show them."
         )
-        self.btn_forced.setShortcut(QKeySequence("F"))
 
         self.btn_wipe_all = QPushButton("🧹 &Wipe All Subs")
         self.btn_wipe_all.setToolTip("Remove every subtitle from these videos.")
         # Allow toggling so the state can be used when processing files
         self.btn_wipe_all.setCheckable(True)
-        self.btn_wipe_all.setShortcut(QKeySequence("W"))
         self.btn_preview = QPushButton("👁️ &Preview Subtitle")
         self.btn_preview.setToolTip("Quickly check the subtitles before processing.")
-        self.btn_preview.setShortcut(QKeySequence("P"))
 
 
         for btn in (
@@ -57,6 +51,7 @@ class ActionBar(QWidget):
         ):
             btn.setMinimumHeight(38)
             btn.setMinimumWidth(110)
+            btn.setFocusPolicy(Qt.NoFocus)
             btn.setStyleSheet(
                 "QPushButton { font-weight: 500; font-size: 14px;" +
                 " border-radius: 8px; padding: 5px 10px; }"

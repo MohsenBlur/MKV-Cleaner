@@ -19,24 +19,39 @@ class TableLogic:
         self._on_selection_change(self.track_table.currentIndex(), None)
 
     def _on_selection_change(self, current, _):
+        ab = self.action_bar
         for btn in (
-            self.action_bar.btn_def_audio, self.action_bar.btn_def_sub, self.action_bar.btn_forced,
-            self.action_bar.btn_wipe_all, self.action_bar.btn_preview
+            ab.btn_def_audio,
+            ab.btn_def_sub,
+            ab.btn_forced,
+            ab.btn_wipe_all,
+            ab.btn_preview,
         ):
             btn.setEnabled(False)
+
+        # Enable wipe all when a group is active and has subtitle tracks
+        sig = getattr(self, "current_sig", None)
+        if sig is not None:
+            tracks = getattr(self, "groups", {}).get(sig, [])
+            if any(t.type == "subtitles" for t in tracks):
+                ab.btn_wipe_all.setEnabled(True)
+
         if not current.isValid():
             return
+
         t = self.track_table.table_model.track_at_row(current.row())
         if t.removed:
-            self.action_bar.btn_wipe_all.setEnabled(t.type == "subtitles")
+            if t.type == "subtitles":
+                ab.btn_wipe_all.setEnabled(True)
             return
+
         if t.type == "audio":
-            self.action_bar.btn_def_audio.setEnabled(True)
+            ab.btn_def_audio.setEnabled(True)
         elif t.type == "subtitles":
-            self.action_bar.btn_def_sub.setEnabled(True)
-            self.action_bar.btn_forced.setEnabled(True)
-            self.action_bar.btn_wipe_all.setEnabled(True)
-            self.action_bar.btn_preview.setEnabled(True)
+            ab.btn_def_sub.setEnabled(True)
+            ab.btn_forced.setEnabled(True)
+            ab.btn_wipe_all.setEnabled(True)
+            ab.btn_preview.setEnabled(True)
 
     def _current_idx(self):
         ci = self.track_table.currentIndex()

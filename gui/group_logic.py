@@ -45,17 +45,19 @@ class GroupLogic:
 
     def add_files_to_groups(self, paths):
         for p in paths:
-            tracks = query_tracks(Path(p), self.app_config)
+            path = Path(p)
+            tracks = query_tracks(path, self.app_config)
             sig = ";".join(t.signature() for t in tracks)
             if sig not in self.groups:
                 self.groups[sig] = [copy.deepcopy(t) for t in tracks]
                 self.file_groups[sig] = []
-                tooltip = str(Path(p).name)
+                tooltip = str(path.name)
                 btn = self.group_bar.add_group_button(sig, tooltip=tooltip)
                 btn.clicked.connect(
                     lambda checked, b=btn: self._on_group_button_clicked(b)
                 )
-            self.file_groups[sig].append(Path(p))
+            if path not in self.file_groups[sig]:
+                self.file_groups[sig].append(path)
             filestr = "\n".join(str(x.name) for x in self.file_groups[sig])
             self.group_bar.update_button_tooltip(sig, filestr)
             if sig == self.current_sig and hasattr(self, "file_list"):

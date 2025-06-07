@@ -47,6 +47,16 @@ class ShortcutLogic:
         sc.activated.connect(lambda: self._on_prev_group(loop=True))
         self._register_shortcut("Previous group", sc)
 
+        sc = QShortcut(QKeySequence(Qt.Key_Right), self)
+        sc.setContext(Qt.ApplicationShortcut)
+        sc.activated.connect(self._on_next_group)
+        self._register_shortcut("Next group", sc)
+
+        sc = QShortcut(QKeySequence(Qt.Key_Left), self)
+        sc.setContext(Qt.ApplicationShortcut)
+        sc.activated.connect(self._on_prev_group)
+        self._register_shortcut("Previous group", sc)
+
         # Action bar shortcuts
         if hasattr(self, "action_bar"):
             ab = self.action_bar
@@ -123,6 +133,26 @@ class ShortcutLogic:
             self.shortcut_toggle_keep = sc
             self._register_shortcut("Toggle keep track", sc)
 
+            sc = QShortcut(QKeySequence(Qt.Key_Up), self)
+            sc.setContext(Qt.ApplicationShortcut)
+            sc.activated.connect(self._on_prev_track)
+            self._register_shortcut("Previous track", sc)
+
+            sc = QShortcut(QKeySequence(Qt.Key_Down), self)
+            sc.setContext(Qt.ApplicationShortcut)
+            sc.activated.connect(self._on_next_track)
+            self._register_shortcut("Next track", sc)
+
+            sc = QShortcut(QKeySequence(Qt.Key_Backspace), self)
+            sc.setContext(Qt.ApplicationShortcut)
+            sc.activated.connect(self._empty_current_group)
+            self._register_shortcut("Empty group", sc)
+
+            sc = QShortcut(QKeySequence(Qt.Key_Delete), self)
+            sc.setContext(Qt.ApplicationShortcut)
+            sc.activated.connect(self._empty_current_group)
+            self._register_shortcut("Empty group", sc)
+
     def _toggle_keep_selected(self):
         row = self._current_idx()
         if row is None:
@@ -139,3 +169,29 @@ class ShortcutLogic:
         btn = self.group_bar.button_at(idx)
         if btn and btn.isEnabled():
             btn.click()
+
+    def _on_prev_track(self) -> None:
+        if not hasattr(self, "track_table"):
+            return
+        row = self._current_idx()
+        model = self.track_table.table_model
+        count = model.rowCount()
+        if count == 0:
+            return
+        if row is None:
+            self.track_table.selectRow(0)
+        elif row > 0:
+            self.track_table.selectRow(row - 1)
+
+    def _on_next_track(self) -> None:
+        if not hasattr(self, "track_table"):
+            return
+        row = self._current_idx()
+        model = self.track_table.table_model
+        count = model.rowCount()
+        if count == 0:
+            return
+        if row is None:
+            self.track_table.selectRow(0)
+        elif row < count - 1:
+            self.track_table.selectRow(row + 1)

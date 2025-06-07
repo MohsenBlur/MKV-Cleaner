@@ -129,3 +129,15 @@ class GroupLogic:
         if hasattr(self.group_bar, "btn_process_all"):
             has_files = any(self.file_groups.values())
             self.group_bar.btn_process_all.setEnabled(has_files)
+
+    def _empty_current_group(self) -> None:
+        """Remove all files from the currently selected group."""
+        sig = getattr(self, "current_sig", None)
+        if sig is None:
+            return
+        if sig in self.file_groups:
+            self.file_groups[sig] = []
+        if hasattr(self, "file_list"):
+            self.file_list.update_files([])
+        self.group_bar.update_button_tooltip(sig, "")
+        self._update_process_buttons()

@@ -8,8 +8,9 @@ from PySide6.QtWidgets import (
     QComboBox,
     QDialog,
     QGridLayout,
+    QApplication,
 )
-from PySide6.QtCore import Qt, QSize, Signal, QPoint
+from PySide6.QtCore import Qt, QSize, Signal, QPoint, QEvent
 
 from .fade_disabled import apply_fade_on_disable
 from ..theme import COLORS, FONT_SIZES, SIZES
@@ -63,6 +64,9 @@ class GroupBar(QWidget):
         self.button_group = QButtonGroup(self)
         self.button_group.setExclusive(True)
         self._setup_ui()
+        app = QApplication.instance()
+        if app is not None:
+            app.installEventFilter(self)
 
     def _setup_ui(self):
         self.layout = QHBoxLayout(self)
@@ -314,3 +318,16 @@ class GroupBar(QWidget):
         if show_arrows:
             self.btn_prev.setEnabled(current_idx > 0)
             self.btn_next.setEnabled(current_idx < total - 1)
+
+    def eventFilter(self, obj, event):
+        if event.type() == QEvent.Wheel:
+            pos = event.globalPosition().toPoint()
+            if self.rect().contains(self.mapFromGlobal(pos)):
+                delta = event.angleDelta().y()
+                if delta > 0 and self.btn_prev.isEnabled():
+                    self.prevClicked.emit()
+                elif delta < 0 and self.btn_next.isEnabled():
+                    self.nextClicked.emit()
+                event.accept()
+                return True
+        return super().eventFilter(obj, event)

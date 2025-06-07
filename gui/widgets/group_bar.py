@@ -78,10 +78,13 @@ class GroupBar(QWidget):
             " border-radius: 8px; padding: 5px 10px; }"
         )
         apply_fade_on_disable(self.btn_groups)
+        self.btn_groups.setToolTip(
+            "Open a popup listing every group of videos."
+        )
         self.btn_groups.clicked.connect(self._open_drawer)
         self.layout.addWidget(self.btn_groups, alignment=Qt.AlignVCenter)
 
-        self.btn_prev = QPushButton("◀")
+        self.btn_prev = QPushButton("⬅️")
         self.btn_prev.setCheckable(False)
         self.btn_prev.setMinimumSize(QSize(32, 40))
         self.btn_prev.setMaximumSize(QSize(32, 44))
@@ -104,7 +107,7 @@ class GroupBar(QWidget):
         self.group_btns_layout.setContentsMargins(0, 0, 0, 0)
         self.group_btns_layout.setSpacing(6)
 
-        self.btn_next = QPushButton("▶")
+        self.btn_next = QPushButton("➡️")
         self.btn_next.setCheckable(False)
         self.btn_next.setMinimumSize(QSize(32, 40))
         self.btn_next.setMaximumSize(QSize(32, 44))

@@ -28,6 +28,9 @@ qtwidgets.QMessageBox = type(
     {
         "warning": staticmethod(lambda *a, **k: None),
         "information": staticmethod(lambda *a, **k: None),
+        "question": staticmethod(lambda *a, **k: qtwidgets.QMessageBox.No),
+        "Yes": 1,
+        "No": 0,
     },
 )
 sys.modules["PySide6.QtWidgets"] = qtwidgets
@@ -72,6 +75,14 @@ class DummyDialog:
         self._canceled = True
 
 processing.QProgressDialog = lambda *a, **kw: DummyDialog()
+
+
+class DummyParent:
+    def __init__(self):
+        self.enabled = True
+
+    def setEnabled(self, val):
+        self.enabled = val
 
 
 class DummyExecutor:
@@ -218,3 +229,82 @@ def test_progress_updates(monkeypatch):
 
     assert progress._val == len(jobs)
     assert progress.closed is True
+
+
+def test_overwrite_prompt(monkeypatch, tmp_path):
+    jobs = [(tmp_path / "a.mkv", [])]
+    (tmp_path / "out").mkdir()
+    existing = tmp_path / "out" / "a.mkv"
+    existing.write_text("old")
+
+    asked = {}
+
+    def query_tracks(src):
+        return []
+
+    def build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=False):
+        return ["cmd", str(src), str(dst)]
+
+    def run_command(cmd, capture=True):
+        asked["ran"] = True
+
+    def question(parent, title, text, buttons, default):
+        asked["msg"] = text
+        return processing.QMessageBox.Yes
+
+    exec_instance = DummyExecutor()
+    monkeypatch.setattr(processing, "ThreadPoolExecutor", lambda *a, **kw: exec_instance)
+    monkeypatch.setattr(processing, "as_completed", dummy_as_completed)
+    monkeypatch.setattr(processing.QMessageBox, "question", staticmethod(question))
+
+    processing.process_files(
+        jobs,
+        max_workers=1,
+        query_tracks=query_tracks,
+        build_cmd=build_cmd,
+        run_command=run_command,
+        output_dir=str(tmp_path / "out"),
+        wipe_all_flag=False,
+        parent=DummyParent(),
+    )
+
+    assert "ran" in asked
+    assert str(existing) in asked.get("msg", "")
+
+
+def test_overwrite_skip(monkeypatch, tmp_path):
+    jobs = [(tmp_path / "a.mkv", [])]
+    (tmp_path / "out").mkdir()
+    (tmp_path / "out" / "a.mkv").write_text("old")
+
+    called = {"ran": False}
+
+    def query_tracks(src):
+        return []
+
+    def build_cmd(src, dst, tracks, wipe_forced=False, wipe_all=False):
+        return ["cmd", str(src), str(dst)]
+
+    def run_command(cmd, capture=True):
+        called["ran"] = True
+
+    def question(parent, title, text, buttons, default):
+        return processing.QMessageBox.No
+
+    exec_instance = DummyExecutor()
+    monkeypatch.setattr(processing, "ThreadPoolExecutor", lambda *a, **kw: exec_instance)
+    monkeypatch.setattr(processing, "as_completed", dummy_as_completed)
+    monkeypatch.setattr(processing.QMessageBox, "question", staticmethod(question))
+
+    processing.process_files(
+        jobs,
+        max_workers=1,
+        query_tracks=query_tracks,
+        build_cmd=build_cmd,
+        run_command=run_command,
+        output_dir=str(tmp_path / "out"),
+        wipe_all_flag=False,
+        parent=DummyParent(),
+    )
+
+    assert called["ran"] is False

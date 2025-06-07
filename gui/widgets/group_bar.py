@@ -56,15 +56,17 @@ class GroupBar(QWidget):
         self.layout.setContentsMargins(16, 4, 16, 4)
         self.layout.setSpacing(14)
 
-        self.group_label = QPushButton("Groups")
-        self.group_label.setCheckable(False)
-        self.group_label.setFlat(True)
-        self.group_label.setStyleSheet(
-            "QPushButton {font-weight: bold; font-size: 17px; color: white; padding-right: 10px; border: none; background: transparent;}"
-            "QPushButton:hover {text-decoration: underline;}"
+        self.btn_groups = QPushButton("Groups")
+        self.btn_groups.setCheckable(False)
+        self.btn_groups.setMinimumHeight(38)
+        self.btn_groups.setMinimumWidth(110)
+        self.btn_groups.setStyleSheet(
+            "QPushButton { font-weight: 500; font-size: 14px;"
+            " border-radius: 8px; padding: 5px 10px; }"
         )
-        self.group_label.clicked.connect(self._open_drawer)
-        self.layout.addWidget(self.group_label, alignment=Qt.AlignVCenter)
+        apply_fade_on_disable(self.btn_groups)
+        self.btn_groups.clicked.connect(self._open_drawer)
+        self.layout.addWidget(self.btn_groups, alignment=Qt.AlignVCenter)
 
         self.btn_prev = QPushButton("◀")
         self.btn_prev.setCheckable(False)
@@ -159,7 +161,7 @@ class GroupBar(QWidget):
         if len(self.group_buttons) <= 4:
             return
         dlg = GroupDrawer(self)
-        pos = self.mapToGlobal(self.group_label.geometry().bottomLeft())
+        pos = self.mapToGlobal(self.btn_groups.geometry().bottomLeft())
         dlg.move(pos)
         dlg.exec()
 
@@ -239,7 +241,7 @@ class GroupBar(QWidget):
         show_arrows = total > 4
         self.btn_prev.setVisible(show_arrows)
         self.btn_next.setVisible(show_arrows)
-        self.group_label.setEnabled(show_arrows)
+        self.btn_groups.setEnabled(show_arrows)
 
         for _, b in self.group_buttons:
             b.hide()

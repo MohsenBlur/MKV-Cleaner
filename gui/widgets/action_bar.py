@@ -18,31 +18,31 @@ class ActionBar(QWidget):
         self.btn_open_files = QPushButton("📂 Open Files...")
         self.btn_open_files.setToolTip("Choose one or more MKV videos.")
 
-        # Underline shortcut letters using HTML markup
-        self.btn_def_audio = QPushButton("🔊 Default <b><u>A</u></b>udio")
+        # Use ampersand to mark shortcut letters
+        self.btn_def_audio = QPushButton("🔊 Default &Audio")
         self.btn_def_audio.setToolTip(
             "Set which audio track should play by default."
         )
         self.btn_def_audio.setShortcut(QKeySequence("A"))
 
-        self.btn_def_sub = QPushButton("💬 Default <b><u>S</u></b>ubtitle")
+        self.btn_def_sub = QPushButton("💬 Default &Subtitle")
         self.btn_def_sub.setToolTip(
             "Set which subtitle track is shown automatically."
         )
         self.btn_def_sub.setShortcut(QKeySequence("S"))
 
-        self.btn_forced = QPushButton("🏳️‍🌈 Set <b><u>F</u></b>orced")
+        self.btn_forced = QPushButton("🏳️‍🌈 Set &Forced")
         self.btn_forced.setToolTip(
             "Mark selected subtitles as forced so players show them."
         )
         self.btn_forced.setShortcut(QKeySequence("F"))
 
-        self.btn_wipe_all = QPushButton("🧹 <b><u>W</u></b>ipe All Subs")
+        self.btn_wipe_all = QPushButton("🧹 &Wipe All Subs")
         self.btn_wipe_all.setToolTip("Remove every subtitle from these videos.")
         # Allow toggling so the state can be used when processing files
         self.btn_wipe_all.setCheckable(True)
         self.btn_wipe_all.setShortcut(QKeySequence("W"))
-        self.btn_preview = QPushButton("👁️ <b><u>P</u></b>review Subtitle")
+        self.btn_preview = QPushButton("👁️ &Preview Subtitle")
         self.btn_preview.setToolTip("Quickly check the subtitles before processing.")
         self.btn_preview.setShortcut(QKeySequence("P"))
 

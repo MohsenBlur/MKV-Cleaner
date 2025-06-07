@@ -192,6 +192,8 @@ def _build_cmd_ffmpeg(
 ) -> list[str]:
     cmd: list[str] = [
         cfg.ffmpeg_cmd,
+        # Overwrite existing output without asking
+        "-y",
         "-loglevel",
         "error",
         "-i",

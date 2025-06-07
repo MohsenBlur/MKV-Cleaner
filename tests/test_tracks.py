@@ -51,6 +51,7 @@ def test_build_cmd_flags(defaults):
     cmd = build_cmd(src, dst, tracks, defaults, wipe_forced=True, wipe_all=False)
     assert cmd == [
         "ffmpeg",
+        "-y",
         "-loglevel",
         "error",
         "-i",
@@ -112,6 +113,7 @@ def test_build_cmd_wipe_all(defaults):
     cmd = build_cmd(src, dst, tracks, defaults, wipe_forced=False, wipe_all=True)
     assert cmd == [
         "ffmpeg",
+        "-y",
         "-loglevel",
         "error",
         "-i",
@@ -172,6 +174,7 @@ def test_build_cmd_forced_default_ffmpeg(defaults):
     cmd = build_cmd(src, dst, tracks, defaults, wipe_forced=False, wipe_all=False)
     assert cmd == [
         "ffmpeg",
+        "-y",
         "-loglevel",
         "error",
         "-i",

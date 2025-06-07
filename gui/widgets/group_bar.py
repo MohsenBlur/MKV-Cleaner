@@ -84,7 +84,8 @@ class GroupBar(QWidget):
         self.btn_groups.clicked.connect(self._open_drawer)
         self.layout.addWidget(self.btn_groups, alignment=Qt.AlignVCenter)
 
-        self.btn_prev = QPushButton("⬅️")
+        # Use plain arrow characters so they are visible without color emoji support
+        self.btn_prev = QPushButton("⬅")
         self.btn_prev.setCheckable(False)
         self.btn_prev.setMinimumSize(QSize(32, 40))
         self.btn_prev.setMaximumSize(QSize(32, 44))
@@ -107,7 +108,7 @@ class GroupBar(QWidget):
         self.group_btns_layout.setContentsMargins(0, 0, 0, 0)
         self.group_btns_layout.setSpacing(6)
 
-        self.btn_next = QPushButton("➡️")
+        self.btn_next = QPushButton("➡")
         self.btn_next.setCheckable(False)
         self.btn_next.setMinimumSize(QSize(32, 40))
         self.btn_next.setMaximumSize(QSize(32, 44))
@@ -146,6 +147,12 @@ class GroupBar(QWidget):
             "Clean every loaded group of videos in one go."
         )
 
+        # Keep right side controls close together similar to the action bar
+        self.right_layout = QHBoxLayout()
+        self.right_layout.setContentsMargins(0, 0, 0, 0)
+        # Match the spacing used in ActionBar
+        self.right_layout.setSpacing(8)
+
         for btn in (self.btn_process_group, self.btn_process_all):
             btn.setMinimumHeight(38)
             btn.setMinimumWidth(110)
@@ -154,7 +161,7 @@ class GroupBar(QWidget):
                 " border-radius: 8px; padding: 5px 10px; }"
             )
             apply_fade_on_disable(btn)
-            self.layout.addWidget(btn, alignment=Qt.AlignRight)
+            self.right_layout.addWidget(btn)
 
         self.backend_combo = QComboBox(self)
         self.backend_combo.addItems(["mkvtoolnix", "ffmpeg"])
@@ -164,7 +171,7 @@ class GroupBar(QWidget):
         )
         self.backend_combo.currentTextChanged.connect(self.backendChanged.emit)
         self.backend_combo.setFixedHeight(32)
-        self.layout.addWidget(self.backend_combo, alignment=Qt.AlignRight)
+        self.right_layout.addWidget(self.backend_combo)
 
         self.btn_prefs = QPushButton("⚙️")
         self.btn_prefs.setMinimumSize(QSize(44, 42))
@@ -179,8 +186,10 @@ class GroupBar(QWidget):
             " border: 2px solid #555; }"
         )
         apply_fade_on_disable(self.btn_prefs)
-        self.layout.addWidget(self.btn_prefs, alignment=Qt.AlignRight)
+        self.right_layout.addWidget(self.btn_prefs)
         self.btn_prefs.clicked.connect(self.preferencesClicked.emit)
+
+        self.layout.addLayout(self.right_layout)
 
         self.setLayout(self.layout)
         self.setFixedHeight(54)

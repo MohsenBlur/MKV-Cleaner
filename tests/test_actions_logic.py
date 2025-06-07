@@ -10,17 +10,10 @@ qtcore.Q_ARG = lambda typ, val: val
 qtcore.QSettings = object
 sys.modules['PySide6.QtCore'] = qtcore
 qtwidgets = types.ModuleType('PySide6.QtWidgets')
-qtwidgets.QMessageBox = type(
-    'QMessageBox',
-    (),
-    {
-        'warning': staticmethod(lambda *a, **k: None),
-        'information': staticmethod(lambda *a, **k: None),
-        'question': staticmethod(lambda *a, **k: qtwidgets.QMessageBox.No),
-        'Yes': 1,
-        'No': 0,
-    },
-)
+qtwidgets.QMessageBox = type('QMessageBox', (), {
+    'warning': staticmethod(lambda *a, **k: None),
+    'information': staticmethod(lambda *a, **k: None),
+})
 # Additional classes used by subtitle_preview imports
 for cls in (
     'QMainWindow', 'QTextEdit', 'QHBoxLayout', 'QVBoxLayout',

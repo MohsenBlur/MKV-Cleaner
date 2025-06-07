@@ -17,7 +17,7 @@ qtwidgets.QMessageBox = type('QMessageBox', (), {
 # Additional classes used by subtitle_preview imports
 for cls in (
     'QMainWindow', 'QTextEdit', 'QHBoxLayout', 'QVBoxLayout',
-    'QWidget', 'QPushButton', 'QLabel', 'LogoSplash'
+    'QWidget', 'QPushButton', 'QLabel', 'LogoSplash', 'QSplashScreen'
 ):
     setattr(qtwidgets, cls, object)
 sys.modules['PySide6.QtWidgets'] = qtwidgets

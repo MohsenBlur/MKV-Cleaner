@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (
     QDialog,
     QGridLayout,
 )
-from PySide6.QtCore import Qt, QSize, Signal
+from PySide6.QtCore import Qt, QSize, Signal, QPoint
 
 from .fade_disabled import apply_fade_on_disable
 
@@ -88,7 +88,12 @@ class GroupBar(QWidget):
         self.btn_prev.hide()
         self.layout.addWidget(self.btn_prev, alignment=Qt.AlignVCenter)
 
-        self.group_btns_anchor = self.layout.count()
+        # container holding the numbered group buttons
+        self.group_btn_container = QWidget(self)
+        self.group_btns_layout = QHBoxLayout(self.group_btn_container)
+        self.group_btns_layout.setContentsMargins(0, 0, 0, 0)
+        self.group_btns_layout.setSpacing(6)
+        self.layout.addWidget(self.group_btn_container, alignment=Qt.AlignVCenter)
 
         self.btn_next = QPushButton("▶")
         self.btn_next.setCheckable(False)
@@ -163,7 +168,11 @@ class GroupBar(QWidget):
         if len(self.group_buttons) <= 4:
             return
         dlg = GroupDrawer(self)
-        pos = self.mapToGlobal(self.rect().topLeft())
+        base_pos = self.mapToGlobal(self.rect().topLeft())
+        left = self.group_btn_container.mapToGlobal(
+            self.group_btn_container.rect().topLeft()
+        ).x() - 10
+        pos = QPoint(left, base_pos.y())
         dlg.move(pos)
         dlg.exec()
 
@@ -191,7 +200,7 @@ class GroupBar(QWidget):
         apply_fade_on_disable(btn)
         if tooltip:
             btn.setToolTip(tooltip)
-        self.layout.insertWidget(self.group_btns_anchor + len(self.group_buttons), btn)
+        self.group_btns_layout.addWidget(btn)
         self.button_group.addButton(btn)
         self.group_buttons.append((sig, btn))
         return btn
@@ -199,7 +208,7 @@ class GroupBar(QWidget):
     def remove_group_button(self, sig):
         for i, (s, btn) in enumerate(self.group_buttons):
             if s == sig:
-                self.layout.removeWidget(btn)
+                self.group_btns_layout.removeWidget(btn)
                 btn.deleteLater()
                 self.button_group.removeButton(btn)
                 self.group_buttons.pop(i)
@@ -230,7 +239,7 @@ class GroupBar(QWidget):
 
     def clear(self):
         for _, btn in self.group_buttons:
-            self.layout.removeWidget(btn)
+            self.group_btns_layout.removeWidget(btn)
             btn.deleteLater()
         self.group_buttons.clear()
         self.button_group = QButtonGroup(self)

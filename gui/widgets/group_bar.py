@@ -37,6 +37,7 @@ class GroupDrawer(QDialog):
         layout.setContentsMargins(margin, margin, margin, margin)
         layout.setHorizontalSpacing(SIZES['spacing_small'])
         layout.setVerticalSpacing(SIZES['spacing_small'])
+        self.buttons = []
         for idx, (_, btn) in enumerate(bar.group_buttons):
             b = QPushButton(btn.text(), self)
             b.setFixedSize(btn.size())
@@ -46,12 +47,18 @@ class GroupDrawer(QDialog):
             b.clicked.connect(lambda checked=False, i=idx: self._choose(i))
             row, col = divmod(idx, 4)
             layout.addWidget(b, row, col)
+            self.buttons.append(b)
 
     def _choose(self, idx: int):
         btn = self.bar.button_at(idx)
         if btn is not None:
             btn.click()
         self.accept()
+
+    def update_checked(self) -> None:
+        """Sync checked state with the buttons on the group bar."""
+        for (_, src_btn), dlg_btn in zip(self.bar.group_buttons, self.buttons):
+            dlg_btn.setChecked(src_btn.isChecked())
 
 
 class GroupBar(QWidget):
@@ -65,6 +72,10 @@ class GroupBar(QWidget):
         self.group_buttons = []
         self.button_group = QButtonGroup(self)
         self.button_group.setExclusive(True)
+        self.drawer = None
+        self.button_group.buttonClicked.connect(
+            lambda *_: self._update_drawer_checked()
+        )
         self._setup_ui()
         app = QApplication.instance()
         if app is not None:
@@ -213,6 +224,7 @@ class GroupBar(QWidget):
         if len(self.group_buttons) <= 4:
             return
         dlg = GroupDrawer(self)
+        self.drawer = dlg
         base_pos = self.mapToGlobal(self.rect().topLeft())
         left = self.group_btn_container.mapToGlobal(
             self.group_btn_container.rect().topLeft()
@@ -220,6 +232,7 @@ class GroupBar(QWidget):
         pos = QPoint(left, base_pos.y())
         dlg.move(pos)
         dlg.exec()
+        self.drawer = None
 
     def set_backend(self, backend: str):
         """Update dropdown to reflect the selected backend."""
@@ -271,6 +284,7 @@ class GroupBar(QWidget):
     def set_checked(self, idx):
         if 0 <= idx < len(self.group_buttons):
             self.group_buttons[idx][1].setChecked(True)
+            self._update_drawer_checked()
 
     def button_at(self, idx):
         return (
@@ -290,6 +304,10 @@ class GroupBar(QWidget):
         self.button_group = QButtonGroup(self)
         self.button_group.setExclusive(True)
         self.update_nav_buttons(None)
+
+    def _update_drawer_checked(self) -> None:
+        if self.drawer is not None and self.drawer.isVisible():
+            self.drawer.update_checked()
 
     def update_nav_buttons(self, current_idx: int | None):
         """Update arrow states and which group buttons are visible."""

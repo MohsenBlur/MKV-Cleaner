@@ -1,9 +1,20 @@
 import os
 import sys
 from pathlib import Path
+import types
 
 from core.tracks import Track
 from core.config import AppConfig
+
+# Stub minimal PySide6 modules before importing group_logic
+sys.modules["PySide6"] = types.ModuleType("PySide6")
+qtwidgets = types.ModuleType("PySide6.QtWidgets")
+qtwidgets.QMessageBox = type(
+    "QMessageBox",
+    (),
+    {"warning": staticmethod(lambda *a, **k: None)},
+)
+sys.modules["PySide6.QtWidgets"] = qtwidgets
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -169,3 +180,28 @@ def test_delete_group_resets_wipe_all():
     logic._empty_current_group()
 
     assert logic.action_bar.btn_wipe_all.isChecked() is False
+
+
+def test_add_files_error_shows_warning(monkeypatch):
+    warnings = []
+
+    def bad_query_tracks(src, cfg):
+        raise group_logic.CommandNotFoundError("boom")
+
+    monkeypatch.setattr(group_logic, "query_tracks", bad_query_tracks)
+    monkeypatch.setattr(
+        group_logic.QMessageBox,
+        "warning",
+        lambda *a, **k: warnings.append((a, k)),
+    )
+
+    logic = GroupLogic()
+    logic.group_bar = DummyGroupBar()
+    logic.track_table = DummyTrackTable()
+    logic.app_config = AppConfig()
+    logic._setup_group_logic()
+
+    logic.add_files_to_groups(["bad.mkv"])
+
+    assert warnings
+    assert "bad.mkv" in warnings[0][0][2]

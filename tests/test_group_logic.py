@@ -4,6 +4,7 @@ from pathlib import Path
 import types
 
 from core.tracks import Track
+import core.tracks as tracks
 from core.config import AppConfig
 
 # Stub minimal PySide6 modules before importing group_logic
@@ -186,7 +187,7 @@ def test_add_files_error_shows_warning(monkeypatch):
     warnings = []
 
     def bad_query_tracks(src, cfg):
-        raise group_logic.CommandNotFoundError("boom")
+        raise tracks.CommandNotFoundError("boom")
 
     monkeypatch.setattr(group_logic, "query_tracks", bad_query_tracks)
     monkeypatch.setattr(

@@ -15,6 +15,11 @@ class KeepToggleDelegate(QStyledItemDelegate):
         self._dragging = False
         self._drag_state = None
 
+    def reset_drag(self):
+        """Clear any active drag toggling state."""
+        self._dragging = False
+        self._drag_state = None
+
     def paint(self, painter, option, index):
         opt = QStyleOptionViewItem(option)
         self.initStyleOption(opt, index)

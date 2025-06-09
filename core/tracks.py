@@ -129,9 +129,15 @@ def build_cmd(
     wipe_all: bool = False,
 ) -> list[str]:
     """Build command for the configured backend."""
+    if wipe_all:
+        if not any(t.type == "subtitles" and t.removed for t in tracks):
+            for t in tracks:
+                if t.type == "subtitles":
+                    t.removed = True
+
     if cfg.backend == "ffmpeg":
-        return _build_cmd_ffmpeg(source, destination, tracks, cfg, wipe_forced, wipe_all)
-    return _build_cmd_mkvmerge(source, destination, tracks, cfg, wipe_forced, wipe_all)
+        return _build_cmd_ffmpeg(source, destination, tracks, cfg, wipe_forced)
+    return _build_cmd_mkvmerge(source, destination, tracks, cfg, wipe_forced)
 
 
 def _build_cmd_mkvmerge(
@@ -140,15 +146,14 @@ def _build_cmd_mkvmerge(
     tracks: List[Track],
     cfg: AppConfig,
     wipe_forced: bool,
-    wipe_all: bool,
 ) -> list[str]:
     cmd: list[str] = [cfg.mkvmerge_cmd]
 
     # Use tid (real mkvmerge track id) everywhere!
     all_audio_ids = [str(t.tid) for t in tracks if t.type == "audio"]
     all_sub_ids   = [str(t.tid) for t in tracks if t.type == "subtitles"]
-    kept_audio    = [str(t.tid) for t in tracks if t.type == "audio" and not t.removed]
-    kept_sub      = [str(t.tid) for t in tracks if t.type == "subtitles" and not t.removed]
+    kept_audio = [str(t.tid) for t in tracks if t.type == "audio" and not t.removed]
+    kept_sub = [str(t.tid) for t in tracks if t.type == "subtitles" and not t.removed]
 
     if kept_audio:
         if set(kept_audio) != set(all_audio_ids):
@@ -156,7 +161,7 @@ def _build_cmd_mkvmerge(
     else:
         cmd += ["--no-audio"]
 
-    if wipe_all or not kept_sub:
+    if not kept_sub:
         cmd += ["--no-subtitles"]
     elif set(kept_sub) != set(all_sub_ids):
         cmd += ["--subtitle-tracks", ",".join(kept_sub)]
@@ -189,7 +194,6 @@ def _build_cmd_ffmpeg(
     tracks: List[Track],
     cfg: AppConfig,
     wipe_forced: bool,
-    wipe_all: bool,
 ) -> list[str]:
     cmd: list[str] = [
         cfg.ffmpeg_cmd,
@@ -204,27 +208,28 @@ def _build_cmd_ffmpeg(
     ]
 
     for t in tracks:
-        if t.type in {"audio", "subtitles"}:
-            if wipe_all and t.type == "subtitles":
-                cmd += ["-map", f"-0:{t.tid}"]
-            elif t.removed:
-                cmd += ["-map", f"-0:{t.tid}"]
+        if t.type == "subtitles" and t.removed:
+            cmd += ["-map", f"-0:{t.tid}"]
+        elif t.type == "audio" and t.removed:
+            cmd += ["-map", f"-0:{t.tid}"]
 
-    audio_tracks = [t for t in tracks if t.type == "audio" and not t.removed]
-    sub_tracks = [t for t in tracks if t.type == "subtitles" and not (wipe_all or t.removed)]
+    a_idx = 0
+    s_idx = 0
 
-    for t in audio_tracks:
-        disp = "default" if t.default_audio else "0"
-        cmd += [f"-disposition:a:{t.tid}", disp]
-
-    for t in sub_tracks:
-        disp_flags = []
-        if not wipe_forced and t.forced:
-            disp_flags.append("forced")
-        if t.default_subtitle:
-            disp_flags.append("default")
-        disp = "+".join(disp_flags) if disp_flags else "0"
-        cmd += [f"-disposition:s:{t.tid}", disp]
+    for t in tracks:
+        if t.type == "audio" and not t.removed:
+            disp = "default" if t.default_audio else "0"
+            cmd += [f"-disposition:a:{a_idx}", disp]
+            a_idx += 1
+        elif t.type == "subtitles" and not t.removed:
+            disp_flags = []
+            if not wipe_forced and t.forced:
+                disp_flags.append("forced")
+            if t.default_subtitle:
+                disp_flags.append("default")
+            disp = "+".join(disp_flags) if disp_flags else "0"
+            cmd += [f"-disposition:s:{s_idx}", disp]
+            s_idx += 1
 
     cmd += ["-c", "copy", str(destination)]
     return cmd

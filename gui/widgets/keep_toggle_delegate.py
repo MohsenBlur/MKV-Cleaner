@@ -37,14 +37,13 @@ class KeepToggleDelegate(QStyledItemDelegate):
 
         state = index.data(Qt.CheckStateRole)
 
-        if not (opt.state & QStyle.State_Selected):
-            if opt.state & QStyle.State_MouseOver:
-                color = self.hover_color
-            elif state == Qt.Checked:
-                color = self.checked_color
-            else:
-                color = self.unchecked_color
-            painter.fillRect(opt.rect, color)
+        if opt.state & QStyle.State_MouseOver:
+            color = self.hover_color
+        elif state == Qt.Checked:
+            color = self.checked_color
+        else:
+            color = self.unchecked_color
+        painter.fillRect(opt.rect, color)
 
         pen = opt.palette.highlightedText().color() if opt.state & QStyle.State_Selected else Qt.white
         painter.setPen(pen)

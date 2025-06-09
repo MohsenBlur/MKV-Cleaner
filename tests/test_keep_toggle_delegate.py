@@ -77,3 +77,18 @@ def test_reset_drag_clears_state():
     delegate.reset_drag()
     assert delegate._dragging is False
     assert delegate._drag_state is None
+
+
+def test_click_toggle_updates_state():
+    delegate = KeepToggleDelegate()
+    model = DummyModel()
+    idx = DummyIndex(model)
+    opt = DummyOption()
+
+    delegate.editorEvent(DummyEvent(QEvent.MouseButtonPress), model, opt, idx)
+    delegate.editorEvent(DummyEvent(QEvent.MouseButtonRelease), model, opt, idx)
+    delegate.reset_drag()
+
+    assert model.state == Qt.Unchecked
+
+

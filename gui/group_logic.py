@@ -1,5 +1,6 @@
 from pathlib import Path
 import copy
+from PySide6.QtWidgets import QMessageBox
 from core.tracks import query_tracks
 
 
@@ -46,7 +47,15 @@ class GroupLogic:
     def add_files_to_groups(self, paths):
         for p in paths:
             path = Path(p)
-            tracks = query_tracks(path, self.app_config)
+            try:
+                tracks = query_tracks(path, self.app_config)
+            except Exception as exc:  # pragma: no cover - GUI warning only
+                QMessageBox.warning(
+                    self,
+                    "Error",
+                    f"Failed to load {path.name}: {exc}",
+                )
+                continue
             sig = ";".join(t.signature() for t in tracks)
             if sig not in self.groups:
                 self.groups[sig] = [copy.deepcopy(t) for t in tracks]

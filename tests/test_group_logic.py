@@ -134,3 +134,38 @@ def test_add_files_no_duplicates(monkeypatch):
     sig = ";".join(t.signature() for t in tracks)
     assert len(logic.file_groups[sig]) == 1
     assert len(logic.group_bar.group_buttons) == 1
+
+
+class DummyWipeButton:
+    def __init__(self):
+        self.checked = False
+
+    def setChecked(self, val):
+        self.checked = val
+
+    def isChecked(self):
+        return self.checked
+
+
+class DummyActionBar:
+    def __init__(self):
+        self.btn_wipe_all = DummyWipeButton()
+
+
+def test_delete_group_resets_wipe_all():
+    logic = GroupLogic()
+    logic.group_bar = DummyGroupBar()
+    logic.track_table = DummyTrackTable()
+    logic.action_bar = DummyActionBar()
+    logic._setup_group_logic()
+
+    logic.groups["sig1"] = []
+    logic.file_groups["sig1"] = ["f1"]
+    logic.current_sig = "sig1"
+    logic.group_bar.add_group_button("sig1")
+
+    logic.action_bar.btn_wipe_all.setChecked(True)
+
+    logic._empty_current_group()
+
+    assert logic.action_bar.btn_wipe_all.isChecked() is False

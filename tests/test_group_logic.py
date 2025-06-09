@@ -206,3 +206,4 @@ def test_add_files_error_shows_warning(monkeypatch):
 
     assert warnings
     assert "bad.mkv" in warnings[0][0][2]
+

@@ -204,3 +204,4 @@ class GroupLogic:
             btn = getattr(getattr(self, "action_bar", None), "btn_wipe_all", None)
             if btn is not None:
                 btn.setChecked(False)
+

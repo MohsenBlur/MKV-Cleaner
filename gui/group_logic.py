@@ -189,3 +189,9 @@ class GroupLogic:
             self.group_bar.update_nav_buttons(idx_cur)
 
         self._update_process_buttons()
+
+        # Reset wipe all toggle if no group is selected
+        if self.current_sig is None:
+            btn = getattr(getattr(self, "action_bar", None), "btn_wipe_all", None)
+            if btn is not None:
+                btn.setChecked(False)

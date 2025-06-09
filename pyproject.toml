@@ -11,6 +11,9 @@ dependencies = [
     "tomli; python_version < \"3.11\"",
 ]
 
+[project.optional-dependencies]
+build = ["pyinstaller"]
+
 [project.scripts]
 mkv-cleaner = "mkv_cleaner:main"
 

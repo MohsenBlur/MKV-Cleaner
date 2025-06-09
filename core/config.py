@@ -19,10 +19,16 @@ except ModuleNotFoundError:  # pragma: no cover - fallback for older versions
 if getattr(sys, 'frozen', False):  # Running from PyInstaller bundle
     bindir = Path(getattr(sys, '_MEIPASS', Path(sys.executable).parent))
     EXT = '.exe' if os.name == 'nt' else ''
-    MKVMERGE = str(bindir / f"mkvmerge{EXT}")
-    MKVEXTRACT = str(bindir / f"mkvextract{EXT}")
-    FFMPEG = str(bindir / f"ffmpeg{EXT}")
-    FFPROBE = str(bindir / f"ffprobe{EXT}")
+    mkvmerge_path = bindir / f"mkvmerge{EXT}"
+    mkvextract_path = bindir / f"mkvextract{EXT}"
+    ffmpeg_path = bindir / f"ffmpeg{EXT}"
+    ffprobe_path = bindir / f"ffprobe{EXT}"
+    MKVMERGE = str(mkvmerge_path) if mkvmerge_path.exists() else f"mkvmerge{EXT}"
+    MKVEXTRACT = (
+        str(mkvextract_path) if mkvextract_path.exists() else f"mkvextract{EXT}"
+    )
+    FFMPEG = str(ffmpeg_path) if ffmpeg_path.exists() else f"ffmpeg{EXT}"
+    FFPROBE = str(ffprobe_path) if ffprobe_path.exists() else f"ffprobe{EXT}"
 else:
     EXT = '.exe' if os.name == 'nt' else ''
     MKVMERGE = f"mkvmerge{EXT}"

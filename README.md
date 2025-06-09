@@ -34,6 +34,19 @@ The prebuilt bundles published in the GitHub releases already include PySide6
 and FFmpeg so no additional installation is required. Copies of their licenses
 are distributed alongside the bundle.
 
+## Building a standalone Windows executable
+
+If you want to create your own `MKVCleaner.exe`, run the
+`build_exe.py` script. It uses PyInstaller to bundle the Python
+dependencies while leaving the backend tools (`mkvmerge`,
+`mkvextract`, `ffmpeg` and `ffprobe`) on the system `PATH`.
+
+```bash
+python build_exe.py
+```
+
+The resulting executable can be found in the `dist` directory.
+
 ## Installation
 
 Install MKV Cleaner with `pip` after cloning the repository:

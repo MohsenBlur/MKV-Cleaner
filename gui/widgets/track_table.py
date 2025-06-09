@@ -106,10 +106,10 @@ class TrackTable(QTableView):
         self.setFixedHeight(total)
 
     def mouseReleaseEvent(self, event):
+        super().mouseReleaseEvent(event)
         delegate = self.itemDelegateForColumn(0)
         if hasattr(delegate, "reset_drag"):
             delegate.reset_drag()
-        super().mouseReleaseEvent(event)
 
     def leaveEvent(self, event):
         delegate = self.itemDelegateForColumn(0)

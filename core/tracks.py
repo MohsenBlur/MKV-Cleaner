@@ -33,7 +33,7 @@ class Track:
         """Return a string uniquely identifying the track."""
 
         return (
-            f"{self.tid}-{self.type}-{self.codec}-"
+            f"{self.idx}-{self.type}-{self.codec}-"
             f"{self.language}-{'F' if self.forced else ''}-{self.name}"
         )
 

@@ -136,6 +136,36 @@ def test_add_files_no_duplicates(monkeypatch):
     assert len(logic.group_bar.group_buttons) == 1
 
 
+def test_grouping_ignores_tids(monkeypatch):
+    tracks1 = [
+        Track(idx=0, tid=10, type="video", codec="h264", language="und", forced=False, name=""),
+        Track(idx=1, tid=11, type="audio", codec="aac", language="eng", forced=False, name=""),
+    ]
+    tracks2 = [
+        Track(idx=0, tid=1, type="video", codec="h264", language="und", forced=False, name=""),
+        Track(idx=1, tid=2, type="audio", codec="aac", language="eng", forced=False, name=""),
+    ]
+
+    def qtracks(path, cfg):
+        return tracks1 if Path(path).name == "f1.mkv" else tracks2
+
+    monkeypatch.setattr(group_logic, "query_tracks", qtracks)
+
+    logic = GroupLogic()
+    logic.group_bar = DummyGroupBar()
+    logic.track_table = DummyTrackTable()
+    logic.file_list = type("FL", (), {"update_files": lambda self, f: None, "clear": lambda self: None})()
+    logic.app_config = AppConfig()
+    logic._setup_group_logic()
+
+    logic.add_files_to_groups(["f1.mkv"])
+    logic.add_files_to_groups(["f2.mkv"])
+
+    sig = ";".join(t.signature() for t in tracks1)
+    assert len(logic.group_bar.group_buttons) == 1
+    assert len(logic.file_groups[sig]) == 2
+
+
 class DummyWipeButton:
     def __init__(self):
         self.checked = False

@@ -1,8 +1,9 @@
+"""Configuration helpers and executable path setup."""
+
 from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Any, Dict
 from dataclasses import dataclass
 import json
 import os
@@ -17,17 +18,17 @@ except ModuleNotFoundError:  # pragma: no cover - fallback for older versions
 
 if getattr(sys, 'frozen', False):  # Running from PyInstaller bundle
     bindir = Path(getattr(sys, '_MEIPASS', Path(sys.executable).parent))
-    ext = '.exe' if os.name == 'nt' else ''
-    MKVMERGE = str(bindir / f"mkvmerge{ext}")
-    MKVEXTRACT = str(bindir / f"mkvextract{ext}")
-    FFMPEG = str(bindir / f"ffmpeg{ext}")
-    FFPROBE = str(bindir / f"ffprobe{ext}")
+    EXT = '.exe' if os.name == 'nt' else ''
+    MKVMERGE = str(bindir / f"mkvmerge{EXT}")
+    MKVEXTRACT = str(bindir / f"mkvextract{EXT}")
+    FFMPEG = str(bindir / f"ffmpeg{EXT}")
+    FFPROBE = str(bindir / f"ffprobe{EXT}")
 else:
-    ext = '.exe' if os.name == 'nt' else ''
-    MKVMERGE = f"mkvmerge{ext}"
-    MKVEXTRACT = f"mkvextract{ext}"
-    FFMPEG = f"ffmpeg{ext}"
-    FFPROBE = f"ffprobe{ext}"
+    EXT = '.exe' if os.name == 'nt' else ''
+    MKVMERGE = f"mkvmerge{EXT}"
+    MKVEXTRACT = f"mkvextract{EXT}"
+    FFMPEG = f"ffmpeg{EXT}"
+    FFPROBE = f"ffprobe{EXT}"
 
 @dataclass
 class AppConfig:

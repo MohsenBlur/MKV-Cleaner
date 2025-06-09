@@ -1,11 +1,17 @@
 import os
 import sys
+import types
 from pathlib import Path
 
 from core.tracks import Track
 from core.config import AppConfig
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+sys.modules['PySide6'] = types.ModuleType('PySide6')
+qtwidgets = types.ModuleType('PySide6.QtWidgets')
+qtwidgets.QMessageBox = type('QMessageBox', (), {'warning': staticmethod(lambda *a, **k: None)})
+sys.modules['PySide6.QtWidgets'] = qtwidgets
 
 from gui.group_logic import GroupLogic  # noqa: E402
 import gui.group_logic as group_logic
@@ -169,3 +175,27 @@ def test_delete_group_resets_wipe_all():
     logic._empty_current_group()
 
     assert logic.action_bar.btn_wipe_all.isChecked() is False
+
+
+def test_add_files_error(monkeypatch):
+    calls = {}
+
+    def fake_warning(parent, title, text):
+        calls['text'] = text
+
+    monkeypatch.setattr(group_logic.QMessageBox, 'warning', staticmethod(fake_warning))
+    import core.tracks as tracks
+    monkeypatch.setattr(group_logic, 'query_tracks', lambda p, cfg: (_ for _ in ()).throw(tracks.CommandNotFoundError('oops')))
+
+    logic = GroupLogic()
+    logic.group_bar = DummyGroupBar()
+    logic.track_table = DummyTrackTable()
+    logic.file_list = type('FL', (), {'update_files': lambda self, f: None, 'clear': lambda self: None})()
+    logic.app_config = AppConfig()
+    logic._setup_group_logic()
+
+    logic.add_files_to_groups(['bad.mkv'])
+
+    assert 'bad.mkv' in calls.get('text', '')
+    assert 'oops' in calls.get('text', '')
+    assert not logic.groups

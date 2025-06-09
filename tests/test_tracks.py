@@ -58,9 +58,9 @@ def test_build_cmd_flags(defaults):
         str(src),
         "-map",
         "0",
-        "-disposition:a:1",
+        "-disposition:a:0",
         "default",
-        "-disposition:s:2",
+        "-disposition:s:0",
         "default",
         "-c",
         "copy",
@@ -98,12 +98,8 @@ def test_build_cmd_wipe_all(defaults):
     assert cmd == [
         "mkvmerge",
         "--no-subtitles",
-        "--forced-track",
-        "2:yes",
         "--default-track",
         "1:yes",
-        "--default-track",
-        "2:yes",
         "-o",
         str(dst),
         str(src),
@@ -122,7 +118,7 @@ def test_build_cmd_wipe_all(defaults):
         "0",
         "-map",
         "-0:2",
-        "-disposition:a:1",
+        "-disposition:a:0",
         "default",
         "-c",
         "copy",
@@ -181,9 +177,9 @@ def test_build_cmd_forced_default_ffmpeg(defaults):
         str(src),
         "-map",
         "0",
-        "-disposition:a:1",
+        "-disposition:a:0",
         "default",
-        "-disposition:s:2",
+        "-disposition:s:0",
         "forced+default",
         "-c",
         "copy",
@@ -254,3 +250,186 @@ def test_build_cmd_full_flags(defaults):
         str(dst),
         str(src),
     ]
+
+
+def test_build_cmd_many_subs_ffmpeg(defaults):
+    src = Path("in.mkv")
+    dst = Path("out.mkv")
+    tracks = []
+    for i in range(2):
+        tracks.append(
+            Track(
+                idx=i,
+                tid=i,
+                type="audio",
+                codec="aac",
+                language="eng",
+                forced=False,
+                name=f"A{i}",
+                default_audio=True,
+            )
+        )
+    for j in range(10):
+        tracks.append(
+            Track(
+                idx=2 + j,
+                tid=2 + j,
+                type="subtitles",
+                codec="srt",
+                language="eng",
+                forced=False,
+                name=f"S{j}",
+                default_subtitle=(j == 9),
+                removed=(j != 9),
+            )
+        )
+
+    defaults.backend = "ffmpeg"
+    cmd = build_cmd(src, dst, tracks, defaults, wipe_forced=False, wipe_all=False)
+
+    expected = [
+        "ffmpeg",
+        "-y",
+        "-loglevel",
+        "error",
+        "-i",
+        str(src),
+        "-map",
+        "0",
+    ]
+    for tid in range(2, 11):
+        expected += ["-map", f"-0:{tid}"]
+    expected += [
+        "-disposition:a:0",
+        "default",
+        "-disposition:a:1",
+        "default",
+        "-disposition:s:0",
+        "default",
+        "-c",
+        "copy",
+        str(dst),
+    ]
+
+    assert cmd == expected
+
+
+def test_build_cmd_wipe_all_keep_one_ffmpeg(defaults):
+    src = Path("in.mkv")
+    dst = Path("out.mkv")
+    tracks = []
+    for i in range(2):
+        tracks.append(
+            Track(
+                idx=i,
+                tid=i + 1,
+                type="audio",
+                codec="aac",
+                language="eng",
+                forced=False,
+                name=f"A{i}",
+                default_audio=True,
+            )
+        )
+    for j in range(3):
+        tracks.append(
+            Track(
+                idx=2 + j,
+                tid=3 + j,
+                type="subtitles",
+                codec="srt",
+                language="eng",
+                forced=False,
+                name=f"S{j}",
+            )
+        )
+    for t in tracks:
+        if t.type == "subtitles":
+            t.removed = True
+    tracks[3].removed = False
+
+    defaults.backend = "ffmpeg"
+    cmd = build_cmd(src, dst, tracks, defaults, wipe_forced=False, wipe_all=True)
+
+    expected = [
+        "ffmpeg",
+        "-y",
+        "-loglevel",
+        "error",
+        "-i",
+        str(src),
+        "-map",
+        "0",
+        "-map",
+        "-0:3",
+        "-map",
+        "-0:5",
+        "-disposition:a:0",
+        "default",
+        "-disposition:a:1",
+        "default",
+        "-disposition:s:0",
+        "0",
+        "-c",
+        "copy",
+        str(dst),
+    ]
+
+    assert cmd == expected
+
+
+def test_build_cmd_wipe_all_keep_one_mkvmerge(defaults):
+    src = Path("in.mkv")
+    dst = Path("out.mkv")
+    tracks = []
+    for i in range(2):
+        tracks.append(
+            Track(
+                idx=i,
+                tid=i + 1,
+                type="audio",
+                codec="aac",
+                language="eng",
+                forced=False,
+                name=f"A{i}",
+                default_audio=True,
+            )
+        )
+    for j in range(3):
+        tracks.append(
+            Track(
+                idx=2 + j,
+                tid=3 + j,
+                type="subtitles",
+                codec="srt",
+                language="eng",
+                forced=False,
+                name=f"S{j}",
+            )
+        )
+    for t in tracks:
+        if t.type == "subtitles":
+            t.removed = True
+    tracks[3].removed = False
+
+    defaults.backend = "mkvtoolnix"
+    cmd = build_cmd(src, dst, tracks, defaults, wipe_forced=False, wipe_all=True)
+
+    expected = [
+        "mkvmerge",
+        "--subtitle-tracks",
+        "4",
+        "--forced-track",
+        "4:no",
+        "--default-track",
+        "1:yes",
+        "--default-track",
+        "2:yes",
+        "--default-track",
+        "4:no",
+        "-o",
+        str(dst),
+        str(src),
+    ]
+
+    assert cmd == expected

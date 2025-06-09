@@ -12,6 +12,8 @@ class KeepToggleDelegate(QStyledItemDelegate):
         self.checked_color = QColor(COLORS['accent'])
         self.unchecked_color = QColor(COLORS['background'])
         self.hover_color = QColor(COLORS['hover'])
+        self._dragging = False
+        self._drag_state = None
 
     def paint(self, painter, option, index):
         opt = QStyleOptionViewItem(option)
@@ -51,9 +53,30 @@ class KeepToggleDelegate(QStyledItemDelegate):
         painter.restore()
 
     def editorEvent(self, event, model, option, index):
-        if event.type() == QEvent.MouseButtonRelease and option.rect.contains(event.pos()):
+        pos_in_rect = option.rect.contains(event.pos())
+        if event.type() == QEvent.MouseButtonPress and pos_in_rect:
             current = index.data(Qt.CheckStateRole)
-            new_state = Qt.Unchecked if current == Qt.Checked else Qt.Checked
-            model.setData(index, new_state, Qt.CheckStateRole)
+            self._drag_state = Qt.Unchecked if current == Qt.Checked else Qt.Checked
+            self._dragging = True
+            model.setData(index, self._drag_state, Qt.CheckStateRole)
             return True
+
+        if event.type() == QEvent.MouseMove and self._dragging:
+            if pos_in_rect:
+                model.setData(index, self._drag_state, Qt.CheckStateRole)
+            return True
+
+        if event.type() == QEvent.MouseButtonRelease:
+            if self._dragging:
+                self._dragging = False
+                if pos_in_rect:
+                    model.setData(index, self._drag_state, Qt.CheckStateRole)
+                self._drag_state = None
+                return True
+            elif pos_in_rect:
+                current = index.data(Qt.CheckStateRole)
+                new_state = Qt.Unchecked if current == Qt.Checked else Qt.Checked
+                model.setData(index, new_state, Qt.CheckStateRole)
+                return True
+
         return super().editorEvent(event, model, option, index)

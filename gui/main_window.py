@@ -1,3 +1,5 @@
+"""Top-level application window and logic bindings."""
+
 from PySide6.QtWidgets import (
     QMainWindow,
     QVBoxLayout,
@@ -5,7 +7,7 @@ from PySide6.QtWidgets import (
     QFileDialog,
     QStatusBar,
 )
-from PySide6.QtCore import QSettings, Qt
+from PySide6.QtCore import QSettings
 import os
 
 from gui.widgets.group_bar import GroupBar
@@ -21,6 +23,7 @@ from .shortcut_logic import ShortcutLogic
 
 
 class MainWindow(QMainWindow, SettingsLogic, GroupLogic, TableLogic, ActionsLogic, ShortcutLogic):
+    """Main application window bundling all interface components."""
     def __init__(self):
         super().__init__()
         self.setWindowTitle("MKV Cleaner")
@@ -77,4 +80,3 @@ class MainWindow(QMainWindow, SettingsLogic, GroupLogic, TableLogic, ActionsLogi
             self.last_dir = os.path.dirname(files[0])
             self.settings.setValue("last_dir", self.last_dir)
             self.add_files_to_groups(files)
-

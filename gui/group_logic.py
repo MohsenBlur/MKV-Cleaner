@@ -1,3 +1,5 @@
+"""Logic mixin for managing file groups within the GUI."""
+
 from pathlib import Path
 import copy
 from PySide6.QtWidgets import QMessageBox

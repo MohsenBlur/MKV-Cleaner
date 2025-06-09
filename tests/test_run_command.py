@@ -39,20 +39,25 @@ def test_run_command_no_capture(monkeypatch):
 
     def fake_run(cmd, **kw):
         called.update(kw)
-        return subprocess.CompletedProcess(cmd, 0)
+        return subprocess.CompletedProcess(cmd, 0, stdout="out", stderr="")
 
     monkeypatch.setattr(tracks.subprocess, "run", fake_run)
-    tracks.run_command(["echo", "hi"], capture=False)
-    assert "capture_output" not in called
+    res = tracks.run_command(["echo", "hi"], capture=False)
+    assert called.get("capture_output") is True
+    assert res.stdout == ""
 
 
 def test_run_command_error_no_stderr(monkeypatch, caplog):
+    called = {}
+
     def fake_run(cmd, **kw):
+        called.update(kw)
         raise subprocess.CalledProcessError(1, cmd, stderr=None)
 
     monkeypatch.setattr(tracks.subprocess, "run", fake_run)
     caplog.set_level(logging.ERROR)
     with pytest.raises(subprocess.CalledProcessError):
         tracks.run_command(["bad"], capture=False)
+    assert called.get("capture_output") is True
     assert "Command failed" in caplog.text
 

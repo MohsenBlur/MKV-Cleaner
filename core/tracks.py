@@ -213,18 +213,18 @@ def _build_cmd_ffmpeg(
     audio_tracks = [t for t in tracks if t.type == "audio" and not t.removed]
     sub_tracks = [t for t in tracks if t.type == "subtitles" and not (wipe_all or t.removed)]
 
-    for i, t in enumerate(audio_tracks):
+    for t in audio_tracks:
         disp = "default" if t.default_audio else "0"
-        cmd += [f"-disposition:a:{i}", disp]
+        cmd += [f"-disposition:a:{t.tid}", disp]
 
-    for i, t in enumerate(sub_tracks):
+    for t in sub_tracks:
         disp_flags = []
         if not wipe_forced and t.forced:
             disp_flags.append("forced")
         if t.default_subtitle:
             disp_flags.append("default")
         disp = "+".join(disp_flags) if disp_flags else "0"
-        cmd += [f"-disposition:s:{i}", disp]
+        cmd += [f"-disposition:s:{t.tid}", disp]
 
     cmd += ["-c", "copy", str(destination)]
     return cmd
